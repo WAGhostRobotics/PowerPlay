@@ -38,20 +38,20 @@ public class Jerry {
 
         if(initTeleOp){
 
-            frontLeft = new Motor(hwMap, "lf");
-            frontRight = new Motor(hwMap, "lr");
-            backLeft = new Motor(hwMap, "rf");
-            backRight = new Motor(hwMap, "rr");
-
-            frontLeft.setInverted(true);
-            frontRight.setInverted(true);
-            backLeft.setInverted(true);
-            backRight.setInverted(true);
-
-            frontLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-            frontRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-            backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-            backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//            frontLeft = new Motor(hwMap, "lf");
+//            frontRight = new Motor(hwMap, "lr");
+//            backLeft = new Motor(hwMap, "rf");
+//            backRight = new Motor(hwMap, "rr");
+//
+//            frontLeft.setInverted(true);
+//            frontRight.setInverted(true);
+//            backLeft.setInverted(true);
+//            backRight.setInverted(true);
+//
+//            frontLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//            frontRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//            backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//            backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         }else{
 
