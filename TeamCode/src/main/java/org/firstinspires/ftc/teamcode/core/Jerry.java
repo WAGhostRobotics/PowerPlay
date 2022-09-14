@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.core;
 
+import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,74 +13,34 @@ import java.util.ArrayList;
 public class Jerry {
     public static HardwareMap hardwareMap;
 
-    // DriveStyle motors
-    private static DcMotor dFrontLeft;
-    private static DcMotor dFrontRight;
-    private static DcMotor dBackLeft;
-    private static DcMotor dBackRight;
+    public static Motor frontLeft;
+    public static Motor frontRight;
+    public static Motor backLeft;
+    public static Motor backRight;
 
 
 
-    //
-//    //IMU
-    public static IMU imu;
-
-
-
-    // Motor array [in order: lf, lr, rf, rr]
-    public static ArrayList<DcMotor> driveMotors = new ArrayList<>();
+    public static RevIMU imu;
 
     public static void init(HardwareMap hwMap, boolean initTeleOp) {
         // Assign HardwareMap
         hardwareMap = hwMap;
 
-        imu = new IMU();
-        imu.init(hardwareMap);
+        imu = new RevIMU(hwMap);
+        imu.init();
 
 
         if(initTeleOp){
 
-
-//            // Assign motor information
-//            dFrontLeft = hardwareMap.get(DcMotor.class, "lf");
-//            dFrontRight = hardwareMap.get(DcMotor.class, "rf");
-//            dBackLeft = hardwareMap.get(DcMotor.class, "lr");
-//            dBackRight = hardwareMap.get(DcMotor.class, "rr");
+//            frontLeft = new Motor(hwMap, "lf");
+//            frontRight = new Motor(hwMap, "lr");
+//            backLeft = new Motor(hwMap, "rf");
+//            backRight = new Motor(hwMap, "rr");
 //
-//            // Adjust motor directions - this decides which side of the robot is "front"
-//            // Flip the values to change the direction the robot "faces"
-//            // The motors turn counterclockwise looking at them head on for FORWARD; set the right ones to reverse for correct operation
-//
-//
-//
-//            dFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-//            dBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-//
-////        dFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-////        dFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-//
-////        dBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-////        dBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-//
-//            // Adjust motor stopping behavior; "BRAKE" locks the motor shaft, while "FLOAT" just stops applying power
-//            dFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            dFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            dBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            dBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//
-////        // set to use encoders (can use for specific speed or distance)
-//            dFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            dFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            dBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            dBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//
-//            // Adds the motors to a motor array for easier reference
-//            // The order here must match the order used in {@link DriveStyle}
-////
-//            driveMotors.add(dFrontLeft);
-//            driveMotors.add(dBackLeft);
-//            driveMotors.add(dFrontRight);
-//            driveMotors.add(dBackRight);
+//            frontLeft.setInverted(true);
+//            frontRight.setInverted(true);
+//            backLeft.setInverted(true);
+//            backRight.setInverted(true);
         }else{
 
 
@@ -92,8 +54,8 @@ public class Jerry {
 
 
     public static void initIMU(){
-        imu = new IMU();
-        imu.init(hardwareMap);
+        imu = new RevIMU(hardwareMap);
+        imu.init();
 
     }
 

@@ -6,6 +6,7 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
@@ -55,9 +56,9 @@ public class TeleOpParent extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        GamepadEx toolOp = new GamepadEx(gamepad2);
+        GamepadEx driverOp = new GamepadEx(gamepad2);
         ToggleButtonReader aReader = new ToggleButtonReader(
-                toolOp, GamepadKeys.Button.RIGHT_STICK_BUTTON
+                driverOp, GamepadKeys.Button.RIGHT_STICK_BUTTON
         );
 
 
@@ -68,17 +69,33 @@ public class TeleOpParent extends LinearOpMode {
         if(Jerry.imu==null){
             Jerry.initIMU();
         }
-//        drive = new DriverOrientedControl();
 
+//        MecanumDrive drive = new MecanumDrive(
+//                Jerry.frontLeft,
+//                Jerry.frontRight,
+//                Jerry.backLeft,
+//                Jerry.backRight
+//        );
 
 
         while (opModeIsActive()) {
 
 
 //            if(type == DriveStyle.DriveType.DRIVERORIENTED){
-//                drive.drive2( gamepad2, power);
+//                drive.driveRobotCentric(
+//                        power*driverOp.getLeftX(),
+//                        power*driverOp.getLeftY(),
+//                        power*driverOp.getRightX(),
+//                        false
+//                );
 //            }else if(type == DriveStyle.DriveType.MECANUMARCADE){
-//                DriveStyle.driveWithType(Jerry.driveMotors, gamepad2, type, power);
+//                drive.driveFieldCentric(
+//                        power*driverOp.getLeftX(),
+//                        power*driverOp.getLeftY(),
+//                        power*driverOp.getRightX(),
+//                        Jerry.imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
+//                        false
+//                );
 //            }
 
             //re-initializes imu to correct heading if teleop starts at the wrong heading
