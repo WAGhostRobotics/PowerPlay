@@ -21,7 +21,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
-
+    namespace = 'com.qualcomm.ftcrobotcontroller'
 }
 
 apply from: '../build.dependencies.gradle'
