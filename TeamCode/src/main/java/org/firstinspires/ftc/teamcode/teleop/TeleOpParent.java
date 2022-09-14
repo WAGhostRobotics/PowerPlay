@@ -6,6 +6,9 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -52,7 +55,10 @@ public class TeleOpParent extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-
+        GamepadEx toolOp = new GamepadEx(gamepad2);
+        ToggleButtonReader aReader = new ToggleButtonReader(
+                toolOp, GamepadKeys.Button.RIGHT_STICK_BUTTON
+        );
 
 
 
@@ -67,26 +73,26 @@ public class TeleOpParent extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            if(type == DriveStyle.DriveType.DRIVERORIENTED){
-                drive.drive2( gamepad2, power);
-            }else if(type == DriveStyle.DriveType.MECANUMARCADE){
-                DriveStyle.driveWithType(Jerry.driveMotors, gamepad2, type, power);
-            }
+
+
+//            if(type == DriveStyle.DriveType.DRIVERORIENTED){
+//                drive.drive2( gamepad2, power);
+//            }else if(type == DriveStyle.DriveType.MECANUMARCADE){
+//                DriveStyle.driveWithType(Jerry.driveMotors, gamepad2, type, power);
+//            }
 
             //re-initializes imu to correct heading if teleop starts at the wrong heading
-            if(gamepad2.right_bumper){
+            if(gamepad2.left_stick_button){
                 Jerry.initIMU();
             }
 
 
-            //to switch between slow mode, normal mode, and fast mode
-            if(gamepad2.left_stick_button){
+            if (aReader.getState()) {
                 power = 0.88;
-            }
-
-            if(gamepad2.right_stick_button){
+            } else {
                 power = 0.15;
             }
+            aReader.readValue();
 
 
 
