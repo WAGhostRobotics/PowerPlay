@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.component.IMU;
+import org.firstinspires.ftc.teamcode.component.Webcam;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,8 @@ public class Jerry {
     public static Motor backLeft;
     public static Motor backRight;
 
+    public static Webcam webcam;
+
 
 
     public static RevIMU imu;
@@ -28,6 +31,9 @@ public class Jerry {
 
         imu = new RevIMU(hwMap);
         imu.init();
+
+        webcam = new Webcam();
+        webcam.init(hwMap);
 
 
         if(initTeleOp){

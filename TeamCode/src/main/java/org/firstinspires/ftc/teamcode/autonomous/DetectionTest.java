@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.component.Webcam;
+import org.firstinspires.ftc.teamcode.core.Jerry;
 import org.openftc.apriltag.AprilTagDetection;
 
 
@@ -23,14 +24,15 @@ public class DetectionTest extends LinearOpMode {
         telemetry.update();
 
         // put this code in robot class later
-        Webcam webcam = new Webcam();
-        webcam.init(hardwareMap);
+
+
+        Jerry.init(hardwareMap, false);
 
 
         while (!isStarted() && !isStopRequested()) {
-            webcam.scanForTags();
-            location = webcam.getLocation();
-            tagOfInterest = webcam.getTagOfInterest();
+            Jerry.webcam.scanForTags();
+            location = Jerry.webcam.getLocation();
+            tagOfInterest = Jerry.webcam.getTagOfInterest();
 
 
             if (location != null && tagOfInterest != null){
@@ -41,7 +43,7 @@ public class DetectionTest extends LinearOpMode {
                 telemetry.update();
             }
         }
-        webcam.stopStreaming();
+        Jerry.webcam.stopStreaming();
 
 
 
