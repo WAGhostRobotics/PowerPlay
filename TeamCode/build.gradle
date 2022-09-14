@@ -22,4 +22,6 @@ dependencies {
 
     implementation 'org.openftc:easyopencv:1.5.1'
     implementation 'org.openftc:apriltag:1.1.0'
+
+    implementation 'org.ftclib.ftclib:core:2.0.1'
 }

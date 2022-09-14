@@ -51,9 +51,7 @@ public class TeleOpParent extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        /**
-         * you can change the variable names to make more sense
-         */
+
 
 
 
