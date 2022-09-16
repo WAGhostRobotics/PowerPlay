@@ -111,6 +111,13 @@ public class TeleOpParent extends LinearOpMode {
             }
             aReader.readValue();
 
+            if (gamepad1.x) {
+                Jerry.intake.in();
+            } else if (gamepad1.b) {
+                Jerry.intake.out();
+            } else {
+                Jerry.intake.stop();
+            }
 
 
         }
