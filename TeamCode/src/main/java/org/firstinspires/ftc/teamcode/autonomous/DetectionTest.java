@@ -10,7 +10,7 @@ import org.openftc.apriltag.AprilTagDetection;
 @Autonomous(name = "Detection Test", group = "competition")
 public class DetectionTest extends LinearOpMode {
 
-    
+
     Webcam.Location location = null;
     AprilTagDetection tagOfInterest = null;
     static final double FEET_PER_METER = 3.28084;
@@ -36,6 +36,7 @@ public class DetectionTest extends LinearOpMode {
             tagOfInterest = Jerry.webcam.getTagOfInterest();
 
 
+            //telemetry for the position
             if (location != null && tagOfInterest != null){
                 telemetry.addData("Location", location);
                 telemetry.addData("Tag ID", tagOfInterest.id);
