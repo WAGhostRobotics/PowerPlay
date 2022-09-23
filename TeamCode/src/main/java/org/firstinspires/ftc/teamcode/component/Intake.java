@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
     private DcMotor roller1;
     private DcMotor roller2;
-    private final double POWER = 1;
+    private final double POWER = 0.4;
 
     public void init (HardwareMap hardwareMap) {
         roller1 = hardwareMap.get(DcMotor.class, "roller1");
@@ -16,12 +16,12 @@ public class Intake {
     }
 
     public void in() {
-        roller1.setPower(POWER);
+        roller1.setPower(-POWER);
         roller2.setPower(-POWER);
     }
 
     public void out() {
-        roller1.setPower(-POWER);
+        roller1.setPower(POWER);
         roller2.setPower(POWER);
     }
 
