@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IMU;
 import org.firstinspires.ftc.teamcode.component.Intake;
+import org.firstinspires.ftc.teamcode.component.ServoClaw;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 
 import java.util.ArrayList;
@@ -23,6 +25,10 @@ public class Jerry {
     public static Webcam webcam;
 
     public static Intake intake;
+
+    public static Claw claw;
+
+    public static ServoClaw intakeClaw;
 
 
 
@@ -40,6 +46,14 @@ public class Jerry {
 
         intake = new Intake();
         intake.init(hwMap);
+
+        claw = new Claw();
+        claw.init(hwMap);
+
+        intakeClaw = new ServoClaw();
+        intakeClaw.init(hwMap);
+
+
 
         if(initTeleOp){
 

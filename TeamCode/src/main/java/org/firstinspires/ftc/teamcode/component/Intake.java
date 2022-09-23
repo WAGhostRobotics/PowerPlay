@@ -17,12 +17,12 @@ public class Intake {
 
     public void in() {
         roller1.setPower(POWER);
-        roller2.setPower(POWER);
+        roller2.setPower(-POWER);
     }
 
     public void out() {
         roller1.setPower(-POWER);
-        roller2.setPower(-POWER);
+        roller2.setPower(POWER);
     }
 
     public void stop() {
