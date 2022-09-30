@@ -22,11 +22,11 @@ public class Jerry {
     public static Motor backLeft;
     public static Motor backRight;
 
-    public static Webcam webcam;
+//    public static Webcam webcam;
 
     public static Intake intake;
 
-    public static Claw claw;
+//    public static ServoClaw claw;
 
     public static ServoClaw intakeClaw;
 
@@ -41,14 +41,14 @@ public class Jerry {
         imu = new RevIMU(hwMap);
         imu.init();
 
-        webcam = new Webcam();
-        webcam.init(hwMap);
+//        webcam = new Webcam();
+//        webcam.init(hwMap);
 
         intake = new Intake();
         intake.init(hwMap);
 
-        claw = new Claw();
-        claw.init(hwMap);
+//        claw = new Claw();
+//        claw.init(hwMap);
 
         intakeClaw = new ServoClaw();
         intakeClaw.init(hwMap);
@@ -57,20 +57,21 @@ public class Jerry {
 
         if(initTeleOp){
 
-//            frontLeft = new Motor(hwMap, "lf");
-//            frontRight = new Motor(hwMap, "lr");
-//            backLeft = new Motor(hwMap, "rf");
-//            backRight = new Motor(hwMap, "rr");
+            frontLeft = new Motor(hwMap, "lf");
+            frontRight = new Motor(hwMap, "rf");
+            backLeft = new Motor(hwMap, "lr");
+            backRight = new Motor(hwMap, "rr");
 //
 //            frontLeft.setInverted(true);
 //            frontRight.setInverted(true);
 //            backLeft.setInverted(true);
 //            backRight.setInverted(true);
-//
-//            frontLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-//            frontRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-//            backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-//            backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+
+            frontLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            frontRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+            backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         }else{
 

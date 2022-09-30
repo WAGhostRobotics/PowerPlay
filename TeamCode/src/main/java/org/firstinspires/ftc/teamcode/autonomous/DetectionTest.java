@@ -30,23 +30,23 @@ public class DetectionTest extends LinearOpMode {
         Jerry.init(hardwareMap, false);
 
 
-        while (!isStarted() && !isStopRequested()) {
-            Jerry.webcam.scanForTags();
-            location = Jerry.webcam.getLocation();
-            tagOfInterest = Jerry.webcam.getTagOfInterest();
-
-
-            //telemetry for the position
-            if (location != null && tagOfInterest != null){
-                telemetry.addData("Location", location);
-                telemetry.addData("Tag ID", tagOfInterest.id);
-                telemetry.addLine("\n\nLocation data:");
-                tagToTelemetry(tagOfInterest);
-                telemetry.update();
-            }
-        }
-        Jerry.webcam.stopStreaming();
-
+//        while (!isStarted() && !isStopRequested()) {
+//            Jerry.webcam.scanForTags();
+//            location = Jerry.webcam.getLocation();
+//            tagOfInterest = Jerry.webcam.getTagOfInterest();
+//
+//
+//            //telemetry for the position
+//            if (location != null && tagOfInterest != null){
+//                telemetry.addData("Location", location);
+//                telemetry.addData("Tag ID", tagOfInterest.id);
+//                telemetry.addLine("\n\nLocation data:");
+//                tagToTelemetry(tagOfInterest);
+//                telemetry.update();
+//            }
+//        }
+//        Jerry.webcam.stopStreaming();
+//
 
 
 

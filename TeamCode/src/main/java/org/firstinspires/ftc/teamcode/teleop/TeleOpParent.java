@@ -49,7 +49,7 @@ public class TeleOpParent extends LinearOpMode {
     DriveStyle.DriveType type = DriveStyle.DriveType.MECANUMARCADE;
 
 
-    public double power = 0.76;
+    public double power = 1;
 
 
     @Override
@@ -61,6 +61,9 @@ public class TeleOpParent extends LinearOpMode {
                 driverOp, GamepadKeys.Button.RIGHT_STICK_BUTTON
         );
 
+        ToggleButtonReader xReader = new ToggleButtonReader(
+                driverOp, GamepadKeys.Button.X
+        );
 
 
         waitForStart();
@@ -70,33 +73,33 @@ public class TeleOpParent extends LinearOpMode {
             Jerry.initIMU();
         }
 
-//        MecanumDrive drive = new MecanumDrive(
-//                Jerry.frontLeft,
-//                Jerry.frontRight,
-//                Jerry.backLeft,
-//                Jerry.backRight
-//        );
+        MecanumDrive drive = new MecanumDrive(
+                Jerry.frontLeft,
+                Jerry.frontRight,
+                Jerry.backLeft,
+                Jerry.backRight
+        );
 
 
         while (opModeIsActive()) {
 
 
-//            if(type == DriveStyle.DriveType.DRIVERORIENTED){
-//                drive.driveRobotCentric(
-//                        power*driverOp.getLeftX(),
-//                        power*driverOp.getLeftY(),
-//                        power*driverOp.getRightX(),
-//                        false
-//                );
-//            }else if(type == DriveStyle.DriveType.MECANUMARCADE){
-//                drive.driveFieldCentric(
-//                        power*driverOp.getLeftX(),
-//                        power*driverOp.getLeftY(),
-//                        power*driverOp.getRightX(),
-//                        Jerry.imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
-//                        false
-//                );
-//            }
+            if(type == DriveStyle.DriveType.MECANUMARCADE){
+                drive.driveRobotCentric(
+                        power*driverOp.getLeftX(),
+                        power*driverOp.getLeftY(),
+                        power*driverOp.getRightX(),
+                        false
+                );
+            }else if(type == DriveStyle.DriveType.DRIVERORIENTED){
+                drive.driveFieldCentric(
+                        power*driverOp.getLeftX(),
+                        power*driverOp.getLeftY(),
+                        power*driverOp.getRightX(),
+                        Jerry.imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
+                        false
+                );
+            }
 
             //re-initializes imu to correct heading if teleop starts at the wrong heading
             if(gamepad2.left_stick_button){
@@ -105,11 +108,18 @@ public class TeleOpParent extends LinearOpMode {
 
 
             if (aReader.getState()) {
-                power = 0.88;
+                power = 0.2;
             } else {
-                power = 0.15;
+                power = 1;
             }
             aReader.readValue();
+
+            if (xReader.getState()) {
+                Jerry.intakeClaw.open();
+            } else {
+                Jerry.intakeClaw.close();
+            }
+            xReader.readValue();
 
 //            if (gamepad1.x) {
 //                Jerry.claw.open();
@@ -134,13 +144,7 @@ public class TeleOpParent extends LinearOpMode {
 //                Jerry.claw.stopClaw();
 //            }
 
-            if(gamepad1.x){
-                Jerry.intakeClaw.open();
-            }
 
-            if(gamepad1.b){
-                Jerry.intakeClaw.close();
-            }
 
             if (gamepad1.y) {
                 Jerry.intake.in();
