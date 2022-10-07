@@ -121,42 +121,29 @@ public class TeleOpParent extends LinearOpMode {
             }
             xReader.readValue();
 
-//            if (gamepad1.x) {
-//                Jerry.claw.open();
-//            }
-//
-//            if (gamepad1.b) {
-//                Jerry.claw.close();
-//            }
-//
-//            if (gamepad1.left_bumper){
-//                Jerry.claw.openSlowly();
-//            }
-//
-//            if (gamepad1.right_bumper){
-//                Jerry.claw.closeSlowly();
-//            }
-//
-            telemetry.addData("Claw position", Jerry.intakeClaw.getPosition());
-            telemetry.update();
-//
-//            if(!Jerry.claw.isBusy()){
-//                Jerry.claw.stopClaw();
-//            }
+
+//            telemetry.addData("Claw position", Jerry.intakeClaw.getPosition());
+//            telemetry.update();
 
 
 
-            if (gamepad1.y) {
-                Jerry.intake.in();
-            } else if (gamepad1.a) {
-                Jerry.intake.out();
+
+
+            if (gamepad2.dpad_down) {
+                Jerry.arm.down();
+            } else if (gamepad2.dpad_up) {
+                Jerry.arm.up();
             } else {
-                Jerry.intake.stop();
+                Jerry.arm.stop();
+            }
+
+            if (gamepad2.dpad_left) {
+                Jerry.servoIntake.in();
+            } else if (gamepad2.dpad_right) {
+                Jerry.servoIntake.out();
+            } else {
+                Jerry.servoIntake.stop();
             }
         }
-
     }
-
-
-
 }

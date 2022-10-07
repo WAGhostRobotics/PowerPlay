@@ -6,10 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IMU;
 import org.firstinspires.ftc.teamcode.component.Intake;
 import org.firstinspires.ftc.teamcode.component.ServoClaw;
+import org.firstinspires.ftc.teamcode.component.ServoIntake;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 
 import java.util.ArrayList;
@@ -24,13 +26,11 @@ public class Jerry {
 
 //    public static Webcam webcam;
 
-    public static Intake intake;
-
-//    public static ServoClaw claw;
-
     public static ServoClaw intakeClaw;
 
+    public static Arm arm;
 
+    public static ServoIntake servoIntake;
 
     public static RevIMU imu;
 
@@ -44,16 +44,16 @@ public class Jerry {
 //        webcam = new Webcam();
 //        webcam.init(hwMap);
 
-        intake = new Intake();
-        intake.init(hwMap);
 
-//        claw = new Claw();
-//        claw.init(hwMap);
 
         intakeClaw = new ServoClaw();
         intakeClaw.init(hwMap);
 
+        arm = new Arm();
+        arm.init(hwMap);
 
+        servoIntake = new ServoIntake();
+        servoIntake.init(hwMap);
 
         if(initTeleOp){
 
