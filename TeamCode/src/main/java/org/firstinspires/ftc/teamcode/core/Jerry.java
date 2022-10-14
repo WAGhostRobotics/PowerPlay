@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IMU;
 import org.firstinspires.ftc.teamcode.component.Intake;
+import org.firstinspires.ftc.teamcode.component.LinearSlidesArm;
 import org.firstinspires.ftc.teamcode.component.ServoClaw;
 import org.firstinspires.ftc.teamcode.component.ServoIntake;
 import org.firstinspires.ftc.teamcode.component.Webcam;
@@ -28,11 +29,12 @@ public class Jerry {
 
     public static ServoClaw intakeClaw;
 
-    public static Arm arm;
 
     public static ServoIntake servoIntake;
 
     public static RevIMU imu;
+
+    public static LinearSlidesArm arm;
 
     public static void init(HardwareMap hwMap, boolean initTeleOp) {
         // Assign HardwareMap
@@ -49,11 +51,11 @@ public class Jerry {
         intakeClaw = new ServoClaw();
         intakeClaw.init(hwMap);
 
-        arm = new Arm();
-        arm.init(hwMap);
-
         servoIntake = new ServoIntake();
         servoIntake.init(hwMap);
+
+        arm = new LinearSlidesArm();
+        arm.init(hwMap);
 
         if(initTeleOp){
 
