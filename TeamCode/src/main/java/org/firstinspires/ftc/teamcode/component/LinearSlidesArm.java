@@ -33,7 +33,7 @@ public class LinearSlidesArm {
 
     //init
     public void init(HardwareMap hardwareMap){
-        arm = hardwareMap.get(DcMotor.class, "arm");
+        arm = hardwareMap.get(DcMotor.class, "slides");
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -46,6 +46,10 @@ public class LinearSlidesArm {
 
     public void stopArm(){
         arm.setPower(0);
+    }
+
+    public void setPower(double power){
+        arm.setPower(power);
     }
 
     public int getTicks(){
@@ -76,7 +80,7 @@ public class LinearSlidesArm {
 
     //move claw up by small increments
     public void moveUp(){
-        arm.setTargetPosition(arm.getCurrentPosition() + 40    );
+        arm.setTargetPosition(arm.getCurrentPosition() + 40 );
         arm.setPower(0.6);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

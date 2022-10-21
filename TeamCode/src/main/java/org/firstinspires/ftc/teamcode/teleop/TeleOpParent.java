@@ -134,39 +134,49 @@ public class TeleOpParent extends LinearOpMode {
             }
 
 
+            if(gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
+                Jerry.arm.up();
+            }else if(gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
+                Jerry.arm.down();
+            } else{
+                Jerry.arm.stop();
+            }
+
 
 //            telemetry.addData("Claw position", Jerry.intakeClaw.getPosition());
 //            telemetry.update();
 
             //makes small increments or decrements to claw position
-            if(gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
-                Jerry.arm.moveUp();
-            }
-            if(gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
-                Jerry.arm.moveDown();
-            }
+//            if(gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
+//                Jerry.arm.moveUp();
+////                Jerry.arm.up();
+//            }
+//            if(gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
+//                Jerry.arm.moveDown();
+////                Jerry.arm.down();
+//            }
 
 
-            if(gamepad1.a||gamepad2.a){
-                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
-            }
-
-            if(gamepad1.x||gamepad2.x){
-                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
-            }
-
-            if(gamepad1.y||gamepad2.y){
-                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
-            }
-
-            if(gamepad1.b||gamepad2.b) {
-                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
-            }
-
-
-            if(!Jerry.arm.isBusy()){
-                Jerry.arm.stopArm();
-            }
+//            if(gamepad1.a||gamepad2.a){
+//                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
+//            }
+//
+//            if(gamepad1.x||gamepad2.x){
+//                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
+//            }
+//
+//            if(gamepad1.y||gamepad2.y){
+//                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
+//            }
+//
+//            if(gamepad1.b||gamepad2.b) {
+//                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
+//            }
+//
+//
+//            if(!Jerry.arm.isBusy()){
+//                Jerry.arm.stopArm();
+//            }
 
 
 

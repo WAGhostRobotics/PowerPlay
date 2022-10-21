@@ -34,7 +34,7 @@ public class Jerry {
 
     public static RevIMU imu;
 
-    public static LinearSlidesArm arm;
+    public static Arm arm;
 
     public static void init(HardwareMap hwMap, boolean initTeleOp) {
         // Assign HardwareMap
@@ -54,7 +54,7 @@ public class Jerry {
         servoIntake = new ServoIntake();
         servoIntake.init(hwMap);
 
-        arm = new LinearSlidesArm();
+        arm = new Arm();
         arm.init(hwMap);
 
         if(initTeleOp){
@@ -65,7 +65,7 @@ public class Jerry {
             backRight = new Motor(hwMap, "rr");
 //
 //            frontLeft.setInverted(true);
-            frontRight.setInverted(true);
+//            frontRight.setInverted(true);
 //            backLeft.setInverted(true);
 //            backRight.setInverted(true);
 
