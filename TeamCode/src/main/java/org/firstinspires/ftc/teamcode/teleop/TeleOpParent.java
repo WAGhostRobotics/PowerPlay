@@ -52,9 +52,15 @@ public class TeleOpParent extends LinearOpMode {
 
     public double power = 1;
 
+    public int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+
+
+
 
 
         GamepadEx driverOp = new GamepadEx(gamepad2);
@@ -90,6 +96,11 @@ public class TeleOpParent extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            Jerry.slides.moveToPosition(position);
+
+            if(!Jerry.slides.isBusy()){
+                Jerry.slides.stopArm();
+            }
 
             if(type == DriveStyle.DriveType.MECANUMARCADE){
                 drive.driveRobotCentric(
@@ -114,6 +125,14 @@ public class TeleOpParent extends LinearOpMode {
             }
 
 
+            if(gamepad1.dpad_left||gamepad2.dpad_left){
+                Jerry.intake.in();
+            } else if (gamepad1.dpad_right||gamepad2.dpad_right){
+                Jerry.intake.out();
+            }else{
+                Jerry.intake.stop();
+            }
+
             if (aReader.getState()) {
                 power = 0.2;
             } else {
@@ -134,17 +153,10 @@ public class TeleOpParent extends LinearOpMode {
             }
 
 
-            if(gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
-                Jerry.arm.up();
-            }else if(gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
-                Jerry.arm.down();
-            } else{
-                Jerry.arm.stop();
-            }
 
 
-//            telemetry.addData("Claw position", Jerry.intakeClaw.getPosition());
-//            telemetry.update();
+            telemetry.addData("Arm position", Jerry.slides.getTicks());
+            telemetry.update();
 
             //makes small increments or decrements to claw position
 //            if(gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
@@ -157,39 +169,46 @@ public class TeleOpParent extends LinearOpMode {
 //            }
 
 
-//            if(gamepad1.a||gamepad2.a){
-//                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
-//            }
-//
-//            if(gamepad1.x||gamepad2.x){
-//                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
-//            }
-//
-//            if(gamepad1.y||gamepad2.y){
-//                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
-//            }
-//
-//            if(gamepad1.b||gamepad2.b) {
-//                Jerry.arm.moveArm(LinearSlidesArm.TurnValue.GROUND);
-//            }
-//
-//
-//            if(!Jerry.arm.isBusy()){
-//                Jerry.arm.stopArm();
-//            }
-
-
-
-
-
-
-                if (gamepad2.dpad_left) {
-                Jerry.servoIntake.in();
-            } else if (gamepad2.dpad_right) {
-                Jerry.servoIntake.out();
-            } else {
-                Jerry.servoIntake.stop();
+            if(gamepad1.a||gamepad2.a){
+                position = LinearSlidesArm.TurnValue.GROUND.getTicks();
             }
+
+            if(gamepad1.x||gamepad2.x){
+                position = LinearSlidesArm.TurnValue.BOTTOM.getTicks();
+            }
+
+            if(gamepad1.y||gamepad2.y) {
+                position = LinearSlidesArm.TurnValue.MID.getTicks();
+            }
+
+            if(gamepad1.b||gamepad2.b) {
+                position = LinearSlidesArm.TurnValue.TOP.getTicks();
+            }
+
+            if((gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1)&&position<=3250) {
+                position += 10;
+            }
+            if((gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1)&&position>=10) {
+                position -= 10;
+            }
+
+
+//
+//
+
+
+
+
+
+
+
+//                if (gamepad2.dpad_left) {
+//                Jerry.servoIntake.in();
+//            } else if (gamepad2.dpad_right) {
+//                Jerry.servoIntake.out();
+//            } else {
+//                Jerry.servoIntake.stop();
+//            }
         }
     }
 }

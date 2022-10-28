@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.component;
 
-import com.qualcomm.robotcore.hardware.CRServo;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+
 
 public class LinearSlidesArm {
 
@@ -13,16 +13,16 @@ public class LinearSlidesArm {
 
     public enum TurnValue{
         GROUND(0),
-        BOTTOM(840),
-        MID(1920),
-        TOP(3169);
+        BOTTOM(0),
+        MID(0),
+        TOP(0);
 
         int ticks;
         TurnValue(int ticks){
             this.ticks = ticks;
         }
 
-        int getTicks(){
+        public int getTicks(){
             return ticks;
         }
     }
@@ -55,6 +55,38 @@ public class LinearSlidesArm {
     public int getTicks(){
         return arm.getCurrentPosition();
     }
+
+    public void moveToPosition(int ticks){
+        int multiplier = 1;//positive if the claw needs to go up, negative if it needs to go down
+
+        if(arm.getCurrentPosition()>ticks){
+            multiplier = -1;
+        }
+        arm.setTargetPosition(ticks);
+
+
+        //sets power and mode
+        arm.setPower(multiplier * 0.92);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    //mover is busy or not
+    public boolean isBusy(){
+        return arm.isBusy();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //takes in input location
     public void moveArm(TurnValue location){
@@ -91,10 +123,7 @@ public class LinearSlidesArm {
         arm.setPower(-0.6);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    //mover is busy or not
-    public boolean isBusy(){
-        return arm.isBusy();
-    }
+
 
 
 

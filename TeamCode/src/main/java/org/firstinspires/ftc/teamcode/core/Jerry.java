@@ -30,11 +30,13 @@ public class Jerry {
     public static ServoClaw intakeClaw;
 
 
-    public static ServoIntake servoIntake;
+    public static Intake intake;
 
     public static RevIMU imu;
 
     public static Arm arm;
+
+    public static LinearSlidesArm slides;
 
     public static void init(HardwareMap hwMap, boolean initTeleOp) {
         // Assign HardwareMap
@@ -51,11 +53,14 @@ public class Jerry {
         intakeClaw = new ServoClaw();
         intakeClaw.init(hwMap);
 
-        servoIntake = new ServoIntake();
-        servoIntake.init(hwMap);
+        intake = new Intake();
+        intake.init(hwMap);
 
         arm = new Arm();
         arm.init(hwMap);
+
+        slides = new LinearSlidesArm();
+        slides.init(hwMap);
 
         if(initTeleOp){
 
