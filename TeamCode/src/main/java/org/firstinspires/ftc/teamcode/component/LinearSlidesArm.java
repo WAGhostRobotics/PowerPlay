@@ -9,13 +9,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class LinearSlidesArm {
 
 
+    private final double POWER = 0.7;
     private DcMotor arm;
 
     public enum TurnValue{
-        GROUND(0),
-        BOTTOM(0),
-        MID(0),
-        TOP(0);
+        GROUND(180),
+        BOTTOM(1120),
+        MID(1972),
+        TOP(2820);
 
         int ticks;
         TurnValue(int ticks){
@@ -66,7 +67,7 @@ public class LinearSlidesArm {
 
 
         //sets power and mode
-        arm.setPower(multiplier * 0.92);
+        arm.setPower(multiplier * 0.7);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 

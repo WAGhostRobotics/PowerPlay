@@ -25,7 +25,7 @@ public class Jerry {
     public static Motor backLeft;
     public static Motor backRight;
 
-//    public static Webcam webcam;
+    public static Webcam webcam;
 
     public static ServoClaw intakeClaw;
 
@@ -45,8 +45,8 @@ public class Jerry {
         imu = new RevIMU(hwMap);
         imu.init();
 
-//        webcam = new Webcam();
-//        webcam.init(hwMap);
+        webcam = new Webcam();
+        webcam.init(hwMap);
 
 
 
@@ -70,7 +70,7 @@ public class Jerry {
             backRight = new Motor(hwMap, "rr");
 //
 //            frontLeft.setInverted(true);
-//            frontRight.setInverted(true);
+            frontRight.setInverted(true);
 //            backLeft.setInverted(true);
 //            backRight.setInverted(true);
 
