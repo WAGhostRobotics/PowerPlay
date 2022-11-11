@@ -13,12 +13,13 @@ public class LinearSlidesArm {
     private DcMotor arm;
 
     public enum TurnValue{
-        GROUND(180),
-        BOTTOM(1120),
-        MID(1972),
-        TOP(2820);
+        GROUND(232), // was 180
+        BOTTOM(1140), // was 1120
+        MID(2005), // was 1972
+        TOP(2877); // was 2820
 
         int ticks;
+
         TurnValue(int ticks){
             this.ticks = ticks;
         }

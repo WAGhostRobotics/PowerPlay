@@ -129,7 +129,7 @@ public class TeleOpParent extends LinearOpMode {
             }
 
 
-            if(gamepad1.dpad_left||gamepad2.dpad_left){
+            if((gamepad1.dpad_left||gamepad2.dpad_left)) {
                 Jerry.intake.in();
             } else if (gamepad1.dpad_right||gamepad2.dpad_right){
                 Jerry.intake.out();
@@ -156,10 +156,14 @@ public class TeleOpParent extends LinearOpMode {
                 }
             }
 
+            if (Jerry.intake.hasFreight()) Jerry.light.on();
+            else Jerry.light.off();
+
 
 
 
             telemetry.addData("Arm position", Jerry.slides.getTicks());
+            telemetry.addData("Cone distance", Jerry.intake.getDistance());
             telemetry.update();
 
             //makes small increments or decrements to claw position
