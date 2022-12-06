@@ -13,13 +13,13 @@ public class Intake {
     private CRServo roller2;
     private DistanceSensor sensor;
     private final double POWER = 1;
-    private final double DISTANCE = 3;
+    private final double DISTANCE = 3.5;
 
     public void init (HardwareMap hardwareMap) {
         roller1 = hardwareMap.get(CRServo.class, "roller1");
         roller2 = hardwareMap.get(CRServo.class, "roller2");
         sensor = hardwareMap.get(DistanceSensor.class, "sensor");
-        roller2.setDirection(DcMotorSimple.Direction.REVERSE);
+        roller1.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void in() {

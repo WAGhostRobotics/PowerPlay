@@ -110,14 +110,14 @@ public class TeleOpParent extends LinearOpMode {
                 drive.driveRobotCentric(
                         power*driverOp.getLeftX(),
                         power*driverOp.getLeftY(),
-                        power*driverOp.getRightX(),
+                        power*-driverOp.getRightX(),
                         false
                 );
             }else if(type == DriveStyle.DriveType.DRIVERORIENTED){
                 drive.driveFieldCentric(
                         power*driverOp.getLeftX(),
                         power*driverOp.getLeftY(),
-                        power*driverOp.getRightX(),
+                        power*-driverOp.getRightX(),
                         Jerry.imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                         false
                 );
