@@ -9,12 +9,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class LinearSlidesArm {
 
 
-    private final double POWER = 0.7;
+    private final double POWER = 1;
     private DcMotor arm;
 
     public enum TurnValue{
         GROUND(232), // was 180
         BOTTOM(1140), // was 1120
+        CONES(1300),
         MID(2005), // was 1972
         TOP(2877); // was 2820
 

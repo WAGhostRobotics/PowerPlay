@@ -96,7 +96,7 @@ public class TeleOpParent extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            if(Jerry.slides.getTicks()>=LinearSlidesArm.TurnValue.BOTTOM.getTicks()){
+            if(Jerry.slides.getTicks()>=LinearSlidesArm.TurnValue.BOTTOM.getTicks()+40){
                 power = 0.2;
             }
 
@@ -192,6 +192,10 @@ public class TeleOpParent extends LinearOpMode {
             if(gamepad1.b||gamepad2.b) {
                 position = LinearSlidesArm.TurnValue.TOP.getTicks();
             }
+
+//            if(gamepad1.left_bumper||gamepad2.left_bumper){
+//                position = LinearSlidesArm.TurnValue.CONES.getTicks();
+//            }
 
             if((gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1)&&position<=3250) {
                 position += 10;

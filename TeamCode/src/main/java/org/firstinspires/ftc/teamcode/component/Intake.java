@@ -13,7 +13,7 @@ public class Intake {
     private CRServo roller2;
     private DistanceSensor sensor;
     private final double POWER = 1;
-    private final double DISTANCE = 3.5;
+    private final double DISTANCE = 3.2;
 
     public void init (HardwareMap hardwareMap) {
         roller1 = hardwareMap.get(CRServo.class, "roller1");
