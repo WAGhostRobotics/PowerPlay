@@ -1,37 +1,25 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.component.LinearSlidesArm;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Jerry;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.library.DriveStyle;
 import org.openftc.apriltag.AprilTagDetection;
 
-@Autonomous(name = "Left Side", group = "competition")
-public class LeftSideAuto extends LinearOpMode {
+@Autonomous(name = "Left Side Sketch", group = "competition")
+public class LeftSideAutoSketch extends LinearOpMode {
 
     Webcam.Location location = null;
     AprilTagDetection tagOfInterest = null;
     static final double FEET_PER_METER = 3.28084;
 
-    State currentState = State.IDLE;
-
     final double POWER = 0.5;
 
-    public int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
 
 
-
-    enum State {
-        TRAJECTORY_1,
-        IDLE
-    }
 
     @Override
     public void runOpMode() {
@@ -42,15 +30,6 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         Jerry.init(hardwareMap, false);
-        Jerry.initIMU();
-
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        drive.setPoseEstimate(new Pose2d(0,0,Math.toRadians(180)));
-
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(39, -31, Math.toRadians(270)))
-                .build();
 
         // updates feedback after initialization finished
         telemetry.addData("Status", "Initialized");
@@ -76,42 +55,48 @@ public class LeftSideAuto extends LinearOpMode {
         }
         Jerry.webcam.stopStreaming();
 
-        while (opModeIsActive()) {
-            switch (currentState) {
-                case TRAJECTORY_1:
-                    position = LinearSlidesArm.TurnValue.GROUND.getTicks();
 
-                    break;
-                case IDLE:
+        if(location == Webcam.Location.ONE){
 
-                    break;
-            }
+            DriveStyle.MecanumArcade(Jerry.driveMotors, POWER, 1, 0, 0);
+            sleep(1100);
+            DriveStyle.MecanumArcade(Jerry.driveMotors, 0, 0, 0, 0);
+        }else if (location == Webcam.Location.TWO){
 
-            drive.update();
-
-            if(!Jerry.slides.isBusy()){
-                Jerry.slides.stopArm();
-            }
-
-
-
-
-            if(location == Webcam.Location.ONE){
-
-            }else if (location == Webcam.Location.TWO){
-
-            }else if (location == Webcam.Location.THREE){
-
-            }
+        }else if (location == Webcam.Location.THREE){
+            DriveStyle.MecanumArcade(Jerry.driveMotors, POWER, -1, 0, 0);
+            sleep(1100);
+            DriveStyle.MecanumArcade(Jerry.driveMotors, 0, 0, 0, 0);
         }
 
-
+        straighten(0, 0.2);
+        sleep(500);
+        DriveStyle.MecanumArcade(Jerry.driveMotors, POWER, 0, -1, 0);
+        sleep(1500);
+        DriveStyle.MecanumArcade(Jerry.driveMotors, 0, 0, 0, 0);
 
 
 
     }
 
+    public void straighten(int heading, double power) {
+// Left positive
+//right negative
+        switch(heading) {
+            case 0:
+                while (Math.abs(Jerry.imu.getHeading()) > 3) {//5
+                    if (Jerry.imu.getHeading() < 0) {
+                        DriveStyle.MecanumArcade(Jerry.driveMotors, -power, 0, 0, 1);
+                    } else {
+                        DriveStyle.MecanumArcade(Jerry.driveMotors, power, 1, 0, 1);
+                    }
+                }
+                break;
 
+        }
+
+        DriveStyle.MecanumArcade(Jerry.driveMotors, 0, 0, 0 ,0);
+    }
 
     private void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
