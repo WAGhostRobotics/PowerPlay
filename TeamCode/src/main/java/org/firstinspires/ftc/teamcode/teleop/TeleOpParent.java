@@ -50,7 +50,7 @@ public class TeleOpParent extends LinearOpMode {
     DriveStyle.DriveType type = DriveStyle.DriveType.MECANUMARCADE;
 
 
-    public double power = 0.6;
+    public double power = 0.85;
 
     public int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
 
@@ -140,7 +140,7 @@ public class TeleOpParent extends LinearOpMode {
             if (aReader.getState()) {
                 power = 0.2;
             } else {
-                power = 0.6;
+                power = 0.85;
             }
             aReader.readValue();
 
@@ -198,10 +198,10 @@ public class TeleOpParent extends LinearOpMode {
 //            }
 
             if((gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1)&&position<=3250) {
-                position += 10;
+                position += 25;
             }
             if((gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1)) {
-                position -= 10;
+                position -= 25;
             }
 
 

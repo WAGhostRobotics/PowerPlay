@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -48,9 +49,7 @@ public class LeftSideAuto extends LinearOpMode {
 
         drive.setPoseEstimate(new Pose2d(0,0,Math.toRadians(180)));
 
-        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(39, -31, Math.toRadians(270)))
-                .build();
+
 
         // updates feedback after initialization finished
         telemetry.addData("Status", "Initialized");
