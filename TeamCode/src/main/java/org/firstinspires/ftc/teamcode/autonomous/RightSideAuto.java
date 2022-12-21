@@ -29,7 +29,8 @@ public class RightSideAuto extends LinearOpMode {
 
     int conePlaced = 0;
 
-    public int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
+    boolean grabbed = false;
+    int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
 
 
 
@@ -144,9 +145,8 @@ public class RightSideAuto extends LinearOpMode {
                     if(!drive.isBusy()){
                         drive.followTrajectoryAsync(traj1);
                         currentState = State.TRAJECTORY_1;
-
                         position = LinearSlidesArm.TurnValue.TOP.getTicks();
-                        Jerry.slides.moveToPosition(position);
+                        time.reset();
                     }
                     break;
                 case TRAJECTORY_1:
@@ -156,6 +156,10 @@ public class RightSideAuto extends LinearOpMode {
                         drive.followTrajectoryAsync(traj2);
                     }
 
+                    if(time.milliseconds()>1000){
+                        position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                    }
+
                     break;
                 case TRAJECTORY_2:
 
@@ -163,21 +167,24 @@ public class RightSideAuto extends LinearOpMode {
                         Jerry.intake.out();
 
 
-                        if(time.milliseconds()<1000){
-                            break;
+                        if(time.milliseconds()>1000){
+                            grabbed = false;
+                            currentState = State.TRAJECTORY_3;
+                            drive.followTrajectoryAsync(traj3);
                         }
-                        currentState = State.TRAJECTORY_3;
-                        drive.followTrajectoryAsync(traj3);
 
+
+
+                    }else{
+                        time.reset();
                     }
-                    time.reset();
+
 
                     break;
                 case TRAJECTORY_3:
                     if (!drive.isBusy()) {
                         Jerry.intake.stop();
                         position = LinearSlidesArm.TurnValue.CONES.getTicks();
-                        Jerry.slides.moveToPosition(position);
 
 
                         currentState = State.TRAJECTORY_4;
@@ -192,15 +199,14 @@ public class RightSideAuto extends LinearOpMode {
                         Jerry.intake.in();
 
 
-                        if(!Jerry.intake.hasFreight() && position >=30){
+                        if(!Jerry.intake.hasFreight() && position >=30 && !grabbed){
                             position -= 40;
-                            Jerry.slides.moveToPosition(position);
-
+                            grabbed = true;
 
                         }else{
 
                             position = LinearSlidesArm.TurnValue.CONES.getTicks();
-                            Jerry.slides.moveToPosition(position);
+
 
                             if(Jerry.slides.getTicks()>LinearSlidesArm.TurnValue.BOTTOM.getTicks()-200){
                                 if(conePlaced<2){
@@ -209,13 +215,13 @@ public class RightSideAuto extends LinearOpMode {
                                     currentState = State.TRAJECTORY_1;
 
                                     position = LinearSlidesArm.TurnValue.TOP.getTicks();
-                                    Jerry.slides.moveToPosition(position);
 
                                     drive.followTrajectoryAsync(traj5);
+                                    time.reset();
                                 }else{
                                     currentState = State.TRAJECTORY_6;
                                     drive.followTrajectoryAsync(traj6);
-                                    position = LinearSlidesArm.TurnValue.GROUND.getTicks();
+                                    time.reset();
                                 }
 
                             }
@@ -225,12 +231,15 @@ public class RightSideAuto extends LinearOpMode {
 
 
                     }
-                    time.reset();
 
                     break;
                 case TRAJECTORY_6:
                     if(!drive.isBusy()){
                         currentState = State.IDLE;
+                    }
+
+                    if(time.milliseconds()>1000){
+                        position = LinearSlidesArm.TurnValue.GROUND.getTicks();
                     }
                     break;
                 case IDLE:
