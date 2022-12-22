@@ -60,27 +60,27 @@ public class RightSideAuto extends LinearOpMode {
 
 
         Trajectory traj0 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(-50, 0, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(50, 0, Math.toRadians(90)))
                 .build();
 
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(-50, -10.5))
+                .lineTo(new Vector2d(50, 10.5))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeRight(6)
-                .build();
-
-        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .strafeLeft(6)
                 .build();
 
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                .strafeRight(6)
+                .build();
+
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .lineToSplineHeading(new Pose2d(-50, 23.6, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(50, -23.6, Math.toRadians(180)))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(-50, -10.5, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(50, 10.5, Math.toRadians(90)))
                 .build();
 
 
@@ -112,17 +112,26 @@ public class RightSideAuto extends LinearOpMode {
         Jerry.webcam.stopStreaming();
         int distance = 0;
 
-        if(location == Webcam.Location.ONE){
-            distance = 10;
-        }else if(location == Webcam.Location.TWO){
-            distance = 0;
-        } else if(location == Webcam.Location.THREE){
-            distance = -15;
-        }
 
         Trajectory traj6 = drive.trajectoryBuilder(traj5.end())
-                .lineToSplineHeading(new Pose2d(-50, distance, Math.toRadians(270)))
+                .forward(8)
                 .build();
+
+        if(location == Webcam.Location.ONE){
+             traj6 = drive.trajectoryBuilder(traj5.end())
+                    .back(8)
+                    .build();
+        }else if(location == Webcam.Location.TWO){
+            traj6 = drive.trajectoryBuilder(traj5.end())
+                    .forward(5)
+                    .build();
+        } else if(location == Webcam.Location.THREE){
+            traj6 = drive.trajectoryBuilder(traj5.end())
+                    .forward(15)
+                    .build();
+        }
+
+
 
         currentState = State.TRAJECTORY_0;
         drive.followTrajectoryAsync((traj0));
@@ -180,8 +189,15 @@ public class RightSideAuto extends LinearOpMode {
                         position = LinearSlidesArm.TurnValue.CONES.getTicks();
 
 
-                        currentState = State.TRAJECTORY_4;
-                        drive.followTrajectoryAsync(traj4);
+                        if(conePlaced >= 3){
+                            currentState = State.TRAJECTORY_6;
+                            drive.followTrajectoryAsync(traj6);
+                            time.reset();
+                        }else{
+                            currentState = State.TRAJECTORY_4;
+                            drive.followTrajectoryAsync(traj4);
+                        }
+
 
                     }
 
@@ -202,7 +218,6 @@ public class RightSideAuto extends LinearOpMode {
 
 
                             if(Jerry.slides.getTicks()>LinearSlidesArm.TurnValue.BOTTOM.getTicks()-200){
-                                if(conePlaced<2){
                                     Jerry.intake.stop();
                                     conePlaced++;
                                     currentState = State.TRAJECTORY_1;
@@ -211,11 +226,6 @@ public class RightSideAuto extends LinearOpMode {
 
                                     drive.followTrajectoryAsync(traj5);
                                     time.reset();
-                                }else{
-                                    currentState = State.TRAJECTORY_6;
-                                    drive.followTrajectoryAsync(traj6);
-                                    time.reset();
-                                }
 
                             }
 
