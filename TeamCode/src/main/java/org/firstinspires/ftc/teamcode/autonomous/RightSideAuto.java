@@ -58,14 +58,7 @@ public class RightSideAuto extends LinearOpMode {
 
         drive.setPoseEstimate(new Pose2d(0,0,0));
 
-//        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
-//                .back(10)
-//                .build();
 
-
-//        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d())
-//                .back(10)
-//                .build();
         Trajectory traj0 = drive.trajectoryBuilder(new Pose2d())
                 .lineToSplineHeading(new Pose2d(-50, 0, Math.toRadians(270)))
                 .build();
