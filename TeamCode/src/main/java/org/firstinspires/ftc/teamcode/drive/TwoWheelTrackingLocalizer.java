@@ -40,11 +40,11 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 1; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double PARALLEL_X = -0.1; //  X is the up and down direction
-    public static double PARALLEL_Y = 3; // Y is the strafe direction
+    public static double PARALLEL_X = 3; //  X is the up and down direction
+    public static double PARALLEL_Y = -5; // Y is the strafe direction
 
-    public static double PERPENDICULAR_X = -1.1;
-    public static double PERPENDICULAR_Y = 10.25;
+    public static double PERPENDICULAR_X = 2;
+    public static double PERPENDICULAR_Y = 2.25;
 
     public static double X_MULTIPLIER = 1; // Multiplier in the X direction
     public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
@@ -69,7 +69,7 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
 
-        parallelEncoder.setDirection(Encoder.Direction.REVERSE);
+//        parallelEncoder.setDirection(Encoder.Direction.REVERSE);
 //       perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 

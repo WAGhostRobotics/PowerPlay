@@ -78,10 +78,10 @@ public class Jerry {
             backLeft = new Motor(hwMap, "lr");
             backRight = new Motor(hwMap, "rr");
 //
-            frontLeft.setInverted(true);
-//            frontRight.setInverted(true);
-            backLeft.setInverted(true);
-            backRight.setInverted(true);
+//            frontLeft.setInverted(true);
+            frontRight.setInverted(true);
+//            backLeft.setInverted(true);
+//            backRight.setInverted(true);
 
 
             frontLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
