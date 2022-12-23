@@ -50,7 +50,7 @@ public class TeleOpParent extends LinearOpMode {
     DriveStyle.DriveType type = DriveStyle.DriveType.MECANUMARCADE;
 
 
-    public double power = 0.85;
+    public double power = 1;
 
     public int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
 
@@ -115,9 +115,9 @@ public class TeleOpParent extends LinearOpMode {
                 );
             }else if(type == DriveStyle.DriveType.DRIVERORIENTED){
                 drive.driveFieldCentric(
-                        power*driverOp.getLeftX(),
-                        power*driverOp.getLeftY(),
-                        power*driverOp.getRightX(),
+                        power*((1.0/3) *Math.pow(driverOp.getLeftX(), 3)),
+                        power*((1.0/3) *Math.pow(driverOp.getLeftY(), 3)),
+                        power*((1.0/3) *Math.pow(driverOp.getRightX(), 3)),
                         Jerry.imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                         false
                 );

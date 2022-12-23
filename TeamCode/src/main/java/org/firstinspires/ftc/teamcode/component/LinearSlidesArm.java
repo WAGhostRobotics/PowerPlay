@@ -69,7 +69,7 @@ public class LinearSlidesArm {
 
 
         //sets power and mode
-        arm.setPower(multiplier * 0.7);
+        arm.setPower(multiplier * POWER);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
