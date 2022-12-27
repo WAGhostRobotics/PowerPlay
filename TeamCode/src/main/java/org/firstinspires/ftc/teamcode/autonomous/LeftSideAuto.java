@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.component.LinearSlidesArm;
 import org.firstinspires.ftc.teamcode.component.Webcam;
@@ -21,21 +22,32 @@ public class LeftSideAuto extends LinearOpMode {
     AprilTagDetection tagOfInterest = null;
     static final double FEET_PER_METER = 3.28084;
 
-    State currentState = State.IDLE;
+    RightSideAuto.State currentState = RightSideAuto.State.IDLE;
 
-    final double POWER = 0.5;
 
-    public int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
+
+    double power = 1;
+
+    int conePlaced = 0;
+
+    boolean grabbed = false;
+    int position = 0;
 
 
 
     enum State {
+        TRAJECTORY_0,
         TRAJECTORY_1,
+        TRAJECTORY_2,
+        TRAJECTORY_3,
+        TRAJECTORY_4,
+        GRAB_CONE,
+        TRAJECTORY_6,
         IDLE
     }
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         // feedback after OpMode started
         telemetry.addData("Status", "Initializing...");
         telemetry.update();
@@ -43,11 +55,35 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         Jerry.init(hardwareMap, false);
-        Jerry.initIMU();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setPoseEstimate(new Pose2d(0,0,Math.toRadians(180)));
+        drive.setPoseEstimate(new Pose2d(0,0,0));
+
+
+        Trajectory traj0 = drive.trajectoryBuilder(new Pose2d())
+                .lineToSplineHeading(new Pose2d(51.5, 3, Math.toRadians(270)))
+                .build();
+
+        Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
+                .lineTo(new Vector2d(51.5, -12.4))
+                .build();
+
+        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .strafeLeft(4.7)
+                .build();
+
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                .strafeRight(4.5)
+                .build();
+
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .lineToSplineHeading(new Pose2d(52, 25.1, Math.toRadians(0)))
+                .build();
+
+        Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
+                .lineToSplineHeading(new Pose2d(51.5, -12.4, Math.toRadians(270)))
+                .build();
 
 
 
@@ -73,13 +109,154 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         }
+
+
         Jerry.webcam.stopStreaming();
+        int distance = 0;
 
-        while (opModeIsActive()) {
+
+        Trajectory traj6 = drive.trajectoryBuilder(traj5.end())
+                .forward(8)
+                .build();
+
+        if(location == Webcam.Location.THREE){
+            traj6 = drive.trajectoryBuilder(traj3.end())
+                    .lineToSplineHeading(new Pose2d(52 , -27, Math.toRadians(0)))
+                    .build();
+        }else if(location == Webcam.Location.TWO){
+            traj6 = drive.trajectoryBuilder(traj3.end())
+                    .lineToSplineHeading(new Pose2d(52 , 0, Math.toRadians(0)))
+                    .build();
+        } else if(location == Webcam.Location.ONE){
+            traj6 = drive.trajectoryBuilder(traj3.end())
+                    .lineToSplineHeading(new Pose2d(52 , 22, Math.toRadians(0)))
+                    .build();
+        }
+
+
+
+        currentState = RightSideAuto.State.TRAJECTORY_0;
+        drive.followTrajectoryAsync((traj0));
+
+
+
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+
+        while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
+                case TRAJECTORY_0:
+                    if(!drive.isBusy()){
+                        drive.followTrajectoryAsync(traj1);
+                        currentState = RightSideAuto.State.TRAJECTORY_1;
+                        position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                        time.reset();
+                    }
+                    break;
                 case TRAJECTORY_1:
-                    position = LinearSlidesArm.TurnValue.GROUND.getTicks();
 
+                    if (!drive.isBusy()) {
+                        currentState = RightSideAuto.State.TRAJECTORY_2;
+                        drive.followTrajectoryAsync(traj2);
+                    }
+
+                    if(time.milliseconds()>2000){
+
+                        telemetry.addData("time", time.milliseconds());
+                        telemetry.update();
+
+                        position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                    }
+
+                    break;
+                case TRAJECTORY_2:
+
+                    if (!drive.isBusy()) {
+                        Jerry.intake.out();
+
+
+                        if(time.milliseconds()>1000){
+                            grabbed = false;
+                            currentState = RightSideAuto.State.TRAJECTORY_3;
+                            drive.followTrajectoryAsync(traj3);
+                        }
+
+
+
+                    }else{
+                        time.reset();
+                    }
+
+
+                    break;
+                case TRAJECTORY_3:
+                    if (!drive.isBusy()) {
+                        Jerry.intake.stop();
+                        position = LinearSlidesArm.TurnValue.CONES.getTicks();
+
+
+                        if(conePlaced<2){
+                            currentState = RightSideAuto.State.TRAJECTORY_4;
+                            drive.followTrajectoryAsync(traj4);
+                        }else{
+                            currentState = RightSideAuto.State.TRAJECTORY_6;
+                            drive.followTrajectoryAsync(traj6);
+                        }
+
+
+                    }
+
+                    break;
+                case TRAJECTORY_4:
+
+
+
+                    if (!drive.isBusy()||Jerry.intake.isTouchingWall()) {
+                        currentState = RightSideAuto.State.GRAB_CONE;
+                    }
+
+                    break;
+                case GRAB_CONE:
+                    power = 0.5;
+                    Jerry.intake.in();
+
+
+                    if(Jerry.intake.hasFreight() || Jerry.slides.getTicks() <=250){
+                        grabbed = true;
+                    }
+
+                    if(!grabbed){
+                        position -= 40;
+
+                        time.reset();
+
+                    }else{
+
+                        position = LinearSlidesArm.TurnValue.CONES.getTicks();
+                        Jerry.intake.stop();
+                        if(time.milliseconds()>1000){
+
+
+                            power = 1;
+                            conePlaced++;
+                            currentState = RightSideAuto.State.TRAJECTORY_1;
+
+
+                            drive.followTrajectoryAsync(traj5);
+                            time.reset();
+                        }
+
+                    }
+                    break;
+                case TRAJECTORY_6:
+                    power = 1;
+                    if(!drive.isBusy()){
+                        currentState = RightSideAuto.State.IDLE;
+                    }
+
+                    if(time.milliseconds()>1500){
+                        position = 0;
+                    }
                     break;
                 case IDLE:
 
@@ -92,16 +269,10 @@ public class LeftSideAuto extends LinearOpMode {
                 Jerry.slides.stopArm();
             }
 
+            Jerry.slides.moveToPosition(position, power);
 
 
 
-            if(location == Webcam.Location.ONE){
-
-            }else if (location == Webcam.Location.TWO){
-
-            }else if (location == Webcam.Location.THREE){
-
-            }
         }
 
 

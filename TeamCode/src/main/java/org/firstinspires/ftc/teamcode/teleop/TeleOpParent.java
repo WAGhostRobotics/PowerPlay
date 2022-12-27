@@ -148,13 +148,13 @@ public class TeleOpParent extends LinearOpMode {
             xReader.readValue();
             xReader2.readValue();
 
-            if(xReader.wasJustReleased()||xReader2.wasJustReleased()){
-                if(Jerry.intakeClaw.isOpen()){
-                    Jerry.intakeClaw.close();
-                }else{
-                    Jerry.intakeClaw.open();
-                }
-            }
+//            if(xReader.wasJustReleased()||xReader2.wasJustReleased()){
+//                if(Jerry.intakeClaw.isOpen()){
+//                    Jerry.intakeClaw.close();
+//                }else{
+//                    Jerry.intakeClaw.open();
+//                }
+//            }
 
             if (Jerry.intake.hasFreight()) Jerry.light.on();
             else Jerry.light.off();
@@ -194,9 +194,9 @@ public class TeleOpParent extends LinearOpMode {
                 position = LinearSlidesArm.TurnValue.TOP.getTicks();
             }
 
-//            if(gamepad1.left_bumper||gamepad2.left_bumper){
-//                position = LinearSlidesArm.TurnValue.CONES.getTicks();
-//            }
+            if(gamepad1.left_bumper||gamepad2.left_bumper){
+                position = LinearSlidesArm.TurnValue.CONES.getTicks();
+            }
 
             if((gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1)&&position<=3250) {
                 position += 25;

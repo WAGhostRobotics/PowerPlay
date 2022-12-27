@@ -62,27 +62,28 @@ public class RightSideAuto extends LinearOpMode {
 
 
         Trajectory traj0 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(51.5, 0, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(51.5, -6, Math.toRadians(270)))
                 .build();
 
+
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(51.5, 11.5))
+                .lineTo(new Vector2d(51.5, 12.8))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(5)
+                .strafeLeft(4.7)
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .strafeRight(5)
+                .strafeRight(4.5)
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .lineToSplineHeading(new Pose2d(50.5, -25.3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(52, -25.3, Math.toRadians(180)))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(51, 11, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(51.5, 11, Math.toRadians(270)))
                 .build();
 
 
@@ -120,15 +121,15 @@ public class RightSideAuto extends LinearOpMode {
                 .build();
 
         if(location == Webcam.Location.ONE){
-             traj6 = drive.trajectoryBuilder(traj5.end())
-                    .lineToSplineHeading(new Pose2d(52 , 20, Math.toRadians(0)))
+             traj6 = drive.trajectoryBuilder(traj3.end())
+                    .lineToSplineHeading(new Pose2d(52 , 25, Math.toRadians(0)))
                     .build();
         }else if(location == Webcam.Location.TWO){
-            traj6 = drive.trajectoryBuilder(traj5.end())
+            traj6 = drive.trajectoryBuilder(traj3.end())
                     .lineToSplineHeading(new Pose2d(52 , 0, Math.toRadians(0)))
                     .build();
         } else if(location == Webcam.Location.THREE){
-            traj6 = drive.trajectoryBuilder(traj5.end())
+            traj6 = drive.trajectoryBuilder(traj3.end())
                     .lineToSplineHeading(new Pose2d(52 , -22, Math.toRadians(0)))
                     .build();
         }
@@ -221,7 +222,7 @@ public class RightSideAuto extends LinearOpMode {
                     Jerry.intake.in();
 
 
-                    if(Jerry.intake.hasFreight() || Jerry.slides.getTicks() <=30){
+                    if(Jerry.intake.hasFreight() || Jerry.slides.getTicks() <=250){
                         grabbed = true;
                     }
 

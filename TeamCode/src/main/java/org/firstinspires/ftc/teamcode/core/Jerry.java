@@ -35,9 +35,6 @@ public class Jerry {
 
     public static Webcam webcam;
 
-    public static ServoClaw intakeClaw;
-
-
     public static Intake intake;
 
     public static RevIMU imu;
