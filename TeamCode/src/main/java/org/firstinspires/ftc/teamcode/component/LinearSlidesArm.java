@@ -14,10 +14,10 @@ public class LinearSlidesArm {
 
     public enum TurnValue{
         GROUND(232), // was 180
-        BOTTOM(1140), // was 1120
-        CONES(1300),
-        MID(2005), // was 1972
-        TOP(2877); // was 2820
+        BOTTOM(1180), // was 1120
+        CONES(664),
+        MID(1931), // was 1972
+        TOP(2700); // was 2820
 
         int ticks;
 
@@ -72,6 +72,24 @@ public class LinearSlidesArm {
         arm.setPower(multiplier * POWER);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
+
+
+
+    public void moveToPosition(int ticks, double power){
+        int multiplier = 1;//positive if the claw needs to go up, negative if it needs to go down
+
+        if(arm.getCurrentPosition()>ticks){
+            multiplier = -1;
+        }
+        arm.setTargetPosition(ticks);
+
+
+        //sets power and mode
+        arm.setPower(multiplier * power);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
 
     //mover is busy or not
     public boolean isBusy(){

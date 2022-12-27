@@ -164,6 +164,7 @@ public class TeleOpParent extends LinearOpMode {
 
             telemetry.addData("Arm position", Jerry.slides.getTicks());
             telemetry.addData("Cone distance", Jerry.intake.getDistance());
+            telemetry.addData("Is touching,", Jerry.intake.isTouchingWall());
             telemetry.update();
 
             //makes small increments or decrements to claw position
