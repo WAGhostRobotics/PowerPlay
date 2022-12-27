@@ -121,7 +121,7 @@ public class RightSideAuto extends LinearOpMode {
 
         if(location == Webcam.Location.ONE){
              traj6 = drive.trajectoryBuilder(traj5.end())
-                    .lineToSplineHeading(new Pose2d(52 , 15, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(52 , 20, Math.toRadians(0)))
                     .build();
         }else if(location == Webcam.Location.TWO){
             traj6 = drive.trajectoryBuilder(traj5.end())
@@ -129,7 +129,7 @@ public class RightSideAuto extends LinearOpMode {
                     .build();
         } else if(location == Webcam.Location.THREE){
             traj6 = drive.trajectoryBuilder(traj5.end())
-                    .lineToSplineHeading(new Pose2d(52 , -15, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(52 , -22, Math.toRadians(0)))
                     .build();
         }
 
@@ -195,8 +195,13 @@ public class RightSideAuto extends LinearOpMode {
                         position = LinearSlidesArm.TurnValue.CONES.getTicks();
 
 
-                        currentState = State.TRAJECTORY_4;
-                        drive.followTrajectoryAsync(traj4);
+                        if(conePlaced<2){
+                            currentState = State.TRAJECTORY_4;
+                            drive.followTrajectoryAsync(traj4);
+                        }else{
+                            currentState = State.TRAJECTORY_6;
+                            drive.followTrajectoryAsync(traj6);
+                        }
 
 
                     }
@@ -230,11 +235,8 @@ public class RightSideAuto extends LinearOpMode {
                         position = LinearSlidesArm.TurnValue.CONES.getTicks();
                         Jerry.intake.stop();
                        if(time.milliseconds()>1000){
-                           if(conePlaced >= 2){
-                               currentState = State.TRAJECTORY_6;
-                               drive.followTrajectoryAsync(traj6);
-                               time.reset();
-                           } else {
+
+
                                power = 1;
                                conePlaced++;
                                currentState = State.TRAJECTORY_1;
@@ -242,8 +244,6 @@ public class RightSideAuto extends LinearOpMode {
 
                                drive.followTrajectoryAsync(traj5);
                                time.reset();
-
-                           }
                        }
 
                     }
