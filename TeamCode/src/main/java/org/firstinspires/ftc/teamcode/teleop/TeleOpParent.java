@@ -79,12 +79,14 @@ public class TeleOpParent extends LinearOpMode {
         );
 
 
-        waitForStart();
+
 
         Jerry.init(hardwareMap, true);
         if(Jerry.imu==null){
             Jerry.initIMU();
         }
+
+        waitForStart();
 
         MecanumDrive drive = new MecanumDrive(
                 Jerry.frontLeft,
@@ -148,13 +150,13 @@ public class TeleOpParent extends LinearOpMode {
             xReader.readValue();
             xReader2.readValue();
 
-//            if(xReader.wasJustReleased()||xReader2.wasJustReleased()){
-//                if(Jerry.intakeClaw.isOpen()){
-//                    Jerry.intakeClaw.close();
-//                }else{
-//                    Jerry.intakeClaw.open();
-//                }
-//            }
+            if(xReader.wasJustReleased()||xReader2.wasJustReleased()){
+                if(Jerry.intakeClaw.isOpen()){
+                    Jerry.intakeClaw.close();
+                }else{
+                    Jerry.intakeClaw.open();
+                }
+            }
 
             if (Jerry.intake.hasFreight()) Jerry.light.on();
             else Jerry.light.off();

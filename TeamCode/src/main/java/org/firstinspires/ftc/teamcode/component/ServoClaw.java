@@ -14,6 +14,9 @@ public class ServoClaw {
     public void init (HardwareMap hardwareMap){
 
         claw = hardwareMap.get(Servo.class, "claw");
+        claw.setDirection(Servo.Direction.REVERSE);
+
+        close();
 
     }
 

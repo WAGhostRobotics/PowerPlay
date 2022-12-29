@@ -115,9 +115,7 @@ public class LeftSideAuto extends LinearOpMode {
         int distance = 0;
 
 
-        Trajectory traj6 = drive.trajectoryBuilder(traj5.end())
-                .forward(8)
-                .build();
+        Trajectory traj6;
 
         if(location == Webcam.Location.THREE){
             traj6 = drive.trajectoryBuilder(traj3.end())
@@ -127,7 +125,7 @@ public class LeftSideAuto extends LinearOpMode {
             traj6 = drive.trajectoryBuilder(traj3.end())
                     .lineToSplineHeading(new Pose2d(52 , 0, Math.toRadians(0)))
                     .build();
-        } else if(location == Webcam.Location.ONE){
+        } else{
             traj6 = drive.trajectoryBuilder(traj3.end())
                     .lineToSplineHeading(new Pose2d(52 , 22, Math.toRadians(0)))
                     .build();
@@ -172,13 +170,15 @@ public class LeftSideAuto extends LinearOpMode {
                 case TRAJECTORY_2:
 
                     if (!drive.isBusy()) {
-                        Jerry.intake.out();
+
 
 
                         if(time.milliseconds()>1000){
                             grabbed = false;
                             currentState = RightSideAuto.State.TRAJECTORY_3;
                             drive.followTrajectoryAsync(traj3);
+                        }else if (time.milliseconds()>0){
+                            Jerry.intake.out();
                         }
 
 

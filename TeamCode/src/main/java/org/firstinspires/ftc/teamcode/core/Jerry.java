@@ -41,6 +41,8 @@ public class Jerry {
 
     public static Arm arm;
 
+    public static ServoClaw intakeClaw;
+
     public static LinearSlidesArm slides;
 
     public static Light light;
@@ -67,6 +69,9 @@ public class Jerry {
 
         light = new Light();
         light.init(hwMap);
+
+        intakeClaw = new ServoClaw();
+        intakeClaw.init(hwMap);
 
         if(initTeleOp){
 
