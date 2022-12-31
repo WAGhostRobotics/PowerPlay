@@ -71,7 +71,15 @@ public class RightSideAuto extends LinearOpMode {
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(4.8)
+                .strafeLeft(3.9)
+                .build();
+
+        Trajectory traj2cone1 = drive.trajectoryBuilder(traj1.end())
+                .strafeLeft(4.5)
+                .build();
+
+        Trajectory traj2cone2 = drive.trajectoryBuilder(traj1.end())
+                .strafeLeft(5.4)
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
@@ -156,7 +164,13 @@ public class RightSideAuto extends LinearOpMode {
 
                     if (!drive.isBusy()) {
                         currentState = RightSideAuto.State.TRAJECTORY_2;
-                        drive.followTrajectoryAsync(traj2);
+                        if(conePlaced == 0){
+                            drive.followTrajectoryAsync(traj2);
+                        }else if (conePlaced == 1){
+                            drive.followTrajectoryAsync(traj2cone1);
+                        }else{
+                            drive.followTrajectoryAsync(traj2cone2);
+                        }
                     }
 
                         if(time.milliseconds()>2000){

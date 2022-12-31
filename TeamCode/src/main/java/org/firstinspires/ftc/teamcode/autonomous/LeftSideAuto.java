@@ -67,11 +67,19 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(53, -9.1))
+                .lineTo(new Vector2d(51, -9.7))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .strafeLeft(3.5)
+                .build();
+
+        Trajectory traj2cone1 = drive.trajectoryBuilder(traj1.end())
                 .strafeLeft(4.8)
+                .build();
+
+        Trajectory traj2cone2 = drive.trajectoryBuilder(traj1.end())
+                .strafeLeft(5.9)
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
@@ -79,11 +87,11 @@ public class LeftSideAuto extends LinearOpMode {
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .lineToSplineHeading(new Pose2d(52, 27.8, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(52, 27.4, Math.toRadians(0)))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(53, -9.1, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(51, -9.7, Math.toRadians(270)))
                 .build();
 
 
@@ -158,7 +166,13 @@ public class LeftSideAuto extends LinearOpMode {
 
                     if (!drive.isBusy()) {
                         currentState = LeftSideAuto.State.TRAJECTORY_2;
-                        drive.followTrajectoryAsync(traj2);
+                        if(conePlaced == 0){
+                            drive.followTrajectoryAsync(traj2);
+                        }else if (conePlaced == 1){
+                            drive.followTrajectoryAsync(traj2cone1);
+                        }else{
+                            drive.followTrajectoryAsync(traj2cone2);
+                        }
                     }
 
 
