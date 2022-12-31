@@ -7,9 +7,9 @@ public class ServoClaw {
 
     public Servo claw;
     private boolean isOpen = false;
-    public final double OPEN = 0.2;
+    public final double OPEN = 0.5;
 
-    public final double CLOSE = 0.55;
+    public final double CLOSE = 0.65;
 
     public void init (HardwareMap hardwareMap){
 

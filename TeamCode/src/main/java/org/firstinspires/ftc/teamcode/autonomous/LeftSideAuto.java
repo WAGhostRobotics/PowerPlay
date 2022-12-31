@@ -26,11 +26,11 @@ public class LeftSideAuto extends LinearOpMode {
 
 
 
-    double power = 1;
+    double power = .8;
 
     int conePlaced = 0;
 
-    boolean grabbed = false;
+
     int position = 0;
 
 
@@ -62,27 +62,28 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         Trajectory traj0 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(51.5, 3, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(50.6, 0, Math.toRadians(270)))
                 .build();
 
+
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(51.5, -12.4))
+                .lineTo(new Vector2d(50.12, -9.5))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(4.7)
+                .strafeLeft(3.4)
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .strafeRight(4.5)
+                .strafeRight(3.3)
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .lineToSplineHeading(new Pose2d(52, 25.1, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(52, 25.35, Math.toRadians(0)))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(51.5, -12.4, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(50.2, -9.5, Math.toRadians(270)))
                 .build();
 
 
@@ -117,17 +118,17 @@ public class LeftSideAuto extends LinearOpMode {
 
         Trajectory traj6;
 
-        if(location == Webcam.Location.THREE){
+        if(location == Webcam.Location.ONE){
             traj6 = drive.trajectoryBuilder(traj3.end())
-                    .lineToSplineHeading(new Pose2d(52 , -27, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(52 , -26.5, Math.toRadians(0)))
                     .build();
         }else if(location == Webcam.Location.TWO){
             traj6 = drive.trajectoryBuilder(traj3.end())
-                    .lineToSplineHeading(new Pose2d(52 , 0, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(52 , -2, Math.toRadians(0)))
                     .build();
-        } else{
+        } else {
             traj6 = drive.trajectoryBuilder(traj3.end())
-                    .lineToSplineHeading(new Pose2d(52 , 22, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(52, 22, Math.toRadians(0)))
                     .build();
         }
 
@@ -147,7 +148,9 @@ public class LeftSideAuto extends LinearOpMode {
                     if(!drive.isBusy()){
                         drive.followTrajectoryAsync(traj1);
                         currentState = RightSideAuto.State.TRAJECTORY_1;
-                        position = LinearSlidesArm.TurnValue.TOP.getTicks();
+//                        position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                        time.reset();
+                    }else{
                         time.reset();
                     }
                     break;
@@ -158,12 +161,22 @@ public class LeftSideAuto extends LinearOpMode {
                         drive.followTrajectoryAsync(traj2);
                     }
 
-                    if(time.milliseconds()>2000){
+                    if(conePlaced == 0){
+                        if(time.milliseconds()>500){
 
-                        telemetry.addData("time", time.milliseconds());
-                        telemetry.update();
+                            telemetry.addData("time", time.milliseconds());
+                            telemetry.update();
 
-                        position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                            position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                        }
+                    }else{
+                        if(time.milliseconds()>2100){
+
+                            telemetry.addData("time", time.milliseconds());
+                            telemetry.update();
+
+                            position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                        }
                     }
 
                     break;
@@ -173,12 +186,20 @@ public class LeftSideAuto extends LinearOpMode {
 
 
 
-                        if(time.milliseconds()>1000){
-                            grabbed = false;
+                        if(time.milliseconds()>1500){
                             currentState = RightSideAuto.State.TRAJECTORY_3;
                             drive.followTrajectoryAsync(traj3);
-                        }else if (time.milliseconds()>0){
-                            Jerry.intake.out();
+                        }else if (time.milliseconds()>1000){
+
+                            if(conePlaced == 0){
+                                position = 500;
+                            }else{
+                                position = 347;
+                            }
+
+                        }else if (time.milliseconds()>400){
+                            Jerry.intakeClaw.open();
+
                         }
 
 
@@ -191,8 +212,7 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case TRAJECTORY_3:
                     if (!drive.isBusy()) {
-                        Jerry.intake.stop();
-                        position = LinearSlidesArm.TurnValue.CONES.getTicks();
+
 
 
                         if(conePlaced<2){
@@ -211,45 +231,35 @@ public class LeftSideAuto extends LinearOpMode {
 
 
 
-                    if (!drive.isBusy()||Jerry.intake.isTouchingWall()) {
+                    if (!drive.isBusy()) {
                         currentState = RightSideAuto.State.GRAB_CONE;
+                        time.reset();
                     }
 
                     break;
                 case GRAB_CONE:
-                    power = 0.5;
-                    Jerry.intake.in();
 
 
-                    if(Jerry.intake.hasFreight() || Jerry.slides.getTicks() <=250){
-                        grabbed = true;
-                    }
 
-                    if(!grabbed){
-                        position -= 40;
 
+
+                    Jerry.intakeClaw.close();
+
+
+
+                    if(time.milliseconds()>1000){
+                        conePlaced++;
+                        currentState = RightSideAuto.State.TRAJECTORY_1;
+
+
+                        drive.followTrajectoryAsync(traj5);
                         time.reset();
 
-                    }else{
-
+                    }else if(time.milliseconds()>500){
                         position = LinearSlidesArm.TurnValue.CONES.getTicks();
-                        Jerry.intake.stop();
-                        if(time.milliseconds()>1000){
-
-
-                            power = 1;
-                            conePlaced++;
-                            currentState = RightSideAuto.State.TRAJECTORY_1;
-
-
-                            drive.followTrajectoryAsync(traj5);
-                            time.reset();
-                        }
-
                     }
                     break;
                 case TRAJECTORY_6:
-                    power = 1;
                     if(!drive.isBusy()){
                         currentState = RightSideAuto.State.IDLE;
                     }

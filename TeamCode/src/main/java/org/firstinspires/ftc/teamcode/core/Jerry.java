@@ -35,17 +35,13 @@ public class Jerry {
 
     public static Webcam webcam;
 
-    public static Intake intake;
 
     public static RevIMU imu;
 
-    public static Arm arm;
 
     public static ServoClaw intakeClaw;
 
     public static LinearSlidesArm slides;
-
-    public static Light light;
 
     public static ArrayList<DcMotor> driveMotors = new ArrayList<>();
 
@@ -60,15 +56,9 @@ public class Jerry {
         webcam.init(hwMap);
 
 
-        intake = new Intake();
-        intake.init(hwMap);
-
-
         slides = new LinearSlidesArm();
         slides.init(hwMap);
 
-        light = new Light();
-        light.init(hwMap);
 
         intakeClaw = new ServoClaw();
         intakeClaw.init(hwMap);
@@ -81,42 +71,17 @@ public class Jerry {
             backRight = new Motor(hwMap, "rr");
 //
 //            frontLeft.setInverted(true);
-            frontRight.setInverted(true);
+//            frontRight.setInverted(true);
 //            backLeft.setInverted(true);
 //            backRight.setInverted(true);
+
+
 
 
             frontLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             frontRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        }else{
-//            dFrontLeft = hardwareMap.get(DcMotor.class, "lf");
-//            dFrontRight = hardwareMap.get(DcMotor.class, "rf");
-//            dBackLeft = hardwareMap.get(DcMotor.class, "lr");
-//            dBackRight = hardwareMap.get(DcMotor.class, "rr");
-//
-//            dFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-////
-//
-//            dBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-//            dBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-//
-//            dFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            dFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            dBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            dBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//
-//            dFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            dFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            dBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            dBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//
-//            driveMotors.add(dFrontLeft);
-//            driveMotors.add(dBackLeft);
-//            driveMotors.add(dFrontRight);
-//            driveMotors.add(dBackRight);
 
         }
 

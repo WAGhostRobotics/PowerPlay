@@ -50,7 +50,7 @@ public class TeleOpParent extends LinearOpMode {
     DriveStyle.DriveType type = DriveStyle.DriveType.MECANUMARCADE;
 
 
-    public double power = 1;
+    public double power = 0.85;
 
     public int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
 
@@ -68,15 +68,15 @@ public class TeleOpParent extends LinearOpMode {
                 driverOp, GamepadKeys.Button.RIGHT_STICK_BUTTON
         );
 
-        ToggleButtonReader xReader = new ToggleButtonReader(
-                driverOp, GamepadKeys.Button.RIGHT_BUMPER
-        );
-
-        GamepadEx driverOp2 = new GamepadEx(gamepad1);
-
-        ToggleButtonReader xReader2 = new ToggleButtonReader(
-                driverOp2, GamepadKeys.Button.RIGHT_BUMPER
-        );
+//        ToggleButtonReader xReader = new ToggleButtonReader(
+//                driverOp, GamepadKeys.Button.RIGHT_BUMPER
+//        );
+//
+//        GamepadEx driverOp2 = new GamepadEx(gamepad1);
+//
+//        ToggleButtonReader xReader2 = new ToggleButtonReader(
+//                driverOp2, GamepadKeys.Button.RIGHT_BUMPER
+//        );
 
 
 
@@ -131,13 +131,6 @@ public class TeleOpParent extends LinearOpMode {
             }
 
 
-            if((gamepad1.dpad_left||gamepad2.dpad_left)) {
-                Jerry.intake.in();
-            } else if (gamepad1.dpad_right||gamepad2.dpad_right){
-                Jerry.intake.out();
-            }else{
-                Jerry.intake.stop();
-            }
 
             if (aReader.getState()) {
                 power = 0.2;
@@ -147,26 +140,34 @@ public class TeleOpParent extends LinearOpMode {
             aReader.readValue();
 
 
-            xReader.readValue();
-            xReader2.readValue();
-
-            if(xReader.wasJustReleased()||xReader2.wasJustReleased()){
-                if(Jerry.intakeClaw.isOpen()){
-                    Jerry.intakeClaw.close();
-                }else{
-                    Jerry.intakeClaw.open();
-                }
+//            xReader.readValue();
+//            xReader2.readValue();
+//
+//            if(xReader.wasJustReleased()||xReader2.wasJustReleased()){
+//                if(Jerry.intakeClaw.isOpen()){
+//                    Jerry.intakeClaw.close();
+//                }else{
+//                    Jerry.intakeClaw.open();
+//                }
+//            }
+//
+            if(gamepad1.left_bumper||gamepad2.left_bumper){
+                Jerry.intakeClaw.open();
             }
 
-            if (Jerry.intake.hasFreight()) Jerry.light.on();
-            else Jerry.light.off();
+            if(gamepad1.right_bumper||gamepad2.right_bumper){
+                Jerry.intakeClaw.close();
+            }
+
+//            if (Jerry.intake.hasFreight()) Jerry.light.on();
+//            else Jerry.light.off();
 
 
 
 
             telemetry.addData("Arm position", Jerry.slides.getTicks());
-            telemetry.addData("Cone distance", Jerry.intake.getDistance());
-            telemetry.addData("Is touching,", Jerry.intake.isTouchingWall());
+//            telemetry.addData("Cone distance", Jerry.intake.getDistance());
+//            telemetry.addData("Is touching,", Jerry.intake.isTouchingWall());
             telemetry.update();
 
             //makes small increments or decrements to claw position
@@ -196,7 +197,7 @@ public class TeleOpParent extends LinearOpMode {
                 position = LinearSlidesArm.TurnValue.TOP.getTicks();
             }
 
-            if(gamepad1.left_bumper||gamepad2.left_bumper){
+            if(gamepad1.dpad_left||gamepad2.dpad_left){
                 position = LinearSlidesArm.TurnValue.CONES.getTicks();
             }
 
