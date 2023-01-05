@@ -97,9 +97,9 @@ public class Webcam {
     }
 
     public enum Location {
-        ONE (0),
-        TWO (1),
-        THREE (2);
+        ONE (1),
+        TWO (2),
+        THREE (3);
 
         int id;
 

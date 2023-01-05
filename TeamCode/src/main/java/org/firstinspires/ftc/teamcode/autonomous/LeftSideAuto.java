@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.component.LinearSlidesArm;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Jerry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.library.DriveStyle;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Left Side", group = "competition")
@@ -67,19 +66,19 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(51, -9.7))
+                .lineTo(new Vector2d(51, -9.57))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(3.5)
+                .strafeLeft(3.9)
                 .build();
 
         Trajectory traj2cone1 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(4.8)
+                .strafeLeft(5.0)
                 .build();
 
         Trajectory traj2cone2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(5.9)
+                .strafeLeft(7)
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
@@ -87,11 +86,11 @@ public class LeftSideAuto extends LinearOpMode {
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .lineToSplineHeading(new Pose2d(52, 27.4, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(52, 27.85, Math.toRadians(0)))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(51, -9.7, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(51, -9.57, Math.toRadians(270)))
                 .build();
 
 
@@ -127,7 +126,7 @@ public class LeftSideAuto extends LinearOpMode {
 
         Trajectory traj6;
 
-        if(location == Webcam.Location.THREE){
+        if(location == Webcam.Location.ONE){
             traj6 = drive.trajectoryBuilder(traj3.end())
                     .lineToSplineHeading(new Pose2d(52 , 25, Math.toRadians(0)))
                     .build();
@@ -160,7 +159,6 @@ public class LeftSideAuto extends LinearOpMode {
                         position = LinearSlidesArm.TurnValue.TOP.getTicks();
                         time.reset();
                     }
-
                     break;
                 case TRAJECTORY_1:
 
@@ -175,11 +173,10 @@ public class LeftSideAuto extends LinearOpMode {
                         }
                     }
 
+                    if(time.milliseconds()>2000){
 
-                        if(time.milliseconds()>2000){
-
-                            position = LinearSlidesArm.TurnValue.TOP.getTicks();
-                        }
+                        position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                    }
 
                     break;
                 case TRAJECTORY_2:
@@ -191,13 +188,16 @@ public class LeftSideAuto extends LinearOpMode {
                         if(time.milliseconds()>1500){
                             currentState = LeftSideAuto.State.TRAJECTORY_3;
                             drive.followTrajectoryAsync(traj3);
-                        }else if (time.milliseconds()>800){
-                            if(conePlaced == 0){
-                                position = 517;
-                            }else{
-                                position = 364;
-                            }
-                        }else if (time.milliseconds()>400){
+                            time.reset();
+                        }
+//                        else if (time.milliseconds()>1000){
+//                            if(conePlaced == 0){
+//                                position = 517;
+//                            }else{
+//                                position = 364;
+//                            }
+//                        }
+                        else if (time.milliseconds()>400){
                             Jerry.intakeClaw.open();
                         }
 
@@ -221,6 +221,14 @@ public class LeftSideAuto extends LinearOpMode {
                         }
 
 
+                    }
+
+                    if (time.milliseconds()>300){
+                        if(conePlaced == 0){
+                            position = 517;
+                        }else{
+                            position = 364;
+                        }
                     }
 
                     break;

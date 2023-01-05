@@ -177,7 +177,7 @@ public class SketchyTeleOp extends TeleOpParent {
                             new Pose2d(
                                     input.getX(),
                                     input.getY(),
-                                    -gamepad1.right_stick_x
+                                    -gamepad2.right_stick_x
                             )
                     );
 
@@ -212,7 +212,7 @@ public class SketchyTeleOp extends TeleOpParent {
                     break;
                 case AUTOMATIC_CONTROL:
                     // If x is pressed, we break out of the automatic following
-                    if (gamepad1.x) {
+                    if (gamepad1.dpad_right) {
                         drive.breakFollowing();
                         currentMode = Mode.DRIVER_CONTROL;
                     }
@@ -229,4 +229,3 @@ public class SketchyTeleOp extends TeleOpParent {
 
         }
     }
-}

@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.component.LinearSlidesArm;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Jerry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.library.DriveStyle;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Right Side", group = "competition")
@@ -67,19 +66,19 @@ public class RightSideAuto extends LinearOpMode {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(52, 14.5))
+                .lineTo(new Vector2d(52, 13.5))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(3.9)
+                .strafeLeft(3.7)
                 .build();
 
         Trajectory traj2cone1 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(4.5)
+                .strafeLeft(4.15)
                 .build();
 
         Trajectory traj2cone2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(5.4)
+                .strafeLeft(4.95)
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
@@ -87,11 +86,11 @@ public class RightSideAuto extends LinearOpMode {
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .lineToSplineHeading(new Pose2d(51.5, -22.3, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(51.5, -23.1, Math.toRadians(180)))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(52, 14.5, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(52, 13.5, Math.toRadians(270)))
                 .build();
 
 
@@ -126,7 +125,7 @@ public class RightSideAuto extends LinearOpMode {
 
         Trajectory traj6;
 
-        if(location == Webcam.Location.ONE){
+        if(location == Webcam.Location.THREE){
             traj6 = drive.trajectoryBuilder(traj3.end())
                     .lineToSplineHeading(new Pose2d(52 , 25, Math.toRadians(0)))
                     .build();
@@ -136,7 +135,7 @@ public class RightSideAuto extends LinearOpMode {
                     .build();
         } else {
             traj6 = drive.trajectoryBuilder(traj3.end())
-                    .lineToSplineHeading(new Pose2d(52, -25, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(52, -23, Math.toRadians(0)))
                     .build();
         }
 
@@ -188,13 +187,16 @@ public class RightSideAuto extends LinearOpMode {
                         if(time.milliseconds()>1500){
                             currentState = RightSideAuto.State.TRAJECTORY_3;
                             drive.followTrajectoryAsync(traj3);
-                        }else if (time.milliseconds()>800){
-                            if(conePlaced == 0){
-                                position = 517;
-                            }else{
-                                position = 364;
-                            }
-                        }else if (time.milliseconds()>400){
+                            time.reset();
+                        }
+//                        else if (time.milliseconds()>1000){
+//                            if(conePlaced == 0){
+//                                position = 517;
+//                            }else{
+//                                position = 364;
+//                            }
+//                        }
+                        else if (time.milliseconds()>400){
                             Jerry.intakeClaw.open();
                         }
 
@@ -218,6 +220,14 @@ public class RightSideAuto extends LinearOpMode {
                         }
 
 
+                    }
+
+                    if (time.milliseconds()>300){
+                        if(conePlaced == 0){
+                            position = 517;
+                        }else{
+                            position = 364;
+                        }
                     }
 
                     break;

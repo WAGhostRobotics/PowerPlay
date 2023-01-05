@@ -17,7 +17,7 @@ public class LinearSlidesArm {
         BOTTOM(1180), // was 1120
         CONES(1000),
         MID(2100), // was 1972
-        TOP(2828); // was 2820
+        TOP(2920); // was 2820
 
         int ticks;
 
