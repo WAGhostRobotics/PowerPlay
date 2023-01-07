@@ -66,19 +66,19 @@ public class RightSideAuto extends LinearOpMode {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(52, 13.5))
+                .lineTo(new Vector2d(52, 13.4))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(3.7)
+                .strafeLeft(3.6)
                 .build();
 
         Trajectory traj2cone1 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(4.15)
+                .strafeLeft(4.05)
                 .build();
 
         Trajectory traj2cone2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(4.95)
+                .strafeLeft(4.65)
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
@@ -90,7 +90,7 @@ public class RightSideAuto extends LinearOpMode {
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(52, 13.5, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(52, 13.4, Math.toRadians(270)))
                 .build();
 
 
@@ -125,7 +125,7 @@ public class RightSideAuto extends LinearOpMode {
 
         Trajectory traj6;
 
-        if(location == Webcam.Location.THREE){
+        if(location == Webcam.Location.ONE){
             traj6 = drive.trajectoryBuilder(traj3.end())
                     .lineToSplineHeading(new Pose2d(52 , 25, Math.toRadians(0)))
                     .build();

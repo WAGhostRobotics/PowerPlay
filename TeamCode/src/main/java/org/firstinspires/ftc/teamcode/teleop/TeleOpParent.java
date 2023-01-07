@@ -50,7 +50,7 @@ public class TeleOpParent extends LinearOpMode {
     DriveStyle.DriveType type = DriveStyle.DriveType.MECANUMARCADE;
 
 
-    public double power = 0.85;
+    public double power = 0.65;
 
     public int position = LinearSlidesArm.TurnValue.GROUND.getTicks();
 
@@ -106,6 +106,10 @@ public class TeleOpParent extends LinearOpMode {
 
             if(!Jerry.slides.isBusy()){
                 Jerry.slides.stopArm();
+            }
+
+            if(gamepad2.dpad_left){
+                power = 0.85;
             }
 
             if(type == DriveStyle.DriveType.MECANUMARCADE){

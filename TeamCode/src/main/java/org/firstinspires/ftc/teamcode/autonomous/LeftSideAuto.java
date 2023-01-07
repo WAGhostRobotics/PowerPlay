@@ -66,7 +66,7 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(51, -9.57))
+                .lineTo(new Vector2d(51, -9.58))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
@@ -86,11 +86,11 @@ public class LeftSideAuto extends LinearOpMode {
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .lineToSplineHeading(new Pose2d(52, 27.85, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(52, 27.84, Math.toRadians(0)))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(51, -9.57, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(51, -9.58, Math.toRadians(270)))
                 .build();
 
 
