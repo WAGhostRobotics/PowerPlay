@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.core.Jerry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 
-@Autonomous(name = "Left Side", group = "competition")
-public class LeftSideAuto extends LinearOpMode {
+@Autonomous(name = "Left Side Sketch", group = "competition")
+public class LeftSideAutoSketch extends LinearOpMode {
 
     Webcam.Location location = null;
     AprilTagDetection tagOfInterest = null;
@@ -66,7 +66,7 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(52.2, -9.65)) //og x = 52
+                .lineTo(new Vector2d(52.2, -9.85)) //og x = 52
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
@@ -163,7 +163,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case TRAJECTORY_0:
                     if(!drive.isBusy()){
                         drive.followTrajectoryAsync(traj1);
-                        currentState = LeftSideAuto.State.TRAJECTORY_1;
+                        currentState = LeftSideAutoSketch.State.TRAJECTORY_1;
                         position = LinearSlidesArm.TurnValue.TOP.getTicks();
                         time.reset();
                     }
@@ -171,7 +171,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case TRAJECTORY_1:
 
                     if (!drive.isBusy()) {
-                        currentState = LeftSideAuto.State.TRAJECTORY_2;
+                        currentState = LeftSideAutoSketch.State.TRAJECTORY_2;
                         if(conePlaced == 0){
                             drive.followTrajectoryAsync(traj2);
                         }else if (conePlaced == 1){
@@ -194,7 +194,7 @@ public class LeftSideAuto extends LinearOpMode {
 
 
                         if(time.milliseconds()>1500){
-                            currentState = LeftSideAuto.State.TRAJECTORY_3;
+                            currentState = LeftSideAutoSketch.State.TRAJECTORY_3;
                             if(conePlaced == 0){
                                 drive.followTrajectoryAsync(traj3);
                             }else if (conePlaced == 1){
@@ -227,10 +227,10 @@ public class LeftSideAuto extends LinearOpMode {
                     if (!drive.isBusy()) {
 
                         if(conePlaced<2){
-                            currentState = LeftSideAuto.State.TRAJECTORY_4;
+                            currentState = LeftSideAutoSketch.State.TRAJECTORY_4;
                             drive.followTrajectoryAsync(traj4);
                         }else{
-                            currentState = LeftSideAuto.State.TRAJECTORY_6;
+                            currentState = LeftSideAutoSketch.State.TRAJECTORY_6;
                             drive.followTrajectoryAsync(traj6);
                         }
                     }
@@ -247,7 +247,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case TRAJECTORY_4:
 
                     if (!drive.isBusy()) {
-                        currentState = LeftSideAuto.State.GRAB_CONE;
+                        currentState = LeftSideAutoSketch.State.GRAB_CONE;
                         time.reset();
                     }
 
@@ -258,7 +258,7 @@ public class LeftSideAuto extends LinearOpMode {
 
                     if(time.milliseconds()>1500){
                         conePlaced++;
-                        currentState = LeftSideAuto.State.TRAJECTORY_1;
+                        currentState = LeftSideAutoSketch.State.TRAJECTORY_1;
 
                         drive.followTrajectoryAsync(traj5);
                         time.reset();
@@ -269,7 +269,7 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case TRAJECTORY_6:
                     if(!drive.isBusy()){
-                        currentState = LeftSideAuto.State.IDLE;
+                        currentState = LeftSideAutoSketch.State.IDLE;
                     }
 
                     if(time.milliseconds()>1500){

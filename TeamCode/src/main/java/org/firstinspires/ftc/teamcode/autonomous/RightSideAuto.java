@@ -66,7 +66,7 @@ public class RightSideAuto extends LinearOpMode {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(52, 13.4))
+                .lineTo(new Vector2d(52, 13.6))
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
@@ -78,19 +78,28 @@ public class RightSideAuto extends LinearOpMode {
                 .build();
 
         Trajectory traj2cone2 = drive.trajectoryBuilder(traj1.end())
-                .strafeLeft(4.65)
+                .strafeLeft(4.75)
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .strafeRight(4.5)
+                .strafeRight(3.6)
                 .build();
 
+        Trajectory traj3cone1 = drive.trajectoryBuilder(traj2cone1.end())
+                .strafeRight(4.05)
+                .build();
+
+        Trajectory traj3cone2 = drive.trajectoryBuilder(traj2cone2.end())
+                .strafeRight(4.75)
+                .build();
+
+
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .lineToSplineHeading(new Pose2d(51.5, -23.1, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(51.8, -23.5, Math.toRadians(180)))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
-                .lineToSplineHeading(new Pose2d(52, 13.4, Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(52, 13.6, Math.toRadians(270)))
                 .build();
 
 
@@ -186,7 +195,13 @@ public class RightSideAuto extends LinearOpMode {
 
                         if(time.milliseconds()>1500){
                             currentState = RightSideAuto.State.TRAJECTORY_3;
-                            drive.followTrajectoryAsync(traj3);
+                            if(conePlaced == 0){
+                                drive.followTrajectoryAsync(traj3);
+                            }else if (conePlaced == 1){
+                                drive.followTrajectoryAsync(traj3cone1);
+                            }else{
+                                drive.followTrajectoryAsync(traj3cone2);
+                            }
                             time.reset();
                         }
 //                        else if (time.milliseconds()>1000){
