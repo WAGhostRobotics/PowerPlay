@@ -18,7 +18,6 @@ public class DriverOrientedControl {
 
     public BNO055IMU imu;
 
-
     double driveTurn;
     double driveX;
     double driveY;
@@ -83,8 +82,6 @@ public class DriverOrientedControl {
         backRight.setPower(movementPower*(gamepadYControl * Math.abs(gamepadYControl) + gamepadXControl * Math.abs(gamepadXControl) + driveTurn));
         frontLeft.setPower(movementPower*(gamepadYControl * Math.abs(gamepadYControl) + gamepadXControl* Math.abs(gamepadXControl) - driveTurn));
         backLeft.setPower(movementPower*(gamepadYControl * Math.abs(gamepadYControl) - gamepadXControl * Math.abs(gamepadXControl) - driveTurn));
-
-
     }
 
     //run but hopefully better
@@ -130,7 +127,6 @@ public class DriverOrientedControl {
         backRight.setPower(movementPower*backRightPower);
 
     }
-
 
 
     //gets angle from imu

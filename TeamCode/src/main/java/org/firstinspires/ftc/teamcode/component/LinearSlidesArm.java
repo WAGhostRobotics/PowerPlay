@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class LinearSlidesArm {
 
-
     private final double POWER = 1;
     private DcMotor arm;
 
@@ -20,8 +19,6 @@ public class LinearSlidesArm {
         TOP(2920); // was 2820
 
         int ticks;
-
-
 
         TurnValue(int ticks){
             this.ticks = ticks;
@@ -43,10 +40,7 @@ public class LinearSlidesArm {
 
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
     }
-
 
 
     public void stopArm(){
@@ -76,8 +70,6 @@ public class LinearSlidesArm {
     }
 
 
-
-
     public void moveToPosition(int ticks, double power){
         int multiplier = 1;//positive if the claw needs to go up, negative if it needs to go down
 
@@ -97,18 +89,6 @@ public class LinearSlidesArm {
     public boolean isBusy(){
         return arm.isBusy();
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //takes in input location
@@ -146,13 +126,4 @@ public class LinearSlidesArm {
         arm.setPower(-0.6);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
-
-
-
-
-
-
-
-
 }

@@ -26,8 +26,6 @@ public class Jerry {
     private static DcMotor dBackLeft;
     private static DcMotor dBackRight;
 
-
-
     public static Motor frontLeft;
     public static Motor frontRight;
     public static Motor backLeft;
@@ -35,9 +33,7 @@ public class Jerry {
 
     public static Webcam webcam;
 
-
     public static RevIMU imu;
-
 
     public static ServoClaw intakeClaw;
 
@@ -85,18 +81,14 @@ public class Jerry {
 
         }
 
-
-
-
-
     }
 
 
     public static void initIMU(){
         imu = new RevIMU(hardwareMap);
         imu.init();
-
     }
+
 
     /**
      * Sleeps for the given amount of milliseconds, or until the thread is interrupted. This is

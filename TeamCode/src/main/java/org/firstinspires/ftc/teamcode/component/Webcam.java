@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.component;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.library.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.library.MasterPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -19,7 +19,7 @@ public class Webcam {
     static final int STREAM_HEIGHT = 720; // modify for your camera
     OpenCvWebcam webcam;
 
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    MasterPipeline masterPipeline;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -42,9 +42,10 @@ public class Webcam {
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "Webcam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        masterPipeline = new MasterPipeline(tagsize, fx, fy, cx, cy);
 
-        webcam.setPipeline(aprilTagDetectionPipeline);
+
+        webcam.setPipeline(masterPipeline);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -60,8 +61,16 @@ public class Webcam {
         });
     }
 
+    public boolean poleInPlace(){
+        return masterPipeline.poleInPlace();
+    }
+
+    public String getPercentageOfPole(){
+        return masterPipeline.getPercentage();
+    }
+
     public void scanForTags(){
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+        ArrayList<AprilTagDetection> currentDetections = masterPipeline.getLatestDetections();
 
         if (currentDetections.size() != 0) {
 

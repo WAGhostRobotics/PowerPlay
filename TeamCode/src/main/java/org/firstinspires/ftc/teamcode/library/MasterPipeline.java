@@ -22,6 +22,7 @@
 package org.firstinspires.ftc.teamcode.library;
 
 import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
@@ -29,6 +30,7 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
 import org.opencv.core.Point3;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.apriltag.AprilTagDetection;
@@ -37,8 +39,31 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-public class AprilTagDetectionPipeline extends OpenCvPipeline
+public class MasterPipeline extends OpenCvPipeline
 {
+    Mat mat = new Mat();
+
+    double value;
+
+    boolean poleInPlace;
+
+
+    final double PERCENT_THRESHOLD = 50;
+
+    //Region of interest coordinates
+    static final Rect ROI = new Rect(
+            new Point(5, 80),
+            new Point(85, 150));
+
+
+
+    public boolean poleInPlace() {
+        return poleInPlace;
+    }
+
+    public String getPercentage(){
+        return Math.round(value * 100) + "%";
+    }
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
@@ -67,7 +92,7 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy)
+    public MasterPipeline(double tagsize, double fx, double fy, double cx, double cy)
     {
         this.tagsize = tagsize;
         this.tagsizeX = tagsize;
@@ -102,6 +127,35 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
     @Override
     public Mat processFrame(Mat input)
     {
+        Scalar lowHSV = new Scalar(20, 140.25, 242.25);//change color HSV
+        Scalar highHSV = new Scalar(25, 255, 255);//change color HSV
+
+
+        Core.inRange(mat, lowHSV, highHSV, mat);
+
+
+        Mat submat = mat.submat(ROI);
+
+
+        value = Core.sumElems(submat).val[0] / ROI.area() / 255;
+
+
+        submat.release();
+
+
+        poleInPlace = value > PERCENT_THRESHOLD;
+
+
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
+
+
+        Scalar colorObject = new Scalar(255, 0, 0);
+        Scalar colorNoObject = new Scalar(0, 255, 0);
+
+
+        Imgproc.rectangle(mat, ROI, poleInPlace ? colorNoObject : colorObject);
+
+
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
 

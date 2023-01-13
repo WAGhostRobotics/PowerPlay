@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.core.Jerry;
 import org.openftc.apriltag.AprilTagDetection;
 
 
-@Autonomous(name = "Detection Test", group = "competition")
-public class DetectionTest extends LinearOpMode {
+@Autonomous(name = "April Tag Detection Test", group = "competition")
+public class AprilTagDetectionTest extends LinearOpMode {
 
 
     Webcam.Location location = null;

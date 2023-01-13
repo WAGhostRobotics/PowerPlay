@@ -15,13 +15,14 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Left Side", group = "competition")
-public class LeftSideAuto extends LinearOpMode {
+public class LeftAutoCopy extends LinearOpMode {
 
     Webcam.Location location = null;
     AprilTagDetection tagOfInterest = null;
     static final double FEET_PER_METER = 3.28084;
 
     State currentState = State.IDLE;
+    Pose2d poleLocation;
 
 
 
@@ -45,6 +46,18 @@ public class LeftSideAuto extends LinearOpMode {
         IDLE
     }
 
+    SampleMecanumDrive drive;
+    Trajectory traj0;
+    Trajectory traj1;
+    Trajectory traj2;
+    Trajectory traj2cone1;
+    Trajectory traj2cone2;
+    Trajectory traj3;
+    Trajectory traj3cone1;
+    Trajectory traj3cone2;
+    Trajectory traj4;
+    Trajectory traj5;
+
     @Override
     public void runOpMode() throws InterruptedException{
         // feedback after OpMode started
@@ -55,49 +68,48 @@ public class LeftSideAuto extends LinearOpMode {
 
         Jerry.init(hardwareMap, false);
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
 
         drive.setPoseEstimate(new Pose2d(0,0,0));
 
 
-        Trajectory traj0 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(51.5, 6, Math.toRadians(270)))
+        traj0 = drive.trajectoryBuilder(new Pose2d())
+                .lineToSplineHeading(new Pose2d(52.2, 6, Math.toRadians(270)))
                 .build();
 
-
-        Trajectory traj1 = drive.trajectoryBuilder(traj0.end())
-                .lineTo(new Vector2d(52.2, -9.65)) //og x = 52
+        traj1 = drive.trajectoryBuilder(traj0.end(), 0.375 * 63.08412700166159, 30)
+                .lineTo(new Vector2d(52.2, -11.65)) //og x = 52
                 .build();
 
-        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+        traj2 = drive.trajectoryBuilder(traj1.end())
                 .strafeLeft(3.2)
                 .build();
 
-        Trajectory traj2cone1 = drive.trajectoryBuilder(traj1.end())
+        traj2cone1 = drive.trajectoryBuilder(traj1.end())
                 .strafeLeft(4.5)
                 .build();
 
-        Trajectory traj2cone2 = drive.trajectoryBuilder(traj1.end())
+        traj2cone2 = drive.trajectoryBuilder(traj1.end())
                 .strafeLeft(6.7)
                 .build();
 
-        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+        traj3 = drive.trajectoryBuilder(traj2.end())
                 .strafeRight(3.1)
                 .build();
 
-        Trajectory traj3cone1 = drive.trajectoryBuilder(traj2cone1.end())
+        traj3cone1 = drive.trajectoryBuilder(traj2cone1.end())
                 .strafeRight(4.5)
                 .build();
 
-        Trajectory traj3cone2 = drive.trajectoryBuilder(traj2cone2.end())
+        traj3cone2 = drive.trajectoryBuilder(traj2cone2.end())
                 .strafeRight(6.7)
                 .build();
 
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+        traj4 = drive.trajectoryBuilder(traj3.end())
                 .lineToSplineHeading(new Pose2d(52.5, 27.85, Math.toRadians(0)))
                 .build();
 
-        Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
+        traj5 = drive.trajectoryBuilder(traj4.end())
                 .lineToSplineHeading(new Pose2d(52.2, -9.75, Math.toRadians(270)))
                 .build();
 
@@ -163,7 +175,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case TRAJECTORY_0:
                     if(!drive.isBusy()){
                         drive.followTrajectoryAsync(traj1);
-                        currentState = LeftSideAuto.State.TRAJECTORY_1;
+                        currentState = LeftAutoCopy.State.TRAJECTORY_1;
                         position = LinearSlidesArm.TurnValue.TOP.getTicks();
                         time.reset();
                     }
@@ -171,19 +183,25 @@ public class LeftSideAuto extends LinearOpMode {
                 case TRAJECTORY_1:
 
                     if (!drive.isBusy()) {
-                        currentState = LeftSideAuto.State.TRAJECTORY_2;
-                        if(conePlaced == 0){
-                            drive.followTrajectoryAsync(traj2);
-                        }else if (conePlaced == 1){
-                            drive.followTrajectoryAsync(traj2cone1);
-                        }else{
-                            drive.followTrajectoryAsync(traj2cone2);
-                        }
+
+
                     }
 
-                    if(time.milliseconds()>2000){
+                    if (Jerry.webcam.poleInPlace()) {
+                        poleLocation = drive.getPoseEstimate();
+                        recalculateTrajectory();
+
+                        currentState = LeftAutoCopy.State.TRAJECTORY_2;
 
                         position = LinearSlidesArm.TurnValue.TOP.getTicks();
+
+                        if (conePlaced == 0) {
+                            drive.followTrajectoryAsync(traj2);
+                        } else if (conePlaced == 1) {
+                            drive.followTrajectoryAsync(traj2cone1);
+                        } else {
+                            drive.followTrajectoryAsync(traj2cone2);
+                        }
                     }
 
                     break;
@@ -194,7 +212,7 @@ public class LeftSideAuto extends LinearOpMode {
 
 
                         if(time.milliseconds()>1500){
-                            currentState = LeftSideAuto.State.TRAJECTORY_3;
+                            currentState = LeftAutoCopy.State.TRAJECTORY_3;
                             if(conePlaced == 0){
                                 drive.followTrajectoryAsync(traj3);
                             }else if (conePlaced == 1){
@@ -227,10 +245,10 @@ public class LeftSideAuto extends LinearOpMode {
                     if (!drive.isBusy()) {
 
                         if(conePlaced<2){
-                            currentState = LeftSideAuto.State.TRAJECTORY_4;
+                            currentState = LeftAutoCopy.State.TRAJECTORY_4;
                             drive.followTrajectoryAsync(traj4);
                         }else{
-                            currentState = LeftSideAuto.State.TRAJECTORY_6;
+                            currentState = LeftAutoCopy.State.TRAJECTORY_6;
                             drive.followTrajectoryAsync(traj6);
                         }
                     }
@@ -247,7 +265,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case TRAJECTORY_4:
 
                     if (!drive.isBusy()) {
-                        currentState = LeftSideAuto.State.GRAB_CONE;
+                        currentState = LeftAutoCopy.State.GRAB_CONE;
                         time.reset();
                     }
 
@@ -258,7 +276,7 @@ public class LeftSideAuto extends LinearOpMode {
 
                     if(time.milliseconds()>1500){
                         conePlaced++;
-                        currentState = LeftSideAuto.State.TRAJECTORY_1;
+                        currentState = LeftAutoCopy.State.TRAJECTORY_1;
 
                         drive.followTrajectoryAsync(traj5);
                         time.reset();
@@ -269,7 +287,7 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case TRAJECTORY_6:
                     if(!drive.isBusy()){
-                        currentState = LeftSideAuto.State.IDLE;
+                        currentState = LeftAutoCopy.State.IDLE;
                     }
 
                     if(time.milliseconds()>1500){
@@ -301,5 +319,20 @@ public class LeftSideAuto extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    private void recalculateTrajectory() {
+        // bruh
+        traj5 = drive.trajectoryBuilder(traj4.end())
+                .lineToSplineHeading(new Pose2d(poleLocation.getX(), poleLocation.getY(), Math.toRadians(270)))
+                .build();
+
+        traj2cone1 = drive.trajectoryBuilder(traj5.end())
+                .strafeLeft(4.5)
+                .build();
+
+        traj2cone2 = drive.trajectoryBuilder(traj5.end())
+                .strafeLeft(6.7)
+                .build();
     }
 }
