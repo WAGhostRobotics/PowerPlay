@@ -154,7 +154,7 @@ public class TeleOpParent extends LinearOpMode {
 
 
             //INTAKE SLIDES UPDATE
-            Tom.intake.moveToPosition(intakePosition);
+            Tom.intake.moveToPosition(intakePosition, power);
             if(!Tom.intake.isBusy()){
                 Tom.intake.stopArm();
             }
@@ -186,6 +186,7 @@ public class TeleOpParent extends LinearOpMode {
             switch (intakeState) {
                 case SLIDES_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.pivot.isFinished()){
+                        intakePower = 0.5;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         Tom.pivot.retract();
 
@@ -196,6 +197,7 @@ public class TeleOpParent extends LinearOpMode {
                     if(Tom.intake.isFinished() &&Tom.pivot.isFinished()){
                         Tom.claw.open();
                         Tom.pivot.partial();
+                        intakePower = 1;
                         intakeState = IntakeState.IDLE;
                     }
                     break;
@@ -209,6 +211,7 @@ public class TeleOpParent extends LinearOpMode {
             switch (autoPlaceState) {
                 case SLIDES_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.pivot.isFinished()){
+                        intakePower = 0.5;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         Tom.pivot.retract();
 
@@ -219,6 +222,7 @@ public class TeleOpParent extends LinearOpMode {
                     if(Tom.intake.isFinished() &&Tom.pivot.isFinished()){
                         Tom.claw.open();
                         Tom.pivot.partial();
+                        intakePower = 1;
                         autoPlaceState = AutoPlaceState.OUTTAKE_READY;
                     }
                     break;
