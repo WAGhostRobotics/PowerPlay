@@ -6,15 +6,40 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Claw {
 
     public Servo claw;
+    public Servo spin;
     private boolean isOpen = false;
     public final double OPEN = 0.2;
 
     public final double CLOSE = 0.55;
 
+    public final double IN = 0.2;
+
+    public final double OUT = 0.55;
+
+    public double targetPosition = IN;
+
+    private final double ERROR =  0.05;
+
+
+
     public void init(HardwareMap hardwareMap){
         claw = hardwareMap.get(Servo.class, "claw");
+        spin = hardwareMap.get(Servo.class, "spin");
         open();
+        in();
     }
+
+    public void in(){
+        spin.setPosition(IN);
+        targetPosition = IN;
+    }
+
+    public void out(){
+        spin.setPosition(OUT);
+        targetPosition = OUT;
+    }
+
+
 
     public void open(){
         claw.setPosition(OPEN);
@@ -27,7 +52,11 @@ public class Claw {
     }
 
     public double getPosition(){
-        return claw.getPosition();
+        return spin.getPosition();
+    }
+
+    public boolean isFinished() {
+        return Math.abs(spin.getPosition() - targetPosition) <= ERROR;
     }
 
     public boolean isOpen() {

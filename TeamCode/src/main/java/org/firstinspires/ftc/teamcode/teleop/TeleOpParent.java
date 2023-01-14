@@ -165,27 +165,35 @@ public class TeleOpParent extends LinearOpMode {
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                 outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                 Tom.pivot.partial();
+                Tom.claw.in();
+
+                intakeState = IntakeState.SLIDES_RETRACT;
             }
 
             if(gamepad1.dpad_down || gamepad2.dpad_down){
                 intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                 Tom.pivot.extend();
+                Tom.claw.out();
+
             }
 
             if(gamepad1.dpad_left || gamepad2.dpad_left) {
                 intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
                 Tom.pivot.extend();
+                Tom.claw.out();
+
             }
 
             if(gamepad1.dpad_right || gamepad2.dpad_right){
                 Tom.pivot.low();
+                Tom.claw.out();
             }
 
 
             //INTAKE STATE MACHINE
             switch (intakeState) {
                 case SLIDES_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.pivot.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.pivot.isFinished()&&Tom.claw.isFinished()){
                         intakePower = 0.5;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         Tom.pivot.retract();
@@ -210,7 +218,7 @@ public class TeleOpParent extends LinearOpMode {
             //OUTTAKE STATE MACHINE
             switch (autoPlaceState) {
                 case SLIDES_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.pivot.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.pivot.isFinished()&&Tom.claw.isFinished()){
                         intakePower = 0.5;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         Tom.pivot.retract();
@@ -237,12 +245,13 @@ public class TeleOpParent extends LinearOpMode {
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                         Tom.pivot.extend();
+                        Tom.claw.out();
                         autoPlaceState = AutoPlaceState.OUTTAKE_RETRACT;
 
                     }
                     break;
                 case OUTTAKE_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.pivot.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.pivot.isFinished()&&Tom.claw.isFinished()){
                         autoPlaceState = AutoPlaceState.IDLE;
                     }
                     break;
@@ -253,6 +262,10 @@ public class TeleOpParent extends LinearOpMode {
 
             //AUTO PLACE CONTROLLER (MASTER BUTTON)
             if(gamepad1.right_stick_button){
+                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
+                outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                Tom.pivot.partial();
+                Tom.claw.in();
                 autoPlaceState = AutoPlaceState.SLIDES_RETRACT;
             }
 
