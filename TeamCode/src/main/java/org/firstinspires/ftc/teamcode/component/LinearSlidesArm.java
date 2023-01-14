@@ -126,4 +126,8 @@ public class LinearSlidesArm {
         arm.setPower(-0.6);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
+    public boolean isFinished(){
+        return Math.abs(arm.getTargetPosition()-arm.getCurrentPosition())<15;
+    }
 }

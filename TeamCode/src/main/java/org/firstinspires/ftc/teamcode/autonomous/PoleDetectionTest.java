@@ -24,7 +24,7 @@ public class PoleDetectionTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // put this code in robot class later
+
 
 
         Jerry.init(hardwareMap, false);

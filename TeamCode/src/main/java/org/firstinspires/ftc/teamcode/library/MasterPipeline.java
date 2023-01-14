@@ -45,15 +45,15 @@ public class MasterPipeline extends OpenCvPipeline
 
     double value;
 
-    boolean poleInPlace;
+    boolean poleInPlace = false;
 
 
-    final double PERCENT_THRESHOLD = 50;
+    final double PERCENT_THRESHOLD = 0.75;
 
     //Region of interest coordinates
     static final Rect ROI = new Rect(
-            new Point(5, 80),
-            new Point(85, 150));
+            new Point(560, 20),
+            new Point(310, 700));
 
 
 
@@ -127,33 +127,8 @@ public class MasterPipeline extends OpenCvPipeline
     @Override
     public Mat processFrame(Mat input)
     {
-        Scalar lowHSV = new Scalar(20, 140.25, 242.25);//change color HSV
-        Scalar highHSV = new Scalar(25, 255, 255);//change color HSV
 
 
-        Core.inRange(mat, lowHSV, highHSV, mat);
-
-
-        Mat submat = mat.submat(ROI);
-
-
-        value = Core.sumElems(submat).val[0] / ROI.area() / 255;
-
-
-        submat.release();
-
-
-        poleInPlace = value > PERCENT_THRESHOLD;
-
-
-        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
-
-
-        Scalar colorObject = new Scalar(255, 0, 0);
-        Scalar colorNoObject = new Scalar(0, 255, 0);
-
-
-        Imgproc.rectangle(mat, ROI, poleInPlace ? colorNoObject : colorObject);
 
 
         // Convert to greyscale
@@ -185,7 +160,41 @@ public class MasterPipeline extends OpenCvPipeline
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
         }
 
-        return input;
+
+
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+
+
+        Scalar lowHSV = new Scalar(10, 100, 100);//change color HSV
+        Scalar highHSV = new Scalar(30, 255, 255);//change color HSV
+
+
+
+        Core.inRange(mat, lowHSV, highHSV, mat);
+
+
+        Mat submat = mat.submat(ROI);
+
+
+        value = Core.sumElems(submat).val[0] / ROI.area() / 255;
+
+
+        submat.release();
+
+
+        poleInPlace = value > PERCENT_THRESHOLD;
+
+
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
+
+
+        Scalar colorObject = new Scalar(255, 0, 0);
+        Scalar colorNoObject = new Scalar(0, 255, 0);
+
+
+        Imgproc.rectangle(mat, ROI, poleInPlace ? colorNoObject : colorObject);
+
+        return mat;
     }
 
     public void setDecimation(float decimation)

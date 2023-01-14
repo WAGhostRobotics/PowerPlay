@@ -38,6 +38,9 @@ public class LeftAutoCopy extends LinearOpMode {
     enum State {
         TRAJECTORY_0,
         TRAJECTORY_1,
+        RAISE_ARM,
+        LOWER_ARM,
+        TURN,
         TRAJECTORY_2,
         TRAJECTORY_3,
         TRAJECTORY_4,
@@ -57,6 +60,7 @@ public class LeftAutoCopy extends LinearOpMode {
     Trajectory traj3cone2;
     Trajectory traj4;
     Trajectory traj5;
+    Trajectory turn;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -74,22 +78,25 @@ public class LeftAutoCopy extends LinearOpMode {
 
 
         traj0 = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(52.2, 6, Math.toRadians(270)))
+                .lineTo(new Vector2d(52.2, 6))
                 .build();
 
         traj1 = drive.trajectoryBuilder(traj0.end(), 0.375 * 63.08412700166159, 30)
                 .lineTo(new Vector2d(52.2, -11.65)) //og x = 52
                 .build();
 
-        traj2 = drive.trajectoryBuilder(traj1.end())
+
+
+
+        traj2 = drive.trajectoryBuilder(new Pose2d(traj1.end().getX(), traj1.end().getY(), 270))
                 .strafeLeft(3.2)
                 .build();
 
-        traj2cone1 = drive.trajectoryBuilder(traj1.end())
+        traj2cone1 = drive.trajectoryBuilder(traj5.end())
                 .strafeLeft(4.5)
                 .build();
 
-        traj2cone2 = drive.trajectoryBuilder(traj1.end())
+        traj2cone2 = drive.trajectoryBuilder(traj5.end())
                 .strafeLeft(6.7)
                 .build();
 
@@ -182,18 +189,38 @@ public class LeftAutoCopy extends LinearOpMode {
                     break;
                 case TRAJECTORY_1:
 
-                    if (!drive.isBusy()) {
-
-
-                    }
 
                     if (Jerry.webcam.poleInPlace()) {
                         poleLocation = drive.getPoseEstimate();
                         recalculateTrajectory();
 
-                        currentState = LeftAutoCopy.State.TRAJECTORY_2;
 
+                        drive.turn(270);
+                        currentState = State.TURN;
+                        time.reset();
+                    }
+
+                    break;
+                case TURN:
+                    if(time.milliseconds()>1000){
                         position = LinearSlidesArm.TurnValue.TOP.getTicks();
+                        drive.followTrajectoryAsync(traj2);
+                        currentState = State.RAISE_ARM;
+
+                    }
+                    break;
+                case RAISE_ARM:
+                    if(Jerry.slides.isFinished()){
+                        position = LinearSlidesArm.TurnValue.MID.getTicks();
+
+                        currentState = State.LOWER_ARM;
+                    }
+                    break;
+                case LOWER_ARM:
+                    if(Jerry.slides.isFinished()){
+                        Jerry.intakeClaw.open();
+
+                        currentState = LeftAutoCopy.State.TRAJECTORY_2;
 
                         if (conePlaced == 0) {
                             drive.followTrajectoryAsync(traj2);
@@ -203,7 +230,6 @@ public class LeftAutoCopy extends LinearOpMode {
                             drive.followTrajectoryAsync(traj2cone2);
                         }
                     }
-
                     break;
                 case TRAJECTORY_2:
 
@@ -229,7 +255,7 @@ public class LeftAutoCopy extends LinearOpMode {
 //                                position = 364;
 //                            }
 //                        }
-                        else if (time.milliseconds()>600){
+                        else if (Jerry.slides.isFinished()){
                             Jerry.intakeClaw.open();
                         }
 
