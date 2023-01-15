@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Pivot {
 
-    public Servo pivot;
+    public Servo pivot1;
+    public Servo pivot2;
 
     public final double EXTEND = 0.2;
     public final double PARTIAL = 0.35;
@@ -16,35 +17,39 @@ public class Pivot {
     private double targetPosition = RETRACT;
 
     public void init (HardwareMap hardwareMap){
-        pivot = hardwareMap.get(Servo.class, "pivot");
+        pivot1 = hardwareMap.get(Servo.class, "pivot1");
+        pivot2 = hardwareMap.get(Servo.class, "pivot2");
         retract();
     }
 
     public void extend(){
-        pivot.setPosition(EXTEND);
+        setPosition(EXTEND);
         targetPosition = EXTEND;
     }
 
     public void retract(){
-        pivot.setPosition(RETRACT);
+        setPosition(RETRACT);
         targetPosition = RETRACT;
     }
 
     public void low(){
-        pivot.setPosition(LOW);
+        setPosition(LOW);
         targetPosition = LOW;
     }
 
     public void partial() {
-        pivot.setPosition(PARTIAL);
+        setPosition(PARTIAL);
+
         targetPosition = PARTIAL;
     }
 
-    public boolean isFinished() {
-        return Math.abs(pivot.getPosition() - targetPosition) <= ERROR;
+    public void setPosition(double position){
+        pivot1.setPosition(position);
+        pivot2.setPosition(position);
     }
 
-    public double getPosition(){
-        return pivot.getPosition();
+    public boolean isFinished() {
+        return Math.abs(pivot1.getPosition() - targetPosition) <= ERROR&&Math.abs(pivot2.getPosition() - targetPosition) <= ERROR;
     }
+
 }
