@@ -154,7 +154,7 @@ public class TeleOpParent extends LinearOpMode {
 
 
             //INTAKE SLIDES UPDATE
-            Tom.intake.moveToPosition(intakePosition, power);
+            Tom.intake.moveToPosition(intakePosition, Tom.intake.getAdjustedPower());
             if(!Tom.intake.isBusy()){
                 Tom.intake.stopArm();
             }

@@ -10,6 +10,8 @@ public class IntakeSlides {
 
 
 
+
+
     public enum TurnValue {
         RETRACTED(0),
         PLACE_CONE(100),
@@ -25,6 +27,18 @@ public class IntakeSlides {
         public int getTicks() {
             return ticks;
         }
+    }
+
+    private final double MAX = TurnValue.EXTENDED.getTicks();
+    private final double MIN = TurnValue.RETRACTED.getTicks();
+
+    private final double minPower = 0.3;
+    private final double maxPower = 1;
+
+    public double getAdjustedPower(){
+        double power = (((maxPower-minPower)*(slides.getCurrentPosition()-MIN))/(MAX-MIN)) + minPower;
+
+        return power;
     }
 
     public void init(HardwareMap hwMap) {
