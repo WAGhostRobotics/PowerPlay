@@ -36,7 +36,7 @@ public class IntakeSlides {
     private final double maxPower = 1;
 
     public double getAdjustedPower(){
-        double power = (((maxPower-minPower)*(slides.getCurrentPosition()-MIN))/(MAX-MIN)) + minPower;
+        double power = (((maxPower-minPower)*(slides.getCurrentPosition()-MIN))/(MIN-MAX)) + maxPower;
 
         return power;
     }
