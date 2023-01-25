@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
@@ -24,7 +25,7 @@ public class Tom {
     public static IntakeSlides intake;
     public static OuttakeSlides outtake;
     public static Claw claw;
-    public static Pivot pivot;
+    public static Arm arm;
 
     public static void init(HardwareMap hwMap, boolean initTeleOp) {
         // Assign HardwareMap
@@ -45,8 +46,8 @@ public class Tom {
         claw = new Claw();
         claw.init(hwMap);
 
-        pivot = new Pivot();
-        pivot.init(hwMap);
+        arm = new Arm();
+        arm.init(hwMap);
 
 
         if(initTeleOp){
