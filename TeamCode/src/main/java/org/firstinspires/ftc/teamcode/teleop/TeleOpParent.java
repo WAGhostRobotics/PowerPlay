@@ -302,7 +302,16 @@ public class TeleOpParent extends LinearOpMode {
             } else if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 intakePosition -= 40;
             }
-            
+
+
+            //ARM MINOR ADJUSTMENT
+
+            if(gamepad1.back){
+                armPosition -= 40;
+            }else if(gamepad1.left_stick_button){
+                armPosition += 40;
+            }
+
         }
     }
 }
