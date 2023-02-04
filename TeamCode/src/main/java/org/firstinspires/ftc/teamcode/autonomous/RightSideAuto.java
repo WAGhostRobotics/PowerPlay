@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 
-@Autonomous(name = "Left Side", group = "competition")
+@Autonomous(name = "Right Side", group = "competition")
 public class RightSideAuto extends LinearOpMode {
     Webcam.Location location = null;
     AprilTagDetection tagOfInterest = null;

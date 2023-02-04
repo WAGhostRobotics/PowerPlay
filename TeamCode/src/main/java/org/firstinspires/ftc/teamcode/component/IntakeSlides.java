@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class IntakeSlides {
     private DcMotor slides;
     private final double POWER = 1;
-    private final double ERROR = 15;
+    private final double ERROR = 20;
 
 
 
@@ -14,9 +14,9 @@ public class IntakeSlides {
 
     public enum TurnValue {
         RETRACTED(0),
-        PLACE_CONE(100),
-        PARTIAL(1931),
-        EXTENDED(2700);
+        PLACE_CONE(30),
+        PARTIAL(180),
+        EXTENDED(425);
 
         int ticks;
 

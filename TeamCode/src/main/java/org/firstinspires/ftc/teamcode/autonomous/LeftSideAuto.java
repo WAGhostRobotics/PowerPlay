@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Left Side", group = "competition")
-public class LeftSideAuto extends LinearOpMode {
+public class   LeftSideAuto extends LinearOpMode {
     Webcam.Location location = null;
     AprilTagDetection tagOfInterest = null;
     static final double FEET_PER_METER = 3.28084;

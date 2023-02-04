@@ -7,13 +7,13 @@ public class OuttakeSlides {
 
     private DcMotor slides;
     private final double POWER = 1;
-    private final double ERROR = 15;
+    private final double ERROR = 50;
 
 
     public enum TurnValue {
         RETRACTED(0),
-        MID(1931),
-        TOP(2700);
+        MID(400),
+        TOP(920);
 
         int ticks;
 

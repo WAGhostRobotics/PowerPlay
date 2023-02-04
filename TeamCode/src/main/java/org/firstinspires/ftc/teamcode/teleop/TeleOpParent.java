@@ -76,14 +76,16 @@ public class TeleOpParent extends LinearOpMode {
 
         int intakePosition = 0;
         int outtakePosition = 0;
-        int armPosition = 0;
-
-        waitForStart();
+        int armPosition = Arm.TurnValue.PARTIAL.getTicks();
 
         Tom.init(hardwareMap, true);
         if(Tom.imu==null){
             Tom.initIMU();
         }
+
+        waitForStart();
+
+
 
         MecanumDrive drive = new MecanumDrive(
                 Tom.frontLeft,
@@ -127,11 +129,7 @@ public class TeleOpParent extends LinearOpMode {
             xReader2.readValue();
 
 
-            //TELEMETRY
-            telemetry.addData("Outtake position", Tom.outtake.getTicks());
-            telemetry.addData("Intake position", Tom.intake.getTicks());
-            telemetry.addData("Arm Position", Tom.arm.getTicks());
-            telemetry.update();
+
 
             //OUTTAKE SLIDES UPDATE
             Tom.outtake.moveToPosition(outtakePosition);
@@ -153,11 +151,23 @@ public class TeleOpParent extends LinearOpMode {
             }
 
 
-            //ARM UPDATE
-            Tom.arm.moveToPosition(armPosition);
-            if(Tom.arm.isFinished()){
-                Tom.arm.stopArm();
-            }
+//            //ARM UPDATE
+            Tom.arm.moveToPosition(armPosition, Tom.arm.getAdjustedPower(armPosition));
+//            Tom.arm.updateTargetPos(armPosition);
+//            if(Tom.arm.isFinished()){
+//                Tom.arm.moveToPosition(armPosition, 0.14);
+//            }
+
+
+            //TELEMETRY
+            telemetry.addData("Outtake position", Tom.outtake.getTicks());
+            telemetry.addData("Target Outtake Pos", outtakePosition);
+            telemetry.addData("Intake position", Tom.intake.getTicks());
+            telemetry.addData("Target Intake Pos", intakePosition);
+            telemetry.addData("Arm Position", Tom.arm.getTicks());
+            telemetry.addData("Target Arm Pos", armPosition);
+            telemetry.addData("Arm Power", Tom.arm.getAdjustedPower(armPosition));
+            telemetry.update();
 
 
 
@@ -203,7 +213,7 @@ public class TeleOpParent extends LinearOpMode {
             switch (intakeState) {
                 case SLIDES_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
-                        intakePower = 0.5;
+                        intakePower = 0.2;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getTicks();
 
@@ -278,7 +288,6 @@ public class TeleOpParent extends LinearOpMode {
                 autoPlaceState = AutoPlaceState.SLIDES_RETRACT;
             }
 
-
             //CLAW CODE
             if (xReader.wasJustReleased()|| xReader2.wasJustReleased()){
                 if (Tom.claw.isOpen()){
@@ -291,16 +300,16 @@ public class TeleOpParent extends LinearOpMode {
 
             //OUTTAKE MINOR ADJUSTMENTS
             if (gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
-                outtakePosition += 40;
+                outtakePosition += 10;
             } else if (gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
-                outtakePosition -= 40;
+                outtakePosition -= 10;
             }
 
             //INTAKE MINOR ADJUSTMENT
             if (gamepad1.right_bumper || gamepad2.right_bumper) {
-                intakePosition += 40;
+                intakePosition += 10;
             } else if (gamepad1.left_bumper || gamepad2.left_bumper) {
-                intakePosition -= 40;
+                intakePosition -= 10;
             }
 
 
@@ -308,8 +317,10 @@ public class TeleOpParent extends LinearOpMode {
 
             if(gamepad1.back){
                 armPosition -= 40;
+
             }else if(gamepad1.left_stick_button){
                 armPosition += 40;
+
             }
 
         }
