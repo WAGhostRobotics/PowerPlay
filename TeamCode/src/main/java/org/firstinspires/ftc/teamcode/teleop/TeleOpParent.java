@@ -187,12 +187,14 @@ public class TeleOpParent extends LinearOpMode {
                 Tom.claw.in();
 
                 intakeState = IntakeState.SLIDES_RETRACT;
+                autoPlaceState = AutoPlaceState.IDLE;
             }
 
             if(gamepad1.dpad_down || gamepad2.dpad_down){
                 intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                 armPosition = Arm.TurnValue.EXTENDED.getTicks();
                 Tom.claw.out();
+                autoPlaceState = AutoPlaceState.IDLE;
 
             }
 
@@ -200,6 +202,7 @@ public class TeleOpParent extends LinearOpMode {
                 intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
                 armPosition = Arm.TurnValue.EXTENDED.getTicks();
                 Tom.claw.out();
+                autoPlaceState = AutoPlaceState.IDLE;
 
             }
 
@@ -289,6 +292,8 @@ public class TeleOpParent extends LinearOpMode {
                 armPosition = Arm.TurnValue.PARTIAL.getTicks();
                 Tom.claw.in();
                 autoPlaceState = AutoPlaceState.SLIDES_RETRACT;
+
+                intakeState = IntakeState.IDLE;
             }
 
             //CLAW CODE
