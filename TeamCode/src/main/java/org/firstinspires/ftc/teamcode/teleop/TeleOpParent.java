@@ -60,17 +60,17 @@ public class TeleOpParent extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         GamepadEx driverOp = new GamepadEx(gamepad2);
-        ToggleButtonReader aReader = new ToggleButtonReader(
+        ToggleButtonReader rightStickReader = new ToggleButtonReader(
                 driverOp, GamepadKeys.Button.RIGHT_STICK_BUTTON
         );
 
-        ToggleButtonReader xReader = new ToggleButtonReader(
+        ToggleButtonReader aReader = new ToggleButtonReader(
                 driverOp, GamepadKeys.Button.A
         );
 
         GamepadEx driverOp2 = new GamepadEx(gamepad1);
 
-        ToggleButtonReader xReader2 = new ToggleButtonReader(
+        ToggleButtonReader aReader2 = new ToggleButtonReader(
                 driverOp2, GamepadKeys.Button.A
         );
 
@@ -119,14 +119,14 @@ public class TeleOpParent extends LinearOpMode {
             if (gamepad2.left_stick_button){
                 Tom.initIMU();
             }
-            if (aReader.getState()) {
+            if (rightStickReader.getState()) {
                 power = 0.2;
             } else {
                 power = 0.85;
             }
+            rightStickReader.readValue();
             aReader.readValue();
-            xReader.readValue();
-            xReader2.readValue();
+            aReader2.readValue();
 
 
 
@@ -254,17 +254,20 @@ public class TeleOpParent extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_READY:
-                    if(Tom.arm.isFinished()){
+                    if(Tom.claw.isFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
+                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
+                        Tom.claw.out();
                         autoPlaceState = AutoPlaceState.OUTTAKE_EXTEND;
                     }
                     break;
                 case OUTTAKE_EXTEND:
                     if(Tom.outtake.isFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
-                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
-                        Tom.claw.out();
+//                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
+//                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
+//                        Tom.claw.out();
                         autoPlaceState = AutoPlaceState.OUTTAKE_RETRACT;
 
                     }
@@ -289,7 +292,7 @@ public class TeleOpParent extends LinearOpMode {
             }
 
             //CLAW CODE
-            if (xReader.wasJustReleased()|| xReader2.wasJustReleased()){
+            if (aReader.wasJustReleased()|| aReader2.wasJustReleased()){
                 if (Tom.claw.isOpen()){
                     Tom.claw.close();
                 } else {

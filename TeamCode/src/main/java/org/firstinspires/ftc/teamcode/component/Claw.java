@@ -12,9 +12,9 @@ public class Claw {
 
     public final double CLOSE = 0.38;
 
-    public final double IN = 0.457;
+    public final double IN = 0.458;
 
-    public final double OUT = 0.34;
+    public final double OUT = 0.335;
 
     public double targetPosition = IN;
 

@@ -58,7 +58,7 @@ public class Tom {
             backRight = new Motor(hwMap, "rr");
 //
 //            frontLeft.setInverted(true);
-            frontRight.setInverted(true);
+//            frontRight.setInverted(true);
 //            backLeft.setInverted(true);
 //            backRight.setInverted(true);
 

@@ -30,7 +30,7 @@ public class Arm {
 
         EXTENDED(3050),
         PARTIAL(250),
-        RETRACTED(-150),
+        RETRACTED(-80),
         LOW(1610);
 
         int ticks;
