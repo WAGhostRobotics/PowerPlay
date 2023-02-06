@@ -16,6 +16,7 @@ public class IntakeSlides {
         RETRACTED(0),
         PLACE_CONE(30),
         PARTIAL(180),
+        ALMOST_DONE(390),
         EXTENDED(425);
 
         int ticks;
@@ -41,10 +42,13 @@ public class IntakeSlides {
         return power;
     }
 
-    public void init(HardwareMap hwMap) {
-        slides = hwMap.get(DcMotor.class, "intake");
-        slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void init(HardwareMap hwMap, boolean teleop) {
+        if(teleop){
+            slides = hwMap.get(DcMotor.class, "intake");
+            slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }else{
+            slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
 
     public void moveToPosition(int ticks){

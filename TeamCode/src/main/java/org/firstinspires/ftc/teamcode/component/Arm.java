@@ -31,7 +31,12 @@ public class Arm {
         EXTENDED(3050),
         PARTIAL(250),
         RETRACTED(-80),
-        LOW(1610);
+        LOW(1610),
+        CONE1(3050),
+        CONE2(3050),
+        CONE3(3050),
+        CONE4(3050),
+        CONE5(3050);
 
         int ticks;
 
@@ -46,12 +51,19 @@ public class Arm {
 
 
 
-    public void init(HardwareMap hwMap) {
-        arm1 = hwMap.get(CRServo.class, "arm1");
-        arm1.setDirection(DcMotorSimple.Direction.REVERSE);
-        arm2 = hwMap.get(CRServo.class, "arm2");
-        armPosition = hwMap.get(DcMotor.class, "armPosition");
-        armPosition.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void init(HardwareMap hwMap, boolean teleop) {
+        if(teleop){
+            arm1 = hwMap.get(CRServo.class, "arm1");
+            arm1.setDirection(DcMotorSimple.Direction.REVERSE);
+            arm2 = hwMap.get(CRServo.class, "arm2");
+            armPosition = hwMap.get(DcMotor.class, "armPosition");
+        }else{
+            arm1 = hwMap.get(CRServo.class, "arm1");
+            arm1.setDirection(DcMotorSimple.Direction.REVERSE);
+            arm2 = hwMap.get(CRServo.class, "arm2");
+            armPosition = hwMap.get(DcMotor.class, "armPosition");
+            armPosition.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
 
 
     }

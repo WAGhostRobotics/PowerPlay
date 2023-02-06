@@ -38,7 +38,7 @@ public class Tom {
         webcam.init(hwMap);
 
         intake = new IntakeSlides();
-        intake.init(hwMap);
+
 
         outtake = new OuttakeSlides();
         outtake.init(hwMap);
@@ -47,7 +47,7 @@ public class Tom {
         claw.init(hwMap);
 
         arm = new Arm();
-        arm.init(hwMap);
+
 
 
         if(initTeleOp){
@@ -68,6 +68,11 @@ public class Tom {
             backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
+            arm.init(hwMap, true);
+            intake.init(hwMap, true);
+        }else{
+            arm.init(hwMap, false);
+            intake.init(hwMap, false);
         }
     }
 

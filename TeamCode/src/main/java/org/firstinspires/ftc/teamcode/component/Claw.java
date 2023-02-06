@@ -26,7 +26,7 @@ public class Claw {
         claw = hardwareMap.get(Servo.class, "claw");
         spin = hardwareMap.get(Servo.class, "spin");
         claw.setDirection(Servo.Direction.REVERSE);
-        open();
+        close();
         in();
     }
 

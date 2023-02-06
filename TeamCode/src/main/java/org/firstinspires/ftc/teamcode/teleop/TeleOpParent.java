@@ -41,17 +41,16 @@ public class TeleOpParent extends LinearOpMode {
         IDLE
     }
 
-    enum AutoPlaceState{
+    enum State {
         SLIDES_RETRACT,
         PIVOT_RETRACT,
         OUTTAKE_READY,
         OUTTAKE_EXTEND,
         OUTTAKE_RETRACT,
-        INTAKE_EXTEND,
         IDLE
     }
 
-    AutoPlaceState autoPlaceState = AutoPlaceState.IDLE;
+    State autoPlaceState = State.IDLE;
     IntakeState intakeState = IntakeState.IDLE;
     double intakePower = 1;
 
@@ -187,14 +186,14 @@ public class TeleOpParent extends LinearOpMode {
                 Tom.claw.in();
 
                 intakeState = IntakeState.SLIDES_RETRACT;
-                autoPlaceState = AutoPlaceState.IDLE;
+                autoPlaceState = State.IDLE;
             }
 
             if(gamepad1.dpad_down || gamepad2.dpad_down){
                 intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                 armPosition = Arm.TurnValue.EXTENDED.getTicks();
                 Tom.claw.out();
-                autoPlaceState = AutoPlaceState.IDLE;
+                autoPlaceState = State.IDLE;
 
             }
 
@@ -202,7 +201,7 @@ public class TeleOpParent extends LinearOpMode {
                 intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
                 armPosition = Arm.TurnValue.EXTENDED.getTicks();
                 Tom.claw.out();
-                autoPlaceState = AutoPlaceState.IDLE;
+                autoPlaceState = State.IDLE;
 
             }
 
@@ -245,7 +244,7 @@ public class TeleOpParent extends LinearOpMode {
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getTicks();
 
-                        autoPlaceState = AutoPlaceState.PIVOT_RETRACT;
+                        autoPlaceState = State.PIVOT_RETRACT;
                     }
                     break;
                 case PIVOT_RETRACT:
@@ -253,7 +252,7 @@ public class TeleOpParent extends LinearOpMode {
                         Tom.claw.open();
                         armPosition = Arm.TurnValue.PARTIAL.getTicks();
                         intakePower = 1;
-                        autoPlaceState = AutoPlaceState.OUTTAKE_READY;
+                        autoPlaceState = State.OUTTAKE_READY;
                     }
                     break;
                 case OUTTAKE_READY:
@@ -262,7 +261,7 @@ public class TeleOpParent extends LinearOpMode {
                         intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                         armPosition = Arm.TurnValue.EXTENDED.getTicks();
                         Tom.claw.out();
-                        autoPlaceState = AutoPlaceState.OUTTAKE_EXTEND;
+                        autoPlaceState = State.OUTTAKE_EXTEND;
                     }
                     break;
                 case OUTTAKE_EXTEND:
@@ -271,13 +270,13 @@ public class TeleOpParent extends LinearOpMode {
 //                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        Tom.claw.out();
-                        autoPlaceState = AutoPlaceState.OUTTAKE_RETRACT;
+                        autoPlaceState = State.OUTTAKE_RETRACT;
 
                     }
                     break;
                 case OUTTAKE_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
-                        autoPlaceState = AutoPlaceState.IDLE;
+                        autoPlaceState = State.IDLE;
                     }
                     break;
                 case IDLE:
@@ -291,7 +290,7 @@ public class TeleOpParent extends LinearOpMode {
                 outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                 armPosition = Arm.TurnValue.PARTIAL.getTicks();
                 Tom.claw.in();
-                autoPlaceState = AutoPlaceState.SLIDES_RETRACT;
+                autoPlaceState = State.SLIDES_RETRACT;
 
                 intakeState = IntakeState.IDLE;
             }
