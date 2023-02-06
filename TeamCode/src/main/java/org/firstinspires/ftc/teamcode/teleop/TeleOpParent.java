@@ -128,6 +128,17 @@ public class TeleOpParent extends LinearOpMode {
             aReader2.readValue();
 
 
+            if(Tom.claw.isIn()){
+                Tom.claw.in();
+            }else{
+                Tom.claw.out();
+            }
+
+            if(Tom.claw.isOpen()){
+                Tom.claw.open();
+            }else{
+                Tom.claw.close();
+            }
 
 
             //OUTTAKE SLIDES UPDATE
@@ -193,6 +204,8 @@ public class TeleOpParent extends LinearOpMode {
                 intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                 armPosition = Arm.TurnValue.EXTENDED.getTicks();
                 Tom.claw.out();
+                Tom.claw.open();
+                intakeState = IntakeState.IDLE;
                 autoPlaceState = State.IDLE;
 
             }
@@ -201,6 +214,8 @@ public class TeleOpParent extends LinearOpMode {
                 intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
                 armPosition = Arm.TurnValue.EXTENDED.getTicks();
                 Tom.claw.out();
+                Tom.claw.open();
+                intakeState = IntakeState.IDLE;
                 autoPlaceState = State.IDLE;
 
             }
@@ -313,9 +328,9 @@ public class TeleOpParent extends LinearOpMode {
             }
 
             //INTAKE MINOR ADJUSTMENT
-            if (gamepad1.right_bumper || gamepad2.right_bumper) {
+            if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 intakePosition += 10;
-            } else if (gamepad1.left_bumper || gamepad2.left_bumper) {
+            } else if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 intakePosition -= 10;
             }
 

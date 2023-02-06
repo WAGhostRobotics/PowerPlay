@@ -15,9 +15,11 @@ public class IntakeSlides {
     public enum TurnValue {
         RETRACTED(0),
         PLACE_CONE(30),
-        PARTIAL(180),
-        ALMOST_DONE(390),
-        EXTENDED(425);
+        PARTIAL(40),
+        ALMOST_DONE(210),
+        EXTENDED(425),
+        AUTO_EXTENDED(320);
+
 
         int ticks;
 
@@ -47,6 +49,8 @@ public class IntakeSlides {
             slides = hwMap.get(DcMotor.class, "intake");
             slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }else{
+            slides = hwMap.get(DcMotor.class, "intake");
+            slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
     }

@@ -52,12 +52,27 @@ public class Claw {
         isOpen = false;
     }
 
+
+    public boolean isIn(){
+        return targetPosition == IN;
+    }
+
     public double getPosition(){
         return spin.getPosition();
     }
 
     public boolean isFinished() {
         return Math.abs(spin.getPosition() - targetPosition) <= ERROR;
+    }
+
+    public boolean clawIsFinished() {
+        boolean result;
+        if(isOpen){
+            result = Math.abs(claw.getPosition() - OPEN) <= ERROR;
+        }else{
+            result = Math.abs(claw.getPosition() - CLOSE) <= ERROR;
+        }
+        return result;
     }
 
     public boolean isOpen() {

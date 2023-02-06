@@ -31,6 +31,10 @@ public class RightSideAuto extends LinearOpMode {
         GO_TO_PLACE,
         OUTTAKE_EXTEND,
         OUTTAKE_RETRACT,
+        INTAKE_FULLY_EXTEND,
+        INTAKE_GRAB,
+        DONE_GRABBING,
+        RETRACT_READY,
         SLIDES_RETRACT,
         PIVOT_RETRACT,
         OUTTAKE_READY,
@@ -132,6 +136,18 @@ public class RightSideAuto extends LinearOpMode {
 
             Tom.arm.moveToPosition(armPosition, Tom.arm.getAdjustedPower(armPosition));
 
+            if(Tom.claw.isIn()){
+                Tom.claw.in();
+            }else{
+                Tom.claw.out();
+            }
+
+            if(Tom.claw.isOpen()){
+                Tom.claw.open();
+            }else{
+                Tom.claw.close();
+            }
+
             drive.update();
 
 
@@ -181,20 +197,45 @@ public class RightSideAuto extends LinearOpMode {
                     break;
                 case OUTTAKE_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
+
+                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                        state = State.INTAKE_FULLY_EXTEND;
+                    }
+                    break;
+                case INTAKE_FULLY_EXTEND:
+                    if(Tom.intake.isFinished()){
+                        intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks();
+                        state = State.INTAKE_GRAB;
+                    }
+                    break;
+                case INTAKE_GRAB:
+                    if(Tom.intake.isFinished()){
                         Tom.claw.close();
+                        state = State.DONE_GRABBING;
+                    }
+                    break;
+                case DONE_GRABBING:
+                    if(Tom.claw.clawIsFinished()){
+                        armPosition = Arm.TurnValue.LOW.getTicks();
+                        state = State.RETRACT_READY;
+                    }
+                    break;
+                case RETRACT_READY:
+                    if(Tom.arm.isFinished()){
                         intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         armPosition = Arm.TurnValue.PARTIAL.getTicks();
                         Tom.claw.in();
                         state = State.SLIDES_RETRACT;
-                    }else if(Tom.outtake.getTicks()<= OuttakeSlides.TurnValue.ON_THE_WAY_DOWN.getTicks()){
-                        intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
                     }
                     break;
                 case SLIDES_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getTicks();
+                        Tom.claw.in();
+
 
                         state = State.PIVOT_RETRACT;
                     }

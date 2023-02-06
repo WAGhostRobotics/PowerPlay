@@ -28,15 +28,15 @@ public class Arm {
 
 
 
-        EXTENDED(3050),
-        PARTIAL(250),
-        RETRACTED(-80),
-        LOW(1610),
-        CONE1(3050),
-        CONE2(3050),
-        CONE3(3050),
-        CONE4(3050),
-        CONE5(3050);
+        EXTENDED(2870),
+        PARTIAL(-100),
+        RETRACTED(-400),
+        LOW(890),
+        CONE1(2270),
+        CONE2(2390),
+        CONE3(2550),
+        CONE4(2670),
+        CONE5(2870);
 
         int ticks;
 
@@ -93,6 +93,9 @@ public class Arm {
         double power = (((maxPower-minPower)*Math.abs(targetPos-armPosition.getCurrentPosition()))/(MAX-MIN)) + minPower;
 
 
+        if(power>1){
+            power = 1;
+        }
 
 
         return power;
