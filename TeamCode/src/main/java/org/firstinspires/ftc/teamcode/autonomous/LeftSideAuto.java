@@ -8,12 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.component.Arm;
+import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.teleop.TeleOpParent;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Left Side", group = "competition")
@@ -52,6 +52,8 @@ public class LeftSideAuto extends LinearOpMode {
         int intakePosition = 0;
         int outtakePosition = 0;
         int armPosition = Arm.TurnValue.PARTIAL.getTicks();
+        double clawPosition = Claw.OPEN;
+        double spinPosition = Claw.IN;
         int cone = 1;
 
         State state;
@@ -115,7 +117,6 @@ public class LeftSideAuto extends LinearOpMode {
 
         state = State.GO_TO_PLACE;
         drive.followTrajectoryAsync(goToCone);
-        Tom.claw.open();
 
 
         while(opModeIsActive()){
@@ -137,17 +138,10 @@ public class LeftSideAuto extends LinearOpMode {
 
             Tom.arm.moveToPosition(armPosition, Tom.arm.getAdjustedPower(armPosition));
 
-            if(Tom.claw.isIn()){
-                Tom.claw.in();
-            }else{
-                Tom.claw.out();
-            }
+            Tom.claw.setClawPosition(clawPosition);
 
-            if(Tom.claw.isOpen()){
-                Tom.claw.open();
-            }else{
-                Tom.claw.close();
-            }
+
+            Tom.claw.setSpinPosition(spinPosition);
 
             drive.update();
 
@@ -183,7 +177,8 @@ public class LeftSideAuto extends LinearOpMode {
 
                         }
                         cone++;
-                        Tom.claw.out();
+                        spinPosition = Claw.OUT;
+
 
                     }
                     break;
@@ -191,13 +186,13 @@ public class LeftSideAuto extends LinearOpMode {
                     if(Tom.outtake.isFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
-//                        Tom.claw.out();
+//                        spinPosition = Claw.OUT;
                         state = State.OUTTAKE_RETRACT;
 
                     }
                     break;
                 case OUTTAKE_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
 
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
@@ -212,7 +207,7 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case INTAKE_GRAB:
                     if(Tom.intake.isFinished()){
-                        Tom.claw.close();
+                        spinPosition = Claw.CLOSE;
                         state = State.DONE_GRABBING;
                     }
                     break;
@@ -227,15 +222,14 @@ public class LeftSideAuto extends LinearOpMode {
                         intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         armPosition = Arm.TurnValue.PARTIAL.getTicks();
-                        Tom.claw.in();
+                        spinPosition = Claw.IN;
                         state = State.SLIDES_RETRACT;
                     }
                     break;
                 case SLIDES_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getTicks();
-                        Tom.claw.in();
 
 
                         state = State.PIVOT_RETRACT;
@@ -243,17 +237,17 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case PIVOT_RETRACT:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        Tom.claw.open();
+                        clawPosition = Claw.OPEN;
                         armPosition = Arm.TurnValue.PARTIAL.getTicks();
                         state = State.OUTTAKE_READY;
                     }
                     break;
                 case OUTTAKE_READY:
-                    if(Tom.claw.isFinished()){
+                    if(Tom.claw.clawIsFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                         armPosition = Arm.TurnValue.EXTENDED.getTicks();
-                        Tom.claw.out();
+                        spinPosition = Claw.OUT;
                         state = State.OUTTAKE_EXTEND;
                     }
                     break;

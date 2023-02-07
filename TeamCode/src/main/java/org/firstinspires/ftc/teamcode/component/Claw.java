@@ -7,16 +7,18 @@ public class Claw {
 
     public Servo claw;
     public Servo spin;
-    private boolean isOpen = false;
-    public final double OPEN = 0.08;
 
-    public final double CLOSE = 0.38;
+    public static final double OPEN = 0.08;
 
-    public final double IN = 0.458;
+    public static final double CLOSE = 0.38;
 
-    public final double OUT = 0.335;
+    public static final double IN = 0.458;
 
-    public double targetPosition = IN;
+    public static final double OUT = 0.335;
+
+    private double spinTargetPosition = IN;
+
+    private double clawTargetPosition = CLOSE;
 
     private final double ERROR =  0.05;
 
@@ -30,52 +32,61 @@ public class Claw {
         in();
     }
 
+    public double getSpinTargetPosition(){
+        return spinTargetPosition;
+    }
+
+    public double getClawTargetPosition(){
+        return clawTargetPosition;
+    }
+
     public void in(){
         spin.setPosition(IN);
-        targetPosition = IN;
+        spinTargetPosition = IN;
     }
 
     public void out(){
         spin.setPosition(OUT);
-        targetPosition = OUT;
+        spinTargetPosition = OUT;
     }
 
+    public void setClawPosition(double position){
+        claw.setPosition(position);
+        clawTargetPosition = position;
+    }
+
+    public  void setSpinPosition(double position){
+        spin.setPosition(position);
+        spinTargetPosition = position;
+    }
 
 
     public void open(){
         claw.setPosition(OPEN);
-        isOpen = true;
+        clawTargetPosition = OPEN;
     }
 
     public void close(){
         claw.setPosition(CLOSE);
-        isOpen = false;
+        clawTargetPosition = CLOSE;
     }
 
 
     public boolean isIn(){
-        return targetPosition == IN;
+        return spinTargetPosition == IN;
     }
 
-    public double getPosition(){
-        return spin.getPosition();
-    }
 
-    public boolean isFinished() {
-        return Math.abs(spin.getPosition() - targetPosition) <= ERROR;
+    public boolean spinIsFinished() {
+        return Math.abs(spin.getPosition() - spinTargetPosition) <= ERROR;
     }
 
     public boolean clawIsFinished() {
-        boolean result;
-        if(isOpen){
-            result = Math.abs(claw.getPosition() - OPEN) <= ERROR;
-        }else{
-            result = Math.abs(claw.getPosition() - CLOSE) <= ERROR;
-        }
-        return result;
+        return Math.abs(claw.getPosition() - clawTargetPosition) <= ERROR;
+
     }
 
     public boolean isOpen() {
-        return isOpen;
+        return clawTargetPosition==OPEN;
     }
 }

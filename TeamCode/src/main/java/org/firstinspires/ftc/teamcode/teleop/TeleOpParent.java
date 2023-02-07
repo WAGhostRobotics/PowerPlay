@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.component.Arm;
+import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.core.Tom;
@@ -76,6 +77,8 @@ public class TeleOpParent extends LinearOpMode {
         int intakePosition = 0;
         int outtakePosition = 0;
         int armPosition = Arm.TurnValue.PARTIAL.getTicks();
+        double clawPosition = Claw.OPEN;
+        double spinPosition = Claw.IN;
 
         Tom.init(hardwareMap, true);
         if(Tom.imu==null){
@@ -128,17 +131,10 @@ public class TeleOpParent extends LinearOpMode {
             aReader2.readValue();
 
 
-            if(Tom.claw.isIn()){
-                Tom.claw.in();
-            }else{
-                Tom.claw.out();
-            }
+            Tom.claw.setClawPosition(clawPosition);
 
-            if(Tom.claw.isOpen()){
-                Tom.claw.open();
-            }else{
-                Tom.claw.close();
-            }
+
+            Tom.claw.setSpinPosition(spinPosition);
 
 
             //OUTTAKE SLIDES UPDATE
@@ -194,7 +190,7 @@ public class TeleOpParent extends LinearOpMode {
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                 outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                 armPosition = Arm.TurnValue.PARTIAL.getTicks();
-                Tom.claw.in();
+                spinPosition = Claw.IN;
 
                 intakeState = IntakeState.SLIDES_RETRACT;
                 autoPlaceState = State.IDLE;
@@ -203,8 +199,8 @@ public class TeleOpParent extends LinearOpMode {
             if(gamepad1.dpad_down || gamepad2.dpad_down){
                 intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                 armPosition = Arm.TurnValue.EXTENDED.getTicks();
-                Tom.claw.out();
-                Tom.claw.open();
+                spinPosition = Claw.OUT;
+                clawPosition = Claw.OPEN;
                 intakeState = IntakeState.IDLE;
                 autoPlaceState = State.IDLE;
 
@@ -213,8 +209,8 @@ public class TeleOpParent extends LinearOpMode {
             if(gamepad1.dpad_left || gamepad2.dpad_left) {
                 intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
                 armPosition = Arm.TurnValue.EXTENDED.getTicks();
-                Tom.claw.out();
-                Tom.claw.open();
+                spinPosition = Claw.OUT;
+                clawPosition = Claw.OPEN;
                 intakeState = IntakeState.IDLE;
                 autoPlaceState = State.IDLE;
 
@@ -222,14 +218,14 @@ public class TeleOpParent extends LinearOpMode {
 
             if(gamepad1.dpad_right || gamepad2.dpad_right){
                 armPosition = Arm.TurnValue.LOW.getTicks();
-                Tom.claw.out();
+                spinPosition = Claw.OUT;
             }
 
 
             //INTAKE STATE MACHINE
             switch (intakeState) {
                 case SLIDES_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         intakePower = 0.2;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getTicks();
@@ -239,7 +235,7 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case PIVOT_RETRACT:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        Tom.claw.open();
+                        clawPosition = Claw.OPEN;
                         armPosition = Arm.TurnValue.PARTIAL.getTicks();
                         intakePower = 1;
                         intakeState = IntakeState.IDLE;
@@ -254,7 +250,7 @@ public class TeleOpParent extends LinearOpMode {
             //OUTTAKE STATE MACHINE
             switch (autoPlaceState) {
                 case SLIDES_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         intakePower = 0.5;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getTicks();
@@ -264,18 +260,18 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case PIVOT_RETRACT:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        Tom.claw.open();
+                        clawPosition = Claw.OPEN;
                         armPosition = Arm.TurnValue.PARTIAL.getTicks();
                         intakePower = 1;
                         autoPlaceState = State.OUTTAKE_READY;
                     }
                     break;
                 case OUTTAKE_READY:
-                    if(Tom.claw.isFinished()){
+                    if(Tom.claw.clawIsFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                         armPosition = Arm.TurnValue.EXTENDED.getTicks();
-                        Tom.claw.out();
+                        spinPosition = Claw.OUT;
                         autoPlaceState = State.OUTTAKE_EXTEND;
                     }
                     break;
@@ -290,7 +286,7 @@ public class TeleOpParent extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         autoPlaceState = State.IDLE;
                     }
                     break;
@@ -304,7 +300,7 @@ public class TeleOpParent extends LinearOpMode {
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                 outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                 armPosition = Arm.TurnValue.PARTIAL.getTicks();
-                Tom.claw.in();
+                spinPosition = Claw.IN;
                 autoPlaceState = State.SLIDES_RETRACT;
 
                 intakeState = IntakeState.IDLE;
@@ -313,9 +309,9 @@ public class TeleOpParent extends LinearOpMode {
             //CLAW CODE
             if (aReader.wasJustReleased()|| aReader2.wasJustReleased()){
                 if (Tom.claw.isOpen()){
-                    Tom.claw.close();
+                    clawPosition = Claw.CLOSE;
                 } else {
-                    Tom.claw.open();
+                    clawPosition = Claw.OPEN;
                 }
             }
 
