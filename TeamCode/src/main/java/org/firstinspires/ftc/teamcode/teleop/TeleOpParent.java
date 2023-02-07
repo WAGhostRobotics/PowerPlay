@@ -76,7 +76,7 @@ public class TeleOpParent extends LinearOpMode {
 
         int intakePosition = 0;
         int outtakePosition = 0;
-        int armPosition = Arm.TurnValue.PARTIAL.getTicks();
+        double armPosition = Arm.TurnValue.PARTIAL.getPosition();
         double clawPosition = Claw.OPEN;
         double spinPosition = Claw.IN;
 
@@ -158,7 +158,7 @@ public class TeleOpParent extends LinearOpMode {
 
 
 //            //ARM UPDATE
-            Tom.arm.moveToPosition(armPosition, Tom.arm.getAdjustedPower(armPosition));
+            Tom.arm.moveToPosition(armPosition);
 //            Tom.arm.updateTargetPos(armPosition);
 //            if(Tom.arm.isFinished()){
 //                Tom.arm.moveToPosition(armPosition, 0.14);
@@ -170,9 +170,8 @@ public class TeleOpParent extends LinearOpMode {
             telemetry.addData("Target Outtake Pos", outtakePosition);
             telemetry.addData("Intake position", Tom.intake.getTicks());
             telemetry.addData("Target Intake Pos", intakePosition);
-            telemetry.addData("Arm Position", Tom.arm.getTicks());
+            telemetry.addData("Arm Position", Tom.arm.getPosition());
             telemetry.addData("Target Arm Pos", armPosition);
-            telemetry.addData("Arm Power", Tom.arm.getAdjustedPower(armPosition));
             telemetry.update();
 
 
@@ -189,7 +188,7 @@ public class TeleOpParent extends LinearOpMode {
             if(gamepad1.dpad_up || gamepad2.dpad_up){
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                 outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                armPosition = Arm.TurnValue.PARTIAL.getTicks();
+                armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
 
                 intakeState = IntakeState.SLIDES_RETRACT;
@@ -198,7 +197,7 @@ public class TeleOpParent extends LinearOpMode {
 
             if(gamepad1.dpad_down || gamepad2.dpad_down){
                 intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
-                armPosition = Arm.TurnValue.EXTENDED.getTicks();
+                armPosition = Arm.TurnValue.EXTENDED.getPosition();
                 spinPosition = Claw.OUT;
                 clawPosition = Claw.OPEN;
                 intakeState = IntakeState.IDLE;
@@ -208,7 +207,7 @@ public class TeleOpParent extends LinearOpMode {
 
             if(gamepad1.dpad_left || gamepad2.dpad_left) {
                 intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
-                armPosition = Arm.TurnValue.EXTENDED.getTicks();
+                armPosition = Arm.TurnValue.EXTENDED.getPosition();
                 spinPosition = Claw.OUT;
                 clawPosition = Claw.OPEN;
                 intakeState = IntakeState.IDLE;
@@ -217,7 +216,7 @@ public class TeleOpParent extends LinearOpMode {
             }
 
             if(gamepad1.dpad_right || gamepad2.dpad_right){
-                armPosition = Arm.TurnValue.LOW.getTicks();
+                armPosition = Arm.TurnValue.LOW.getPosition();
                 spinPosition = Claw.OUT;
             }
 
@@ -228,7 +227,7 @@ public class TeleOpParent extends LinearOpMode {
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         intakePower = 0.2;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getTicks();
+                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
                         intakeState = IntakeState.PIVOT_RETRACT;
                     }
@@ -236,7 +235,7 @@ public class TeleOpParent extends LinearOpMode {
                 case PIVOT_RETRACT:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
                         clawPosition = Claw.OPEN;
-                        armPosition = Arm.TurnValue.PARTIAL.getTicks();
+                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakePower = 1;
                         intakeState = IntakeState.IDLE;
                     }
@@ -253,7 +252,7 @@ public class TeleOpParent extends LinearOpMode {
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         intakePower = 0.5;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getTicks();
+                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
                         autoPlaceState = State.PIVOT_RETRACT;
                     }
@@ -261,7 +260,7 @@ public class TeleOpParent extends LinearOpMode {
                 case PIVOT_RETRACT:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
                         clawPosition = Claw.OPEN;
-                        armPosition = Arm.TurnValue.PARTIAL.getTicks();
+                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakePower = 1;
                         autoPlaceState = State.OUTTAKE_READY;
                     }
@@ -270,7 +269,7 @@ public class TeleOpParent extends LinearOpMode {
                     if(Tom.claw.clawIsFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
-                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
+                        armPosition = Arm.TurnValue.EXTENDED.getPosition();
                         spinPosition = Claw.OUT;
                         autoPlaceState = State.OUTTAKE_EXTEND;
                     }
@@ -299,7 +298,7 @@ public class TeleOpParent extends LinearOpMode {
             if(gamepad1.right_stick_button){
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                 outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                armPosition = Arm.TurnValue.PARTIAL.getTicks();
+                armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
                 autoPlaceState = State.SLIDES_RETRACT;
 

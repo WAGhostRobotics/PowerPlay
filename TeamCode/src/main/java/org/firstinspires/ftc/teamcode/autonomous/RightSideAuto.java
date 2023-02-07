@@ -51,7 +51,7 @@ public class RightSideAuto extends LinearOpMode {
 
         int intakePosition = 0;
         int outtakePosition = 0;
-        int armPosition = Arm.TurnValue.PARTIAL.getTicks();
+        double armPosition = Arm.TurnValue.PARTIAL.getPosition();
         double clawPosition = Claw.OPEN;
         double spinPosition = Claw.IN;
         int cone = 1;
@@ -136,7 +136,7 @@ public class RightSideAuto extends LinearOpMode {
             }
 
 
-            Tom.arm.moveToPosition(armPosition, Tom.arm.getAdjustedPower(armPosition));
+            Tom.arm.moveToPosition(armPosition);
 
             Tom.claw.setClawPosition(clawPosition);
 
@@ -157,19 +157,19 @@ public class RightSideAuto extends LinearOpMode {
 
                         switch(cone){
                             case 1:
-                                armPosition = Arm.TurnValue.CONE1.getTicks();
+                                armPosition = Arm.TurnValue.CONE1.getPosition();
                                 break;
                             case 2:
-                                armPosition = Arm.TurnValue.CONE2.getTicks();
+                                armPosition = Arm.TurnValue.CONE2.getPosition();
                                 break;
                             case 3:
-                                armPosition = Arm.TurnValue.CONE3.getTicks();
+                                armPosition = Arm.TurnValue.CONE3.getPosition();
                                 break;
                             case 4:
-                                armPosition = Arm.TurnValue.CONE4.getTicks();
+                                armPosition = Arm.TurnValue.CONE4.getPosition();
                                 break;
                             case 5:
-                                armPosition = Arm.TurnValue.CONE5.getTicks();
+                                armPosition = Arm.TurnValue.CONE5.getPosition();
                                 break;
                             case 6:
                                 state = State.PARK;
@@ -213,7 +213,7 @@ public class RightSideAuto extends LinearOpMode {
                     break;
                 case DONE_GRABBING:
                     if(Tom.claw.clawIsFinished()){
-                        armPosition = Arm.TurnValue.LOW.getTicks();
+                        armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }
                     break;
@@ -221,7 +221,7 @@ public class RightSideAuto extends LinearOpMode {
                     if(Tom.arm.isFinished()){
                         intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                        armPosition = Arm.TurnValue.PARTIAL.getTicks();
+                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         spinPosition = Claw.IN;
                         state = State.SLIDES_RETRACT;
                     }
@@ -229,7 +229,7 @@ public class RightSideAuto extends LinearOpMode {
                 case SLIDES_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getTicks();
+                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
 
                         state = State.PIVOT_RETRACT;
@@ -238,7 +238,7 @@ public class RightSideAuto extends LinearOpMode {
                 case PIVOT_RETRACT:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
                         clawPosition = Claw.OPEN;
-                        armPosition = Arm.TurnValue.PARTIAL.getTicks();
+                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         state = State.OUTTAKE_READY;
                     }
                     break;
@@ -246,7 +246,7 @@ public class RightSideAuto extends LinearOpMode {
                     if(Tom.claw.clawIsFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
-                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
+                        armPosition = Arm.TurnValue.EXTENDED.getPosition();
                         spinPosition = Claw.OUT;
                         state = State.OUTTAKE_EXTEND;
                     }

@@ -1,130 +1,68 @@
 package org.firstinspires.ftc.teamcode.component;
 
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.util.Encoder;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Arm {
-    private CRServo arm1;
-    private CRServo arm2;
-    private DcMotor armPosition;
-    private final double POWER = 1;
-    private final double ERROR = 100;
-    private int targetPos = 0;
+    private Servo arm1;
+    private Servo arm2;
+    private final double ERROR = 0.05;
+    private double targetPos = 0;
 
 
-    private double maxPower = 0.8;
-    private double minPower = 0.05;
-
-    private int MIN = 0;
-    private int MAX = 2000;
 
 
     public enum TurnValue {
 
 
 
-        EXTENDED(2870),
-        PARTIAL(-100),
-        RETRACTED(-400),
-        LOW(890),
-        CONE1(2270),
-        CONE2(2390),
-        CONE3(2550),
-        CONE4(2670),
-        CONE5(2870);
+        EXTENDED(1),
+        PARTIAL(0.1),
+        RETRACTED(0),
+        LOW(0.5),
+        CONE1(0.96),
+        CONE2(0.97),
+        CONE3(0.98),
+        CONE4(0.99),
+        CONE5(1);
 
-        int ticks;
+        double position;
 
-        TurnValue(int ticks) {
-            this.ticks = ticks;
+        TurnValue(double position) {
+            this.position = position;
         }
 
-        public int getTicks() {
-            return ticks;
+        public double getPosition() {
+            return position;
         }
     }
 
 
 
     public void init(HardwareMap hwMap, boolean teleop) {
-        if(teleop){
-            arm1 = hwMap.get(CRServo.class, "arm1");
-            arm1.setDirection(DcMotorSimple.Direction.REVERSE);
-            arm2 = hwMap.get(CRServo.class, "arm2");
-            armPosition = hwMap.get(DcMotor.class, "armPosition");
-        }else{
-            arm1 = hwMap.get(CRServo.class, "arm1");
-            arm1.setDirection(DcMotorSimple.Direction.REVERSE);
-            arm2 = hwMap.get(CRServo.class, "arm2");
-            armPosition = hwMap.get(DcMotor.class, "armPosition");
-            armPosition.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
+        arm1 = hwMap.get(Servo.class, "arm1");
+//        arm1.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm2 = hwMap.get(Servo.class, "arm2");
 
     }
 
-    public void moveToPosition(int ticks, double power){
-        armPosition.setTargetPosition(ticks); // useless line of code
-        targetPos = ticks;
-
-
-        int multiplier = 1;//positive if the claw needs to go up, negative if it needs to go down
-
-        if(armPosition.getCurrentPosition()>ticks){
-            multiplier = -1;
-        }
-
-
-        //sets power and mode
-        setPower(multiplier * power);
-
+    public double getPosition(){
+        return arm1.getPosition();
     }
 
-    public void updateTargetPos(int targetPos){
-        this.targetPos =  targetPos;
+    public void moveToPosition(double position){
+        targetPos = position;
+        arm1.setPosition(position);
+        arm2.setPosition(position);
+
     }
-
-    public double getAdjustedPower(int targetPos){
-        double power = (((maxPower-minPower)*Math.abs(targetPos-armPosition.getCurrentPosition()))/(MAX-MIN)) + minPower;
-
-
-        if(power>1){
-            power = 1;
-        }
-
-
-        return power;
-    }
-
-
-
-
-
-    public boolean isBusy(){
-        return armPosition.isBusy();
-    }
-
-    public int getTicks(){
-        return armPosition.getCurrentPosition();
-    }
-
-
 
     public boolean isFinished(){
-        return Math.abs(armPosition.getCurrentPosition()-targetPos)<=ERROR;
+        return Math.abs(arm1.getPosition()-targetPos)<=ERROR;
     }
 
-    public void stopArm(){
-        setPower(0);
-    }
 
-    public void setPower(double power){
-        arm1.setPower(power);
-        arm2.setPower(power);
-    }
 }
