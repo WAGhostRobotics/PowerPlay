@@ -115,6 +115,7 @@ public class LeftSideAuto extends LinearOpMode {
 
         state = State.GO_TO_PLACE;
         drive.followTrajectoryAsync(goToCone);
+        Tom.claw.open();
 
 
         while(opModeIsActive()){
