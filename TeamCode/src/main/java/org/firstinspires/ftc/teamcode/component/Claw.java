@@ -20,7 +20,7 @@ public class Claw {
 
     private double clawTargetPosition = CLOSE;
 
-    private final double ERROR =  0.05;
+    private final double ERROR =  0.01;
 
 
 

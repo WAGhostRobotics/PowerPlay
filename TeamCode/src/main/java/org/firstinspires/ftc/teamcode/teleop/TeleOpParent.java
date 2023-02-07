@@ -333,10 +333,18 @@ public class TeleOpParent extends LinearOpMode {
             //ARM MINOR ADJUSTMENT
 
             if(gamepad1.back){
-                armPosition -= 40;
+                armPosition -= 0.01;
+
+                if(armPosition<0){
+                    armPosition = 0;
+                }
 
             }else if(gamepad1.left_stick_button){
-                armPosition += 40;
+                armPosition += 0.01;
+
+                if(armPosition>1){
+                    armPosition = 1;
+                }
 
             }
 

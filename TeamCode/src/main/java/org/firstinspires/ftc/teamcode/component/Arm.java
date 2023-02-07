@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     private Servo arm1;
     private Servo arm2;
-    private final double ERROR = 0.05;
+    private final double ERROR = 0.01;
     private double targetPos = 0;
 
 
