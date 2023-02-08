@@ -36,6 +36,7 @@ public class LeftSideAuto extends LinearOpMode {
         DONE_GRABBING,
         RETRACT_READY,
         SLIDES_RETRACT,
+        CLAW_OPEN,
         PIVOT_RETRACT,
         OUTTAKE_READY,
         PARK,
@@ -232,6 +233,12 @@ public class LeftSideAuto extends LinearOpMode {
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
 
+                        state = State.CLAW_OPEN;
+                    }
+                    break;
+                case CLAW_OPEN:
+                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
+                        clawPosition = Claw.OPEN;
                         state = State.PIVOT_RETRACT;
                     }
                     break;

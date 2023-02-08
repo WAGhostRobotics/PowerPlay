@@ -38,12 +38,14 @@ public class TeleOpParent extends LinearOpMode {
 
     enum IntakeState{
         SLIDES_RETRACT,
+        CLAW_OPEN,
         PIVOT_RETRACT,
         IDLE
     }
 
     enum State {
         SLIDES_RETRACT,
+        CLAW_OPEN,
         PIVOT_RETRACT,
         OUTTAKE_READY,
         OUTTAKE_EXTEND,
@@ -228,25 +230,26 @@ public class TeleOpParent extends LinearOpMode {
             switch (intakeState) {
                 case SLIDES_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        intakePower = 0.2;
+
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
-                        intake = 0;
 
+                        intakeState = IntakeState.CLAW_OPEN;
+                    }
+                    break;
+                case CLAW_OPEN:
+                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
+                        clawPosition = Claw.OPEN;
                         intakeState = IntakeState.PIVOT_RETRACT;
                     }
                     break;
                 case PIVOT_RETRACT:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        clawPosition = Claw.OPEN;
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                        intakePower = 1;
-                        intake = 1;
                         intakeState = IntakeState.IDLE;
                     }
                     break;
                 case IDLE:
-                    intake = 3;
                     break;
 
             }
@@ -260,6 +263,12 @@ public class TeleOpParent extends LinearOpMode {
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
+                        autoPlaceState = State.CLAW_OPEN;
+                    }
+                    break;
+                case CLAW_OPEN:
+                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
+                        clawPosition = Claw.OPEN;
                         autoPlaceState = State.PIVOT_RETRACT;
                     }
                     break;

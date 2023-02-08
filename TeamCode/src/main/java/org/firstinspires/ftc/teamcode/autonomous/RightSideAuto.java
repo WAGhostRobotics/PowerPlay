@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.teleop.TeleOpParent;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Right Side", group = "competition")
@@ -36,6 +37,7 @@ public class RightSideAuto extends LinearOpMode {
         DONE_GRABBING,
         RETRACT_READY,
         SLIDES_RETRACT,
+        CLAW_OPEN,
         PIVOT_RETRACT,
         OUTTAKE_READY,
         PARK,
@@ -232,6 +234,12 @@ public class RightSideAuto extends LinearOpMode {
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
 
+                        state = State.CLAW_OPEN;
+                    }
+                    break;
+                case CLAW_OPEN:
+                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
+                        clawPosition = Claw.OPEN;
                         state = State.PIVOT_RETRACT;
                     }
                     break;

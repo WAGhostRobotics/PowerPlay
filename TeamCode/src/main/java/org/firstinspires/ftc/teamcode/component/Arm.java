@@ -10,7 +10,7 @@ public class Arm {
     private Servo arm1;
     private Servo arm2;
     private DcMotor armPosition;
-    private final double ERROR = 100;
+    private final double ERROR = 150;
     private double targetPos = 0;
 
 
@@ -20,15 +20,15 @@ public class Arm {
 
 
 
-        EXTENDED(1),
-        PARTIAL(0.1),
-        RETRACTED(0),
-        LOW(0.5),
-        CONE1(0.96),
-        CONE2(0.97),
-        CONE3(0.98),
-        CONE4(0.99),
-        CONE5(1);
+        EXTENDED(0.03),
+        PARTIAL(0.79),
+        RETRACTED(0.91),
+        LOW(0.56),
+        CONE1(0.1),
+        CONE2(0.1),
+        CONE3(0.1),
+        CONE4(0.1),
+        CONE5(0.1);
 
         double position;
 
@@ -58,7 +58,7 @@ public class Arm {
     }
 
     public double getPosition(){
-        return arm1.getPosition();
+        return armPosition.getCurrentPosition();
     }
 
     public void moveToPosition(double position){
@@ -69,7 +69,10 @@ public class Arm {
     }
 
     public boolean isFinished(){
-        return Math.abs(armPosition.getCurrentPosition()-targetPos)<=ERROR;
+
+        double encoderPosition = ((-3700.0)*targetPos) + 2974;
+
+        return Math.abs(armPosition.getCurrentPosition()-encoderPosition)<=ERROR;
     }
 
 
