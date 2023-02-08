@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     private Servo arm1;
     private Servo arm2;
-    private final double ERROR = 0.01;
+    private DcMotor armPosition;
+    private final double ERROR = 100;
     private double targetPos = 0;
 
 
@@ -44,8 +45,15 @@ public class Arm {
 
     public void init(HardwareMap hwMap, boolean teleop) {
         arm1 = hwMap.get(Servo.class, "arm1");
-//        arm1.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm1.setDirection(Servo.Direction.REVERSE);
         arm2 = hwMap.get(Servo.class, "arm2");
+
+        if(teleop){
+            armPosition = hwMap.get(DcMotor.class, "armPosition");
+        }else{
+            armPosition = hwMap.get(DcMotor.class, "armPosition");
+            armPosition.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
 
     }
 
@@ -61,7 +69,7 @@ public class Arm {
     }
 
     public boolean isFinished(){
-        return Math.abs(arm1.getPosition()-targetPos)<=ERROR;
+        return Math.abs(armPosition.getCurrentPosition()-targetPos)<=ERROR;
     }
 
 

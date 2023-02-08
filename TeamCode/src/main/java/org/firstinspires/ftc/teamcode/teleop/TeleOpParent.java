@@ -54,6 +54,7 @@ public class TeleOpParent extends LinearOpMode {
     State autoPlaceState = State.IDLE;
     IntakeState intakeState = IntakeState.IDLE;
     double intakePower = 1;
+    int intake = -1;
 
 
     @Override
@@ -172,6 +173,8 @@ public class TeleOpParent extends LinearOpMode {
             telemetry.addData("Target Intake Pos", intakePosition);
             telemetry.addData("Arm Position", Tom.arm.getPosition());
             telemetry.addData("Target Arm Pos", armPosition);
+            telemetry.addData("Intake State", intake);
+
             telemetry.update();
 
 
@@ -228,6 +231,7 @@ public class TeleOpParent extends LinearOpMode {
                         intakePower = 0.2;
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
+                        intake = 0;
 
                         intakeState = IntakeState.PIVOT_RETRACT;
                     }
@@ -237,10 +241,12 @@ public class TeleOpParent extends LinearOpMode {
                         clawPosition = Claw.OPEN;
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakePower = 1;
+                        intake = 1;
                         intakeState = IntakeState.IDLE;
                     }
                     break;
                 case IDLE:
+                    intake = 3;
                     break;
 
             }

@@ -41,7 +41,7 @@ public class Tom {
 
 
         outtake = new OuttakeSlides();
-        outtake.init(hwMap);
+
 
         claw = new Claw();
         claw.init(hwMap);
@@ -70,9 +70,12 @@ public class Tom {
 
             arm.init(hwMap, true);
             intake.init(hwMap, true);
+            outtake.init(hwMap, true);
         }else{
             arm.init(hwMap, false);
             intake.init(hwMap, false);
+            outtake.init(hwMap, false);
+//            System.exit(0);
         }
     }
 

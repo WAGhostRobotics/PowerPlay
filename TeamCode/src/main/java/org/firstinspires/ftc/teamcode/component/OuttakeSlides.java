@@ -27,10 +27,15 @@ public class OuttakeSlides {
         }
     }
 
-    public void init(HardwareMap hwMap) {
-       slides = hwMap.get(DcMotor.class, "outtake");
-       slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-       slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void init(HardwareMap hwMap, boolean teleop) {
+       if(teleop){
+           slides = hwMap.get(DcMotor.class, "outtake");
+           slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       }else{
+           slides = hwMap.get(DcMotor.class, "outtake");
+           slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+           slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       }
     }
 
     public void moveToPosition(int ticks){
