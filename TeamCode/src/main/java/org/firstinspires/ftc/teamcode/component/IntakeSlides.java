@@ -14,8 +14,8 @@ public class IntakeSlides {
 
     public enum TurnValue {
         RETRACTED(0),
-        PLACE_CONE(40),
-        PARTIAL(40),
+        PLACE_CONE(15),
+        PARTIAL(15),
         ALMOST_DONE(210),
         EXTENDED(425),
         AUTO_EXTENDED(320);

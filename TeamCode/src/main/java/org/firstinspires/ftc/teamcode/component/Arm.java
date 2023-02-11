@@ -10,7 +10,7 @@ public class Arm {
     private Servo arm1;
     private Servo arm2;
     private DcMotor armPosition;
-    private final double ERROR = 150;
+    private final double ERROR = 220;
     private double targetPos = 0;
 
 
@@ -24,11 +24,11 @@ public class Arm {
         PARTIAL(0.79),
         RETRACTED(0.91),
         LOW(0.56),
-        CONE1(0.1),
-        CONE2(0.1),
-        CONE3(0.1),
-        CONE4(0.1),
-        CONE5(0.1);
+        CONE1(0.15),
+        CONE2(0.12),
+        CONE3(0.09),
+        CONE4(0.06),
+        CONE5(0.03);
 
         double position;
 
@@ -45,8 +45,10 @@ public class Arm {
 
     public void init(HardwareMap hwMap, boolean teleop) {
         arm1 = hwMap.get(Servo.class, "arm1");
-        arm1.setDirection(Servo.Direction.REVERSE);
+
         arm2 = hwMap.get(Servo.class, "arm2");
+        arm2.setDirection(Servo.Direction.REVERSE);
+
 
         if(teleop){
             armPosition = hwMap.get(DcMotor.class, "armPosition");
@@ -70,7 +72,7 @@ public class Arm {
 
     public boolean isFinished(){
 
-        double encoderPosition = ((-3700.0)*targetPos) + 2974;
+        double encoderPosition = ((-3891.0 - 2/3.0)*targetPos) + 3575.42;
 
         return Math.abs(armPosition.getCurrentPosition()-encoderPosition)<=ERROR;
     }

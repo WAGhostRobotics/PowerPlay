@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
@@ -31,7 +32,6 @@ public class RightSideAuto extends LinearOpMode {
     enum State {
         GO_TO_PLACE,
         OUTTAKE_EXTEND,
-        OUTTAKE_RETRACT,
         INTAKE_FULLY_EXTEND,
         INTAKE_GRAB,
         DONE_GRABBING,
@@ -40,6 +40,7 @@ public class RightSideAuto extends LinearOpMode {
         CLAW_OPEN,
         PIVOT_RETRACT,
         OUTTAKE_READY,
+        READY_TO_PARK,
         PARK,
         IDLE
     }
@@ -121,7 +122,10 @@ public class RightSideAuto extends LinearOpMode {
         drive.followTrajectoryAsync(goToCone);
 
 
-        while(opModeIsActive()){
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+
+        while(opModeIsActive() && !isStopRequested()){
 
 
             //INTAKE SLIDES UPDATE
@@ -155,31 +159,14 @@ public class RightSideAuto extends LinearOpMode {
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
 
-                        state = State.OUTTAKE_EXTEND;
 
-                        switch(cone){
-                            case 1:
-                                armPosition = Arm.TurnValue.CONE1.getPosition();
-                                break;
-                            case 2:
-                                armPosition = Arm.TurnValue.CONE2.getPosition();
-                                break;
-                            case 3:
-                                armPosition = Arm.TurnValue.CONE3.getPosition();
-                                break;
-                            case 4:
-                                armPosition = Arm.TurnValue.CONE4.getPosition();
-                                break;
-                            case 5:
-                                armPosition = Arm.TurnValue.CONE5.getPosition();
-                                break;
-                            case 6:
-                                state = State.PARK;
-                                drive.followTrajectoryAsync(park);
 
-                        }
+                        armPosition = Arm.TurnValue.CONE1.getPosition();
+
                         cone++;
                         spinPosition = Claw.OUT;
+
+                        state = State.OUTTAKE_EXTEND;
 
 
                     }
@@ -189,20 +176,12 @@ public class RightSideAuto extends LinearOpMode {
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;
-                        state = State.OUTTAKE_RETRACT;
-
-                    }
-                    break;
-                case OUTTAKE_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-
-                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         state = State.INTAKE_FULLY_EXTEND;
+
                     }
                     break;
                 case INTAKE_FULLY_EXTEND:
-                    if(Tom.intake.isFinished()){
+                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks();
                         state = State.INTAKE_GRAB;
                     }
@@ -210,11 +189,12 @@ public class RightSideAuto extends LinearOpMode {
                 case INTAKE_GRAB:
                     if(Tom.intake.isFinished()){
                         spinPosition = Claw.CLOSE;
+                        time.reset();
                         state = State.DONE_GRABBING;
                     }
                     break;
                 case DONE_GRABBING:
-                    if(Tom.claw.clawIsFinished()){
+                    if(time.milliseconds()>300){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }
@@ -240,28 +220,60 @@ public class RightSideAuto extends LinearOpMode {
                 case CLAW_OPEN:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
                         clawPosition = Claw.OPEN;
+                        time.reset();
                         state = State.PIVOT_RETRACT;
                     }
                     break;
                 case PIVOT_RETRACT:
-                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        clawPosition = Claw.OPEN;
+                    if(time.milliseconds()>300){
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         state = State.OUTTAKE_READY;
                     }
                     break;
                 case OUTTAKE_READY:
-                    if(Tom.claw.clawIsFinished()){
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
-                        armPosition = Arm.TurnValue.EXTENDED.getPosition();
-                        spinPosition = Claw.OUT;
+                    if(Tom.arm.isFinished()){
                         state = State.OUTTAKE_EXTEND;
+                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
+                        spinPosition = Claw.OUT;
+                        switch(cone){
+                            case 1:
+                                armPosition = Arm.TurnValue.CONE1.getPosition();
+                                break;
+                            case 2:
+                                armPosition = Arm.TurnValue.CONE2.getPosition();
+                                break;
+                            case 3:
+                                armPosition = Arm.TurnValue.CONE3.getPosition();
+                                break;
+                            case 4:
+                                armPosition = Arm.TurnValue.CONE4.getPosition();
+                                break;
+                            case 5:
+                                armPosition = Arm.TurnValue.CONE5.getPosition();
+                                break;
+                            case 6:
+                                state = State.READY_TO_PARK;
+                                armPosition = Arm.TurnValue.PARTIAL.getPosition();
+                                spinPosition = Claw.IN;
+                                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
+                                break;
+
+                        }
+                        cone++;
+
+
                     }
                     break;
-
+                case READY_TO_PARK:
+                    if(Tom.outtake.isFinished()){
+                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                        drive.followTrajectoryAsync(park);
+                        state = State.PARK;
+                    }
+                    break;
                 case PARK:
-                    if(!drive.isBusy()){
+                    if(!drive.isBusy()&&Tom.outtake.isFinished()){
                         state = State.IDLE;
                     }
                     break;
