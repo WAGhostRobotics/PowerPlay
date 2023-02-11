@@ -166,6 +166,7 @@ public class LeftSideAuto extends LinearOpMode {
 
                         armPosition = Arm.TurnValue.CONE1.getPosition();
 
+                        cone++;
                         spinPosition = Claw.OUT;
 
                         state = State.OUTTAKE_EXTEND;
