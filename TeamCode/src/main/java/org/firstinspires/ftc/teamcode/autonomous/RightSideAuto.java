@@ -90,6 +90,7 @@ public class RightSideAuto extends LinearOpMode {
             tagOfInterest = Tom.webcam.getTagOfInterest();
 
 
+
             //telemetry for the position
             if (location != null && tagOfInterest != null) {
                 telemetry.addData("Location", location);
@@ -99,6 +100,7 @@ public class RightSideAuto extends LinearOpMode {
                 telemetry.update();
             }
 
+            Tom.arm.moveToPosition(Arm.TurnValue.PARTIAL.getPosition());
 
         }
 
