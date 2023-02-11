@@ -127,7 +127,7 @@ public class TeleOpParent extends LinearOpMode {
             if (rightStickReader.getState()) {
                 power = 0.2;
             } else {
-                power = 0.85;
+                power = 0.65;
             }
             rightStickReader.readValue();
             aReader.readValue();
@@ -283,7 +283,8 @@ public class TeleOpParent extends LinearOpMode {
                 case OUTTAKE_READY:
                     if(Tom.claw.clawIsFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
+
+//                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
                         armPosition = Arm.TurnValue.EXTENDED.getPosition();
                         spinPosition = Claw.OUT;
                         autoPlaceState = State.OUTTAKE_EXTEND;
@@ -301,6 +302,7 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case OUTTAKE_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
+                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks(); //possibly make this earlier
                         autoPlaceState = State.IDLE;
                     }
                     break;
