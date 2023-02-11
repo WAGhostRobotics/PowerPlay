@@ -270,12 +270,12 @@ public class RightSideAuto extends LinearOpMode {
                 case READY_TO_PARK:
                     if(Tom.outtake.isFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                        drive.followTrajectoryAsync(park);
                         state = State.PARK;
                     }
                     break;
                 case PARK:
-                    if(!drive.isBusy()&&Tom.outtake.isFinished()){
+                    if(Tom.outtake.isFinished()){
+                        drive.followTrajectoryAsync(park);
                         state = State.IDLE;
                     }
                     break;
