@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -49,6 +50,7 @@ public class TeleOpParent extends LinearOpMode {
         PIVOT_RETRACT,
         OUTTAKE_READY,
         OUTTAKE_EXTEND,
+        WAIT_FOR_OUTTAKE,
         OUTTAKE_RETRACT,
         IDLE
     }
@@ -61,6 +63,8 @@ public class TeleOpParent extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        ElapsedTime time = new ElapsedTime();
 
         GamepadEx driverOp = new GamepadEx(gamepad2);
         ToggleButtonReader rightStickReader = new ToggleButtonReader(
@@ -240,11 +244,12 @@ public class TeleOpParent extends LinearOpMode {
                 case CLAW_OPEN:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
                         clawPosition = Claw.OPEN;
+                        time.reset();
                         intakeState = IntakeState.PIVOT_RETRACT;
                     }
                     break;
                 case PIVOT_RETRACT:
-                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
+                    if(time.milliseconds()>200){
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakeState = IntakeState.IDLE;
                     }
@@ -269,12 +274,12 @@ public class TeleOpParent extends LinearOpMode {
                 case CLAW_OPEN:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
                         clawPosition = Claw.OPEN;
+                        time.reset();
                         autoPlaceState = State.PIVOT_RETRACT;
                     }
                     break;
                 case PIVOT_RETRACT:
-                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        clawPosition = Claw.OPEN;
+                    if(time.milliseconds()>200){
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakePower = 1;
                         autoPlaceState = State.OUTTAKE_READY;
@@ -284,14 +289,21 @@ public class TeleOpParent extends LinearOpMode {
                     if(Tom.claw.clawIsFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
 
-//                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
+                    intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                         armPosition = Arm.TurnValue.EXTENDED.getPosition();
                         spinPosition = Claw.OUT;
+                        autoPlaceState = State.WAIT_FOR_OUTTAKE;
+                    }
+                    break;
+                case WAIT_FOR_OUTTAKE:
+                    if(Tom.outtake.isFinished()){
+                        time.reset();
                         autoPlaceState = State.OUTTAKE_EXTEND;
+
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(Tom.outtake.isFinished()){
+                    if(time.milliseconds()>300){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
@@ -299,10 +311,9 @@ public class TeleOpParent extends LinearOpMode {
                         autoPlaceState = State.OUTTAKE_RETRACT;
 
                     }
-                    break;
-                case OUTTAKE_RETRACT:
+                    break; case OUTTAKE_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks(); //possibly make this earlier
+                        intakePosition = IntakeSlides.TurnValue.AUTO_STACK.getTicks(); //possibly make this earlier
                         autoPlaceState = State.IDLE;
                     }
                     break;
@@ -317,6 +328,7 @@ public class TeleOpParent extends LinearOpMode {
                 outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
+                time.reset();
                 autoPlaceState = State.SLIDES_RETRACT;
 
                 intakeState = IntakeState.IDLE;

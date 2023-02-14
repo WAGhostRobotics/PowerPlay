@@ -10,25 +10,22 @@ public class Arm {
     private Servo arm1;
     private Servo arm2;
     private DcMotor armPosition;
-    private final double ERROR = 220;
+    private final double ERROR = 270;
     private double targetPos = 0;
 
 
 
 
     public enum TurnValue {
-
-
-
-        EXTENDED(0.03),
-        PARTIAL(0.79),
-        RETRACTED(0.91),
-        LOW(0.56),
-        CONE1(0.15),
-        CONE2(0.12),
-        CONE3(0.09),
-        CONE4(0.06),
-        CONE5(0.03);
+        EXTENDED(0.07),
+        PARTIAL(0.74),
+        RETRACTED(0.82),
+        LOW(0.58),
+        CONE1(0.22),
+        CONE2(0.18),
+        CONE3(0.15),
+        CONE4(0.13),
+        CONE5(0.06);
 
         double position;
 
