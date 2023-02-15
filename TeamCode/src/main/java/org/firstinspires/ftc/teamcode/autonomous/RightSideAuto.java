@@ -193,7 +193,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                     case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>200){
+                    if(time.milliseconds()>100){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;
