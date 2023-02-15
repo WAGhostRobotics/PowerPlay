@@ -216,7 +216,7 @@ public class TeleOpParent extends LinearOpMode {
 
             if(gamepad1.dpad_left || gamepad2.dpad_left) {
                 intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
-                armPosition = Arm.TurnValue.EXTENDED.getPosition();
+                armPosition = Arm.TurnValue.SUPER_EXTENDED.getPosition();
                 spinPosition = Claw.OUT;
                 clawPosition = Claw.OPEN;
                 intakeState = IntakeState.IDLE;
@@ -303,7 +303,7 @@ public class TeleOpParent extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>300){
+                    if(time.milliseconds()>150){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();

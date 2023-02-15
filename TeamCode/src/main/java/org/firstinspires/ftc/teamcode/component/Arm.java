@@ -17,15 +17,16 @@ public class Arm {
 
 
     public enum TurnValue {
-        EXTENDED(0.07),
-        PARTIAL(0.74),
-        RETRACTED(0.82),
-        LOW(0.58),
-        CONE1(0.22),
-        CONE2(0.18),
-        CONE3(0.15),
-        CONE4(0.13),
-        CONE5(0.06);
+        EXTENDED(0.10),
+        SUPER_EXTENDED(0.13),
+        PARTIAL(0.75),
+        RETRACTED(0.88),
+        LOW(0.61),
+        CONE1(0.26),
+        CONE2(0.22),
+        CONE3(0.19),
+        CONE4(0.15),
+        CONE5(0.10);
 
         double position;
 
@@ -69,7 +70,7 @@ public class Arm {
 
     public boolean isFinished(){
 
-        double encoderPosition = ((-3891.0 - 2/3.0)*targetPos) + 3575.42;
+        double encoderPosition = ((-3828.3582089552)*targetPos) + 3490.9850746268;
 
         return Math.abs(armPosition.getCurrentPosition()-encoderPosition)<=ERROR;
     }

@@ -9,12 +9,15 @@ public class OuttakeSlides {
     private final double POWER = 1;
     private final double ERROR = 50;
 
+    private final double minPower = 0.3;
+    private final double maxPower = 1;
+
 
     public enum TurnValue {
-        RETRACTED(0),
+        RETRACTED(-50),
         MID(570),
         ON_THE_WAY_DOWN(700),
-        TOP(920);
+        TOP(900);
 
         int ticks;
 
@@ -58,6 +61,27 @@ public class OuttakeSlides {
         slides.setPower(0.6);
         slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
+    public void moveToPosition(int ticks, double power){
+        int multiplier = 1;//positive if the claw needs to go up, negative if it needs to go down
+
+        if(slides.getCurrentPosition()>ticks){
+            multiplier = -1;
+        }
+        slides.setTargetPosition(ticks);
+
+
+        //sets power and mode
+        slides.setPower(multiplier * power);
+        slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public double getAdjustedPower(){
+        double power = (((maxPower-minPower)*Math.abs(slides.getTargetPosition()-slides.getCurrentPosition()))/(100)) + minPower;
+
+        return power;
+    }
+
 
     // move claw down by small increments
     public void moveDown(){

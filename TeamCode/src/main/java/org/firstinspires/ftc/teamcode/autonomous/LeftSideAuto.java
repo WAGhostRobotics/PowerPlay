@@ -133,7 +133,7 @@ public class LeftSideAuto extends LinearOpMode {
 
 
             //INTAKE SLIDES UPDATE
-            Tom.intake.moveToPosition(intakePosition, Tom.intake.getAdjustedPower());
+            Tom.intake.moveToPosition(intakePosition, 1);
             if(!Tom.intake.isBusy()){
                 Tom.intake.stopArm();
             }
@@ -163,8 +163,6 @@ public class LeftSideAuto extends LinearOpMode {
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
 
-
-
                         armPosition = Arm.TurnValue.CONE1.getPosition();
 
                         cone++;
@@ -187,8 +185,9 @@ public class LeftSideAuto extends LinearOpMode {
                         }
 
                     }
-                    break;case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>300){
+                    break;
+                case OUTTAKE_EXTEND:
+                    if(time.milliseconds()>100){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;
@@ -210,7 +209,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case DONE_GRABBING:
-                    if(time.milliseconds()>300){
+                    if(time.milliseconds() > 300){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }
@@ -241,7 +240,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case PIVOT_RETRACT:
-                    if(time.milliseconds()>300){
+                    if(time.milliseconds()>100){
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         state = State.OUTTAKE_READY;
                     }
