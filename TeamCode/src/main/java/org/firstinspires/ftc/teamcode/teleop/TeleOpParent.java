@@ -145,7 +145,7 @@ public class TeleOpParent extends LinearOpMode {
 
 
             //OUTTAKE SLIDES UPDATE
-            Tom.outtake.moveToPosition(outtakePosition);
+            Tom.outtake.moveToPosition(outtakePosition, Tom.outtake.getAdjustedPower());
             if(!Tom.outtake.isBusy()){
                 Tom.outtake.stopArm();
             }
@@ -194,9 +194,9 @@ public class TeleOpParent extends LinearOpMode {
 
 
             //INTAKE CONTROLLER
-            if(gamepad1.dpad_up || gamepad2.dpad_up){
+            if(gamepad1.dpad_right || gamepad2.dpad_right){
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
 
@@ -224,7 +224,8 @@ public class TeleOpParent extends LinearOpMode {
 
             }
 
-            if(gamepad1.dpad_right || gamepad2.dpad_right){
+            if(gamepad1.dpad_up || gamepad2.dpad_up){
+                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                 armPosition = Arm.TurnValue.LOW.getPosition();
                 spinPosition = Claw.OUT;
             }
@@ -235,6 +236,7 @@ public class TeleOpParent extends LinearOpMode {
                 case SLIDES_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
 
+                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
@@ -264,7 +266,7 @@ public class TeleOpParent extends LinearOpMode {
             switch (autoPlaceState) {
                 case SLIDES_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        intakePower = 0.5;
+                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
@@ -325,7 +327,7 @@ public class TeleOpParent extends LinearOpMode {
             //AUTO PLACE CONTROLLER (MASTER BUTTON)
             if(gamepad1.right_stick_button){
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
                 time.reset();
@@ -347,8 +349,14 @@ public class TeleOpParent extends LinearOpMode {
             //OUTTAKE MINOR ADJUSTMENTS
             if (gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
                 outtakePosition += 10;
+
+
             } else if (gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
                 outtakePosition -= 10;
+
+                if(outtakePosition<0){
+                    outtakePosition = 0;
+                }
             }
 
             //INTAKE MINOR ADJUSTMENT
@@ -356,6 +364,10 @@ public class TeleOpParent extends LinearOpMode {
                 intakePosition += 10;
             } else if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 intakePosition -= 10;
+
+                if(intakePosition<0){
+                    intakePosition = 0;
+                }
             }
 
 

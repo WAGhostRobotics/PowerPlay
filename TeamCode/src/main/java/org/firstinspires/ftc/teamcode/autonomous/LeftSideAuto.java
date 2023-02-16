@@ -223,7 +223,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case RETRACT_READY:
                     if(Tom.arm.isFinished()){
                         intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         spinPosition = Claw.IN;
                         state = State.WAIT_FOR_CLAW;
@@ -249,6 +249,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case CLAW_OPEN:
                     if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
                         clawPosition = Claw.OPEN;
+                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         time.reset();
                         state = State.PIVOT_RETRACT;
                     }

@@ -19,7 +19,7 @@ public class IntakeSlides {
         PARTIAL(50),
         ALMOST_DONE(150),
         EXTENDED(425),
-        AUTO_EXTENDED(275);
+        AUTO_EXTENDED(280);
 
 
         int ticks;
