@@ -45,6 +45,7 @@ public class LeftSideAuto extends LinearOpMode {
         READY_TO_PARK,
         PARK,
         PARK2,
+        BACK,
         IDLE
     }
 
@@ -79,6 +80,8 @@ public class LeftSideAuto extends LinearOpMode {
         Trajectory readyToPark = drive.trajectoryBuilder(goToCone.end())
                 .lineToSplineHeading(new Pose2d(49.569, -1.25, Math.toRadians(0)))
                 .build();
+
+
 
 
 
@@ -127,6 +130,10 @@ public class LeftSideAuto extends LinearOpMode {
                     .lineTo(new Vector2d(49.569, -22))
                     .build();
         }
+
+        Trajectory back = drive.trajectoryBuilder(park.end())
+                .back(20)
+                .build();
 
         state = State.GO_TO_PLACE;
         drive.followTrajectoryAsync(goToCone);
@@ -238,7 +245,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case SLIDES_RETRACT:
-                    if(time.milliseconds()>100){
+                    if(time.milliseconds()>175){
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
@@ -311,9 +318,14 @@ public class LeftSideAuto extends LinearOpMode {
                 case PARK2:
                     if(!drive.isBusy()){
                         drive.followTrajectoryAsync(park);
-                        state = State.IDLE;
+                        state = State.BACK;
                     }
                     break;
+                case BACK:
+                    if(!drive.isBusy()){
+                        drive.followTrajectoryAsync(back);
+                        state = State.IDLE;
+                    }
                 case IDLE:
                     break;
 

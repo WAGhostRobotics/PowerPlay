@@ -9,7 +9,7 @@ public class OuttakeSlides {
     private final double POWER = 1;
     private final double ERROR = 50;
 
-    private final double minPower = 0.3;
+    private final double minPower = 0.2;
     private final double maxPower = 1;
 
 
