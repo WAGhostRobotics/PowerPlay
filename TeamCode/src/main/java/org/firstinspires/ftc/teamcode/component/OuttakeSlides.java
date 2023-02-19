@@ -9,8 +9,8 @@ public class OuttakeSlides {
     private final double POWER = 1;
     private final double ERROR = 50;
 
-    private final double minPower = 0.2;
-    private final double maxPower = 1;
+    private final double minPower = 0.3;
+    private final double maxPower = 0.8;
 
 
     public enum TurnValue {
@@ -18,7 +18,7 @@ public class OuttakeSlides {
         RETRACTED(0),
         MID(570),
         ON_THE_WAY_DOWN(700),
-        TOP(900);
+        TOP(900);//900
 
         int ticks;
 

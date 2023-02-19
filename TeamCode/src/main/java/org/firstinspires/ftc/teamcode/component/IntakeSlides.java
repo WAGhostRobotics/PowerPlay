@@ -14,12 +14,13 @@ public class IntakeSlides {
 
     public enum TurnValue {
         RETRACTED(0),
-        PLACE_CONE(0),
+        PLACE_CONE(25),
         AUTO_STACK(95),
         PARTIAL(50),
         ALMOST_DONE(150),
         EXTENDED(425),
-        AUTO_EXTENDED(280);
+        AUTO_EXTENDED(280),//280
+        AUTO_EXTENDED_LEFT(300);
 
 
         int ticks;

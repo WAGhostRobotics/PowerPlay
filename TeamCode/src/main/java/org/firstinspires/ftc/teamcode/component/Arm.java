@@ -10,23 +10,23 @@ public class Arm {
     private Servo arm1;
     private Servo arm2;
     private DcMotor armPosition;
-    private final double ERROR = 270;
+    private final double ERROR = 300;
     private double targetPos = 0;
 
 
 
 
     public enum TurnValue {
-        EXTENDED(0.03),
-        SUPER_EXTENDED(0.05),
-        PARTIAL(0.67),
+        EXTENDED(0.02),
+        SUPER_EXTENDED(0.04),
+        PARTIAL(0.66),
         RETRACTED(0.82),
-        LOW(0.56),
-        CONE1(0.18),
-        CONE2(0.14),
-        CONE3(0.11),
-        CONE4(0.07),
-        CONE5(0.03);
+        LOW(0.55),
+        CONE1(0.17),
+        CONE2(0.13),
+        CONE3(0.10),
+        CONE4(0.06),
+        CONE5(0.02);
 
         double position;
 
@@ -70,7 +70,7 @@ public class Arm {
 
     public boolean isFinished(){
 
-        double encoderPosition = ((-3828.3582089552)*targetPos) + 3490.9850746268;
+        double encoderPosition = ((-3851.5625)*targetPos) + 3224.03125;
 
         return Math.abs(armPosition.getCurrentPosition()-encoderPosition)<=ERROR;
     }

@@ -74,7 +74,8 @@ public class RightSideAuto extends LinearOpMode {
 
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(58.125, -1.25, Math.toRadians(74.5)))
+                .lineToSplineHeading(new Pose2d(57.875
+                        , -1.75, Math.toRadians(74.5)))
                 .build();
 
         Trajectory readyToPark = drive.trajectoryBuilder(goToCone.end())
@@ -113,11 +114,14 @@ public class RightSideAuto extends LinearOpMode {
 
         }
 
+        ElapsedTime autoTime = new ElapsedTime();
+        autoTime.reset();
+
         Trajectory park;
 
         if (location == Webcam.Location.ONE) {
              park = drive.trajectoryBuilder(readyToPark.end())
-                     .lineTo(new Vector2d(49.569, 21))
+                     .lineTo(new Vector2d(49.569, 25))
                      .build();
         }else if (location == Webcam.Location.TWO) {
             park = drive.trajectoryBuilder(readyToPark.end())
@@ -125,7 +129,7 @@ public class RightSideAuto extends LinearOpMode {
                     .build();
         }else {
             park = drive.trajectoryBuilder(readyToPark.end())
-                    .lineTo(new Vector2d(49.569, -22))
+                    .lineTo(new Vector2d(49.569, -24))
                     .build();
         }
 
@@ -198,7 +202,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                     case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>100){
+                    if(time.milliseconds()>10){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;
@@ -243,7 +247,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case SLIDES_RETRACT:
-                    if(time.milliseconds()>175){
+                    if(time.milliseconds()>200){
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
@@ -327,6 +331,14 @@ public class RightSideAuto extends LinearOpMode {
                 case IDLE:
                     break;
 
+            }
+
+            if(autoTime.milliseconds()>26500 && state != State.READY_TO_PARK && state != State.PARK && state != State.PARK2 && state != State.BACK && state != State.IDLE){
+                armPosition = Arm.TurnValue.PARTIAL.getPosition();
+                spinPosition = Claw.IN;
+                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
+                outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                state = State.PARK;
             }
 
 
