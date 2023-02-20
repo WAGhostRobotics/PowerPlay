@@ -109,7 +109,7 @@ public class RightSideAuto extends LinearOpMode {
                 telemetry.update();
             }
 
-            Tom.arm.moveToPosition(Arm.TurnValue.PARTIAL.getPosition());
+            Tom.arm.moveToPosition(Arm.TurnValue.START_AUTO.getPosition());
             Tom.claw.setClawPosition(Claw.OPEN);
 
         }
@@ -121,7 +121,7 @@ public class RightSideAuto extends LinearOpMode {
 
         if (location == Webcam.Location.ONE) {
              park = drive.trajectoryBuilder(readyToPark.end())
-                     .lineTo(new Vector2d(49.569, 25))
+                     .lineTo(new Vector2d(49.569, 26))
                      .build();
         }else if (location == Webcam.Location.TWO) {
             park = drive.trajectoryBuilder(readyToPark.end())
@@ -337,8 +337,8 @@ public class RightSideAuto extends LinearOpMode {
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                state = State.PARK;
+                outtakePosition = Tom.outtake.getTicks();
+                state = State.READY_TO_PARK;
             }
 
 

@@ -18,12 +18,13 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.teleop.TeleOpParent;
 import org.openftc.apriltag.AprilTagDetection;
 
-@Autonomous(name = "Left Side", group = "competition")
-public class LeftSideAuto extends LinearOpMode {
+@Autonomous(name = "Park", group = "competition")
+public class Park extends LinearOpMode {
     Webcam.Location location = null;
     AprilTagDetection tagOfInterest = null;
     static final double FEET_PER_METER = 3.28084;
 
+    LeftSideAuto.State currentState = LeftSideAuto.State.IDLE;
 
     double power = 1;
     int position = 0;
@@ -73,14 +74,13 @@ public class LeftSideAuto extends LinearOpMode {
 
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(58.625, -1.75, Math.toRadians(286)))
+                .lineToSplineHeading(new Pose2d(57.875
+                        , -1.75, Math.toRadians(74.5)))
                 .build();
 
         Trajectory readyToPark = drive.trajectoryBuilder(goToCone.end())
                 .lineToSplineHeading(new Pose2d(49.569, -1.25, Math.toRadians(0)))
                 .build();
-
-
 
 
 
@@ -109,7 +109,7 @@ public class LeftSideAuto extends LinearOpMode {
                 telemetry.update();
             }
 
-            Tom.arm.moveToPosition(Arm.TurnValue.PARTIAL.getPosition());
+            Tom.arm.moveToPosition(Arm.TurnValue.START_AUTO.getPosition());
             Tom.claw.setClawPosition(Claw.OPEN);
 
         }
@@ -121,7 +121,7 @@ public class LeftSideAuto extends LinearOpMode {
 
         if (location == Webcam.Location.ONE) {
             park = drive.trajectoryBuilder(readyToPark.end())
-                    .lineTo(new Vector2d(49.569, 23))
+                    .lineTo(new Vector2d(49.569, 25))
                     .build();
         }else if (location == Webcam.Location.TWO) {
             park = drive.trajectoryBuilder(readyToPark.end())
@@ -129,7 +129,7 @@ public class LeftSideAuto extends LinearOpMode {
                     .build();
         }else {
             park = drive.trajectoryBuilder(readyToPark.end())
-                    .lineTo(new Vector2d(49.569, -27))
+                    .lineTo(new Vector2d(49.569, -24))
                     .build();
         }
 
@@ -137,8 +137,7 @@ public class LeftSideAuto extends LinearOpMode {
                 .back(20)
                 .build();
 
-        state = State.GO_TO_PLACE;
-        drive.followTrajectoryAsync(goToCone);
+        state = State.PARK;
 
 
         ElapsedTime time = new ElapsedTime();
@@ -202,7 +201,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>200){
+                    if(time.milliseconds()>10){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;
@@ -212,7 +211,7 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case INTAKE_FULLY_EXTEND:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks();
+                        intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks();
                         state = State.INTAKE_GRAB;
                     }
                     break;
@@ -247,7 +246,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case SLIDES_RETRACT:
-                    if(time.milliseconds()>175){
+                    if(time.milliseconds()>200){
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
@@ -320,7 +319,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case PARK2:
                     if(!drive.isBusy()){
                         drive.followTrajectoryAsync(park);
-                        state = State.BACK;
+                        state = State.IDLE;
                     }
                     break;
                 case BACK:

@@ -214,6 +214,16 @@ public class TeleOpParent extends LinearOpMode {
 
             }
 
+            if(gamepad1.start || gamepad2.start){
+                intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
+                armPosition = Arm.TurnValue.ON_THE_FLOOR.getPosition();
+                spinPosition = Claw.OUT;
+                clawPosition = Claw.OPEN;
+                intakeState = IntakeState.IDLE;
+                autoPlaceState = State.IDLE;
+
+            }
+
             if(gamepad1.dpad_left || gamepad2.dpad_left) {
                 intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
                 armPosition = Arm.TurnValue.SUPER_EXTENDED.getPosition();
