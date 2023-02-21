@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.teleop.TeleOpParent;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Right Side", group = "competition")
@@ -44,8 +45,7 @@ public class RightSideAuto extends LinearOpMode {
         OUTTAKE_READY,
         READY_TO_PARK,
         PARK,
-        PARK2,
-        BACK,
+        DONE_PARKING,
         IDLE
     }
 
@@ -73,14 +73,18 @@ public class RightSideAuto extends LinearOpMode {
         drive.setPoseEstimate(new Pose2d(0,0,0));
 
 
+//        Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
+//                .lineToSplineHeading(new Pose2d(57.875
+//                        , -1.75, Math.toRadians(74.5)))
+//                .build();
+
+
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(57.875
-                        , -1.75, Math.toRadians(74.5)))
+                .splineToSplineHeading(new Pose2d(35, -0.25, Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(57.875, -1.75, Math.toRadians(74.5)), Math.toRadians(164.5))
                 .build();
 
-        Trajectory readyToPark = drive.trajectoryBuilder(goToCone.end())
-                .lineToSplineHeading(new Pose2d(49.569, -1.25, Math.toRadians(0)))
-                .build();
+
 
 
 
@@ -117,25 +121,28 @@ public class RightSideAuto extends LinearOpMode {
         ElapsedTime autoTime = new ElapsedTime();
         autoTime.reset();
 
-        Trajectory park;
+        TrajectorySequence park;
 
         if (location == Webcam.Location.ONE) {
-             park = drive.trajectoryBuilder(readyToPark.end())
-                     .lineTo(new Vector2d(49.569, 26))
+             park = drive.trajectorySequenceBuilder(goToCone.end())
+                     .setReversed(true)
+                     .splineToSplineHeading(new Pose2d(42.569, -1.75, Math.toRadians(0)), Math.toRadians(150))
+                     .splineToConstantHeading(new Vector2d(49.569, 26), Math.toRadians(90))
                      .build();
         }else if (location == Webcam.Location.TWO) {
-            park = drive.trajectoryBuilder(readyToPark.end())
-                    .lineTo(new Vector2d(49.569, 0))
+            park = drive.trajectorySequenceBuilder(goToCone.end())
+                    .setReversed(true)
+                    .splineToSplineHeading(new Pose2d(42.569, -1.75, Math.toRadians(0)), Math.toRadians(150))
+                    .splineToConstantHeading(new Vector2d(49.569, 0), Math.toRadians(270))
                     .build();
         }else {
-            park = drive.trajectoryBuilder(readyToPark.end())
-                    .lineTo(new Vector2d(49.569, -24))
+            park = drive.trajectorySequenceBuilder(goToCone.end())
+                    .setReversed(true)
+                    .splineToSplineHeading(new Pose2d(42.569, -1.75, Math.toRadians(0)), Math.toRadians(150))
+                    .splineToConstantHeading(new Vector2d(49.569, -26), Math.toRadians(270))
                     .build();
         }
 
-        Trajectory back = drive.trajectoryBuilder(park.end())
-                .back(20)
-                .build();
 
         state = State.GO_TO_PLACE;
         drive.followTrajectoryAsync(goToCone);
@@ -307,37 +314,36 @@ public class RightSideAuto extends LinearOpMode {
                     break;
                 case READY_TO_PARK:
                     if(time.milliseconds()>200){
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
                         state = State.PARK;
                     }
                     break;
                 case PARK:
                     if(Tom.outtake.isFinished()){
-                        drive.followTrajectoryAsync(readyToPark);
-                        state = State.PARK2;
+                        drive.followTrajectorySequenceAsync(park);
+                        intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
+                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
+
+                        state = State.DONE_PARKING;
                     }
                     break;
-                case PARK2:
-                    if(!drive.isBusy()){
-                        drive.followTrajectoryAsync(park);
+                case DONE_PARKING:
+                    if(Tom.intake.isFinished()&&Tom.arm.isFinished()){
+                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         state = State.IDLE;
                     }
                     break;
-                case BACK:
-                    if(!drive.isBusy()){
-                        drive.followTrajectoryAsync(back);
-                        state = State.IDLE;
-                    }
                 case IDLE:
                     break;
 
             }
 
-            if(autoTime.milliseconds()>26500 && state != State.READY_TO_PARK && state != State.PARK && state != State.PARK2 && state != State.BACK && state != State.IDLE){
+            if(autoTime.milliseconds()>27000 && state != State.READY_TO_PARK && state != State.PARK && state != State.IDLE){
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                 outtakePosition = Tom.outtake.getTicks();
+                time.reset();
                 state = State.READY_TO_PARK;
             }
 

@@ -73,12 +73,9 @@ public class Park extends LinearOpMode {
         drive.setPoseEstimate(new Pose2d(0,0,0));
 
 
-        Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(57.875
-                        , -1.75, Math.toRadians(74.5)))
-                .build();
 
-        Trajectory readyToPark = drive.trajectoryBuilder(goToCone.end())
+
+        Trajectory readyToPark = drive.trajectoryBuilder(new Pose2d())
                 .lineToSplineHeading(new Pose2d(49.569, -1.25, Math.toRadians(0)))
                 .build();
 
@@ -172,138 +169,6 @@ public class Park extends LinearOpMode {
 
             //OUTTAKE STATE MACHINE
             switch (state) {
-                case GO_TO_PLACE:
-                    if(!drive.isBusy()){
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
-
-                        armPosition = Arm.TurnValue.CONE1.getPosition();
-
-                        cone++;
-                        spinPosition = Claw.OUT;
-
-                        state = State.WAIT_FOR_OUTTAKE;
-
-
-                    }
-                    break;
-                case WAIT_FOR_OUTTAKE:
-                    if(Tom.outtake.isFinished()){
-                        time.reset();
-//                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
-//                        spinPosition = Claw.OUT;
-                        state = State.OUTTAKE_EXTEND;
-
-                        if(cone == 7){
-                            state = State.READY_TO_PARK;
-                        }
-
-                    }
-                    break;
-                case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>10){
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-//                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
-//                        spinPosition = Claw.OUT;
-                        state = State.INTAKE_FULLY_EXTEND;
-
-                    }
-                    break;
-                case INTAKE_FULLY_EXTEND:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks();
-                        state = State.INTAKE_GRAB;
-                    }
-                    break;
-                case INTAKE_GRAB:
-                    if(Tom.intake.isFinished()){
-                        clawPosition = Claw.CLOSE;
-                        time.reset();
-                        state = State.DONE_GRABBING;
-                    }
-                    break;
-                case DONE_GRABBING:
-                    if(time.milliseconds() > 300){
-                        armPosition = Arm.TurnValue.LOW.getPosition();
-                        state = State.RETRACT_READY;
-                    }
-                    break;
-                case RETRACT_READY:
-                    if(Tom.arm.isFinished()){
-                        intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                        outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
-                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                        spinPosition = Claw.IN;
-                        state = State.WAIT_FOR_CLAW;
-                    }
-                    break;
-                case WAIT_FOR_CLAW:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        time.reset();
-
-
-                        state = State.SLIDES_RETRACT;
-                    }
-                    break;
-                case SLIDES_RETRACT:
-                    if(time.milliseconds()>200){
-                        intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
-
-
-                        state = State.CLAW_OPEN;
-                    }
-                    break;
-                case CLAW_OPEN:
-                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        clawPosition = Claw.OPEN;
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                        time.reset();
-                        state = State.PIVOT_RETRACT;
-                    }
-                    break;
-
-                case PIVOT_RETRACT:
-                    if(time.milliseconds()>150){
-                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                        state = State.OUTTAKE_READY;
-                    }
-                    break;
-                case OUTTAKE_READY:
-                    if(Tom.arm.isFinished()){
-                        state = State.WAIT_FOR_OUTTAKE;
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
-                        spinPosition = Claw.OUT;
-                        switch(cone){
-                            case 1:
-                                armPosition = Arm.TurnValue.CONE1.getPosition();
-                                break;
-                            case 2:
-                                armPosition = Arm.TurnValue.CONE2.getPosition();
-                                break;
-                            case 3:
-                                armPosition = Arm.TurnValue.CONE3.getPosition();
-                                break;
-                            case 4:
-                                armPosition = Arm.TurnValue.CONE4.getPosition();
-                                break;
-                            case 5:
-                                armPosition = Arm.TurnValue.CONE5.getPosition();
-                                break;
-                            case 6:
-                                armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                                spinPosition = Claw.IN;
-                                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                                break;
-
-                        }
-                        cone++;
-
-                        time.reset();
-
-                    }
-                    break;
                 case READY_TO_PARK:
                     if(time.milliseconds()>200){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();

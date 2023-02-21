@@ -1,16 +1,21 @@
 package org.firstinspires.ftc.teamcode.component;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class OuttakeSlides {
 
-    private DcMotor slides;
+    private DcMotorEx slides;
     private final double POWER = 1;
     private final double ERROR = 50;
 
     private final double minPower = 0.3;
     private final double maxPower = 0.8;
+
+    private final double stallCurrent = 7;
 
 
     public enum TurnValue {
@@ -33,10 +38,10 @@ public class OuttakeSlides {
 
     public void init(HardwareMap hwMap, boolean teleop) {
        if(teleop){
-           slides = hwMap.get(DcMotor.class, "outtake");
+           slides = hwMap.get(DcMotorEx.class, "outtake");
            slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
        }else{
-           slides = hwMap.get(DcMotor.class, "outtake");
+           slides = hwMap.get(DcMotorEx.class, "outtake");
            slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
            slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
        }
@@ -61,6 +66,10 @@ public class OuttakeSlides {
         slides.setTargetPosition(slides.getCurrentPosition() + 40 );
         slides.setPower(0.6);
         slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public double getCurrent(){
+        return slides.getCurrent(CurrentUnit.AMPS);
     }
 
     public void moveToPosition(int ticks, double power){
@@ -102,6 +111,10 @@ public class OuttakeSlides {
 
     public boolean isFinished(){
         return Math.abs(slides.getCurrentPosition()-slides.getTargetPosition())<=ERROR;
+    }
+
+    public boolean isStalling(){
+        return slides.getCurrent(CurrentUnit.AMPS)>stallCurrent;
     }
 
     public void stopArm(){

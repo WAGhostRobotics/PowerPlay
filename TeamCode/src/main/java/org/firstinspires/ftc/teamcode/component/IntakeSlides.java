@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.component;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 public class IntakeSlides {
-    private DcMotor slides;
+    private DcMotorEx slides;
     private final double POWER = 1;
     private final double ERROR = 10;
 
 
+    private final double stallCurrent = 6;
 
 
 
@@ -46,12 +50,21 @@ public class IntakeSlides {
         return power;
     }
 
+    public double getCurrent(){
+        return slides.getCurrent(CurrentUnit.AMPS);
+    }
+
+    public boolean isStalling(){
+        return slides.getCurrent(CurrentUnit.AMPS)>stallCurrent;
+    }
+
+
     public void init(HardwareMap hwMap, boolean teleop) {
         if(teleop){
-            slides = hwMap.get(DcMotor.class, "intake");
+            slides = hwMap.get(DcMotorEx.class, "intake");
             slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }else{
-            slides = hwMap.get(DcMotor.class, "intake");
+            slides = hwMap.get(DcMotorEx.class, "intake");
             slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
