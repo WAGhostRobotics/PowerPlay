@@ -223,6 +223,11 @@ public class RightSideAuto extends LinearOpMode {
                         intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks();
                         state = State.INTAKE_GRAB;
                     }
+                    if(Tom.outtake.isStalling()){
+                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
+                        state = State.WAIT_FOR_OUTTAKE;
+                    }
                     break;
                 case INTAKE_GRAB:
                     if(Tom.intake.isFinished()){
@@ -232,7 +237,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case DONE_GRABBING:
-                    if(time.milliseconds() > 300){
+                    if(time.milliseconds() > 200){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }
@@ -255,7 +260,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case SLIDES_RETRACT:
-                    if(time.milliseconds()>200){
+                    if(time.milliseconds()>150){
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
 
@@ -273,7 +278,7 @@ public class RightSideAuto extends LinearOpMode {
                     break;
 
                 case PIVOT_RETRACT:
-                    if(time.milliseconds()>150){
+                    if(time.milliseconds()>100){
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         state = State.OUTTAKE_READY;
                     }
@@ -321,7 +326,7 @@ public class RightSideAuto extends LinearOpMode {
                     break;
 
                 case PARK:
-                    if(Tom.outtake.isFinished()){
+                    if(Tom.outtake.isFinished()||Tom.outtake.isStalling()){
                         drive.followTrajectoryAsync(park);
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
@@ -338,7 +343,7 @@ public class RightSideAuto extends LinearOpMode {
 
             }
 
-            if(autoTime.milliseconds()>27000 && state != State.READY_TO_PARK && state != State.PARK && state != State.IDLE && state != State.GRAB_LAST){
+            if(autoTime.milliseconds()>28000 && state != State.READY_TO_PARK && state != State.PARK && state != State.IDLE && state != State.GRAB_LAST){
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
