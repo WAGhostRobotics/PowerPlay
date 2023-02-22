@@ -44,7 +44,7 @@ public class LeftSideAuto extends LinearOpMode {
         OUTTAKE_READY,
         READY_TO_PARK,
         PARK,
-        DONE_PARKING,
+        GRAB_LAST,
         IDLE
     }
 
@@ -315,11 +315,18 @@ public class LeftSideAuto extends LinearOpMode {
                         state = State.PARK;
                     }
                     break;
+
                 case PARK:
                     if(Tom.outtake.isFinished()){
                         drive.followTrajectoryAsync(park);
-
+                        intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
+                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
                         state = State.IDLE;
+                    }
+                    break;
+                case GRAB_LAST:
+                    if(Tom.intake.isFinished()&&Tom.arm.isFinished()){
+                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                     }
                     break;
                 case IDLE:
@@ -327,7 +334,7 @@ public class LeftSideAuto extends LinearOpMode {
 
             }
 
-            if(autoTime.milliseconds()>27000 && state != State.READY_TO_PARK && state != State.PARK && state != State.IDLE){
+            if(autoTime.milliseconds()>27000 && state != State.READY_TO_PARK && state != State.PARK && state != State.IDLE && state != State.GRAB_LAST){
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
