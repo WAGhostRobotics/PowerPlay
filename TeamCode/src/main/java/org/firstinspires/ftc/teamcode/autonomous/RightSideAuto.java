@@ -126,18 +126,18 @@ public class RightSideAuto extends LinearOpMode {
 
         if (location == Webcam.Location.ONE) {
             park = drive.trajectoryBuilder(goToCone.end())
-                    .splineToSplineHeading(new Pose2d(56.569, 1, 0), Math.toRadians(140))
-                    .splineToConstantHeading(new Vector2d(50.569, 0), Math.toRadians(90))
+                    .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(50.569, 26, 0), Math.toRadians(60))
                     .build();
         }else if (location == Webcam.Location.TWO) {
             park = drive.trajectoryBuilder(goToCone.end())
-                    .splineToSplineHeading(new Pose2d(56.569, 1, 0), Math.toRadians(140))
-                    .splineToConstantHeading(new Vector2d(50.569, 0), Math.toRadians(90))
+                    .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(50.569, 0, 0), Math.toRadians(290))
                     .build();
         }else {
             park = drive.trajectoryBuilder(goToCone.end())
-                    .splineToSplineHeading(new Pose2d(56.569, 1, 0), Math.toRadians(140))
-                    .splineToConstantHeading(new Vector2d(50.569, -26), Math.toRadians(90))
+                    .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(50.569, -26, 0), Math.toRadians(290))
                     .build();
         }
 
