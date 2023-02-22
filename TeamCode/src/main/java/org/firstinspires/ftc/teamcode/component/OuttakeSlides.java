@@ -13,9 +13,9 @@ public class OuttakeSlides {
     private final double ERROR = 50;
 
     private final double minPower = 0.3;
-    private final double maxPower = 0.8;
+    private final double maxPower = 1;
 
-    private final double stallCurrent = 7;
+    private final double stallCurrent = 6;
 
 
     public enum TurnValue {

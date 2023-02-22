@@ -81,7 +81,7 @@ public class LeftSideAuto extends LinearOpMode {
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
                 .splineToSplineHeading(new Pose2d(35, -0.25, Math.toRadians(0)), Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(58.625, -1.75, Math.toRadians(286)), Math.toRadians(16))
+                .splineToSplineHeading(new Pose2d(58.625, -1.75, Math.toRadians(286)), Math.toRadians(354))
                 .build();
 
 
@@ -122,28 +122,24 @@ public class LeftSideAuto extends LinearOpMode {
         ElapsedTime autoTime = new ElapsedTime();
         autoTime.reset();
 
-        TrajectorySequence park;
+        Trajectory park;
 
         if (location == Webcam.Location.ONE) {
-            park = drive.trajectorySequenceBuilder(goToCone.end())
-                    .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(42.569, -1.75, Math.toRadians(0)), Math.toRadians(150))
-                    .splineToConstantHeading(new Vector2d(49.569, 26), Math.toRadians(90))
+            park = drive.trajectoryBuilder(goToCone.end())
+                    .splineToSplineHeading(new Pose2d(56.569, 1, 0), Math.toRadians(140))
+                    .splineToConstantHeading(new Vector2d(50.569, 0), Math.toRadians(90))
                     .build();
         }else if (location == Webcam.Location.TWO) {
-            park = drive.trajectorySequenceBuilder(goToCone.end())
-                    .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(42.569, -1.75, Math.toRadians(0)), Math.toRadians(150))
-                    .splineToConstantHeading(new Vector2d(49.569, 0), Math.toRadians(270))
+            park = drive.trajectoryBuilder(goToCone.end())
+                    .splineToSplineHeading(new Pose2d(56.569, 1, 0), Math.toRadians(140))
+                    .splineToConstantHeading(new Vector2d(50.569, 0), Math.toRadians(90))
                     .build();
         }else {
-            park = drive.trajectorySequenceBuilder(goToCone.end())
-                    .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(42.569, -1.75, Math.toRadians(0)), Math.toRadians(150))
-                    .splineToConstantHeading(new Vector2d(49.569, -26), Math.toRadians(270))
+            park = drive.trajectoryBuilder(goToCone.end())
+                    .splineToSplineHeading(new Pose2d(56.569, 1, 0), Math.toRadians(140))
+                    .splineToConstantHeading(new Vector2d(50.569, -26), Math.toRadians(90))
                     .build();
         }
-
 
         state = State.GO_TO_PLACE;
         drive.followTrajectoryAsync(goToCone);
@@ -210,7 +206,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>200){
+                    if(time.milliseconds()>100){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;
@@ -321,16 +317,8 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case PARK:
                     if(Tom.outtake.isFinished()){
-                        drive.followTrajectorySequenceAsync(park);
-                        intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
+                        drive.followTrajectoryAsync(park);
 
-                        state = State.DONE_PARKING;
-                    }
-                    break;
-                case DONE_PARKING:
-                    if(Tom.intake.isFinished()&&Tom.arm.isFinished()){
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         state = State.IDLE;
                     }
                     break;

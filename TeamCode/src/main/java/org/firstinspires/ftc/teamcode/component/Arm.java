@@ -72,7 +72,7 @@ public class Arm {
 
     public boolean isFinished(){
 
-        double encoderPosition = ((-3851.5625)*targetPos) + 3224.03125;
+        double encoderPosition = ((-3847.2222222222)*targetPos) + 3400.8888888889;
 
         return Math.abs(armPosition.getCurrentPosition()-encoderPosition)<=ERROR;
     }
