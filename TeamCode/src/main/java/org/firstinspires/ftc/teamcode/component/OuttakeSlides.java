@@ -15,7 +15,7 @@ public class OuttakeSlides {
     private final double minPower = 0.3;
     private final double maxPower = 1;
 
-    private final double stallCurrent = 7.1;
+    private final double stallCurrent = 5.9;
 
 
     public enum TurnValue {
@@ -23,7 +23,7 @@ public class OuttakeSlides {
         RETRACTED(0),
         MID(570),
         ON_THE_WAY_DOWN(700),
-        TOP(925);//900
+        TOP(910);//900
 
         int ticks;
 

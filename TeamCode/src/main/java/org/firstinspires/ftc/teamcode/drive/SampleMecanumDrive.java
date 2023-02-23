@@ -58,6 +58,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static double LATERAL_MULTIPLIER = 60.0/40.1;
 
+    public static Pose2d permissableError = new Pose2d(1.5, 1.5, Math.toRadians(9));
+
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
@@ -82,6 +84,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.25, 0.25, Math.toRadians(2)), 1.0);
+
+
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -211,6 +215,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public Pose2d getLastError() {
         return trajectorySequenceRunner.getLastPoseError();
+    }
+
+    public boolean inError(Pose2d targetPos){
+        Pose2d error = getPoseEstimate().minus(targetPos);
+
+        return Math.abs(error.getX())>permissableError.getX()||
+                Math.abs(error.getY())>permissableError.getY()||
+                Math.abs(error.getHeading())>permissableError.getHeading();
     }
 
     public void update() {

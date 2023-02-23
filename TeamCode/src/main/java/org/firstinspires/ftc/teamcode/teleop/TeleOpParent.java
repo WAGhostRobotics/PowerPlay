@@ -46,6 +46,7 @@ public class TeleOpParent extends LinearOpMode {
 
     enum State {
         SLIDES_RETRACT,
+        PLACE_CONE,
         CLAW_OPEN,
         PIVOT_RETRACT,
         OUTTAKE_READY,
@@ -277,6 +278,14 @@ public class TeleOpParent extends LinearOpMode {
             //OUTTAKE STATE MACHINE
             switch (autoPlaceState) {
                 case SLIDES_RETRACT:
+                    if(time.milliseconds()>200){
+                        intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
+                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
+                        spinPosition = Claw.IN;
+                    }
+                    break;
+                case PLACE_CONE:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
@@ -325,7 +334,8 @@ public class TeleOpParent extends LinearOpMode {
                         autoPlaceState = State.OUTTAKE_RETRACT;
 
                     }
-                    break; case OUTTAKE_RETRACT:
+                    break;
+                case OUTTAKE_RETRACT:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
                         intakePosition = IntakeSlides.TurnValue.AUTO_STACK.getTicks(); //possibly make this earlier
                         autoPlaceState = State.IDLE;
@@ -338,10 +348,7 @@ public class TeleOpParent extends LinearOpMode {
 
             //AUTO PLACE CONTROLLER (MASTER BUTTON)
             if(gamepad1.right_stick_button){
-                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
-                armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                spinPosition = Claw.IN;
+                clawPosition = Claw.CLOSE;
                 time.reset();
                 autoPlaceState = State.SLIDES_RETRACT;
 
