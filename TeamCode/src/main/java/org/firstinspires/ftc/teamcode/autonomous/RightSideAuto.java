@@ -199,6 +199,22 @@ public class RightSideAuto extends LinearOpMode {
 
 
                 Tom.claw.setSpinPosition(spinPosition);
+            }else{
+                Tom.intake.moveToPosition(IntakeSlides.TurnValue.PARTIAL.getTicks(), 0.9);
+                if(!Tom.intake.isBusy()){
+                    Tom.intake.stopArm();
+                }
+
+
+                Tom.outtake.moveToPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks(), Tom.outtake.getAdjustedPower());
+                if(!Tom.outtake.isBusy()){
+                    Tom.outtake.stopArm();
+                }
+
+
+
+                Tom.arm.moveToPosition(Arm.TurnValue.LOW.getPosition());
+
             }
 
             drive.update();
