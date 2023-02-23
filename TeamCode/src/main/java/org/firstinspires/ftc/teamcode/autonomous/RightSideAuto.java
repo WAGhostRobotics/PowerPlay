@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
+import org.firstinspires.ftc.teamcode.component.Latch;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Tom;
@@ -62,6 +63,7 @@ public class RightSideAuto extends LinearOpMode {
         double armPosition = Arm.TurnValue.PARTIAL.getPosition();
         double clawPosition = Claw.OPEN;
         double spinPosition = Claw.IN;
+        double latchPosition = Latch.CLOSE;
         int cone = 1;
         boolean placing = false;
 
@@ -102,6 +104,8 @@ public class RightSideAuto extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        Tom.latch.setLatchPosition(Latch.OPEN);
+
         //telemetry of the vision data
         while (!isStarted() && !isStopRequested()) {
             Tom.webcam.scanForTags();
@@ -121,6 +125,10 @@ public class RightSideAuto extends LinearOpMode {
 
             Tom.arm.moveToPosition(Arm.TurnValue.START_AUTO.getPosition());
             Tom.claw.setClawPosition(Claw.OPEN);
+
+            if(gamepad1.a){
+                Tom.latch.setLatchPosition(Latch.CLOSE);
+            }
 
         }
 
@@ -179,14 +187,14 @@ public class RightSideAuto extends LinearOpMode {
 
             if(state != State.CORRECT_POSITION){
                 //INTAKE SLIDES UPDATE
-                Tom.intake.moveToPosition(intakePosition, 0.9);
+                Tom.intake.moveToPosition(intakePosition, 1);
                 if(!Tom.intake.isBusy()){
                     Tom.intake.stopArm();
                 }
 
 
                 //OUTTAKE SLIDES UPDATE
-                Tom.outtake.moveToPosition(outtakePosition, Tom.outtake.getAdjustedPower());
+                Tom.outtake.moveToPosition(outtakePosition, 1);
                 if(!Tom.outtake.isBusy()){
                     Tom.outtake.stopArm();
                 }
@@ -199,14 +207,16 @@ public class RightSideAuto extends LinearOpMode {
 
 
                 Tom.claw.setSpinPosition(spinPosition);
+
+                Tom.latch.setLatchPosition(latchPosition);
             }else{
-                Tom.intake.moveToPosition(IntakeSlides.TurnValue.PARTIAL.getTicks(), 0.9);
+                Tom.intake.moveToPosition(IntakeSlides.TurnValue.PARTIAL.getTicks(), 1);
                 if(!Tom.intake.isBusy()){
                     Tom.intake.stopArm();
                 }
 
 
-                Tom.outtake.moveToPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks(), Tom.outtake.getAdjustedPower());
+                Tom.outtake.moveToPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks(), 1);
                 if(!Tom.outtake.isBusy()){
                     Tom.outtake.stopArm();
                 }
@@ -270,6 +280,7 @@ public class RightSideAuto extends LinearOpMode {
                     break;
                 case OUTTAKE_EXTEND:
                     if(time.milliseconds()>100){
+                        latchPosition = Latch.OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         time.reset();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
@@ -340,6 +351,7 @@ public class RightSideAuto extends LinearOpMode {
 
                 case PIVOT_RETRACT:
                     if(time.milliseconds()>100){
+                        latchPosition = Latch.CLOSE;
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         state = State.OUTTAKE_READY;
                     }
@@ -382,9 +394,9 @@ public class RightSideAuto extends LinearOpMode {
                 case READY_TO_PARK:
 
 
-                    if(time.milliseconds()>200){
+                    if(time.milliseconds()>100){
                         placing = false;
-
+                        latchPosition = Latch. OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
                         state = State.PARK;
                     }

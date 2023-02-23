@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
+import org.firstinspires.ftc.teamcode.component.Latch;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.component.Pivot;
 import org.firstinspires.ftc.teamcode.component.Webcam;
@@ -26,6 +27,7 @@ public class Tom {
     public static OuttakeSlides outtake;
     public static Claw claw;
     public static Arm arm;
+    public static Latch latch;
 
     public static void init(HardwareMap hwMap, boolean initTeleOp) {
         // Assign HardwareMap
@@ -33,6 +35,10 @@ public class Tom {
 
         imu = new RevIMU(hwMap);
         imu.init();
+
+        latch = new Latch();
+        latch.init(hwMap);
+
 
         webcam = new Webcam();
         webcam.init(hwMap);

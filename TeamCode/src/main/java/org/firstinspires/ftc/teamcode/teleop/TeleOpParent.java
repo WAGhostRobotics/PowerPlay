@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
+import org.firstinspires.ftc.teamcode.component.Latch;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.library.DriveStyle;
@@ -76,10 +77,19 @@ public class TeleOpParent extends LinearOpMode {
                 driverOp, GamepadKeys.Button.A
         );
 
+        ToggleButtonReader startReader = new ToggleButtonReader(
+                driverOp, GamepadKeys.Button.START
+        );
+
+
         GamepadEx driverOp2 = new GamepadEx(gamepad1);
 
         ToggleButtonReader aReader2 = new ToggleButtonReader(
                 driverOp2, GamepadKeys.Button.A
+        );
+
+        ToggleButtonReader startReader2 = new ToggleButtonReader(
+                driverOp2, GamepadKeys.Button.START
         );
 
         int intakePosition = 0;
@@ -87,6 +97,8 @@ public class TeleOpParent extends LinearOpMode {
         double armPosition = Arm.TurnValue.PARTIAL.getPosition();
         double clawPosition = Claw.OPEN;
         double spinPosition = Claw.IN;
+        double latchPosition = Latch.OPEN;
+
 
         Tom.init(hardwareMap, true);
         if(Tom.imu==null){
@@ -137,16 +149,19 @@ public class TeleOpParent extends LinearOpMode {
             rightStickReader.readValue();
             aReader.readValue();
             aReader2.readValue();
-
+            startReader.readValue();
+            startReader2.readValue();
 
             Tom.claw.setClawPosition(clawPosition);
 
 
             Tom.claw.setSpinPosition(spinPosition);
 
+            Tom.latch.setLatchPosition(latchPosition);
+
 
             //OUTTAKE SLIDES UPDATE
-            Tom.outtake.moveToPosition(outtakePosition, Tom.outtake.getAdjustedPower());
+            Tom.outtake.moveToPosition(outtakePosition, 1);
             if(!Tom.outtake.isBusy()){
                 Tom.outtake.stopArm();
             }
@@ -154,6 +169,7 @@ public class TeleOpParent extends LinearOpMode {
             //OUTTAKE SLIDES CONTROLLER
             if(gamepad1.x || gamepad2.x){
                 outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
+                latchPosition = Latch.OPEN;
             }
 
             if(gamepad1.b || gamepad2.b){
@@ -198,6 +214,7 @@ public class TeleOpParent extends LinearOpMode {
 
             //INTAKE CONTROLLER
             if(gamepad1.dpad_right || gamepad2.dpad_right){
+                latchPosition = Latch.OPEN;
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                 outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
@@ -217,13 +234,12 @@ public class TeleOpParent extends LinearOpMode {
 
             }
 
-            if(gamepad1.start || gamepad2.start){
-                intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
-                armPosition = Arm.TurnValue.ON_THE_FLOOR.getPosition();
-                spinPosition = Claw.OUT;
-                clawPosition = Claw.OPEN;
-                intakeState = IntakeState.IDLE;
-                autoPlaceState = State.IDLE;
+            if(startReader.wasJustReleased() || startReader2.wasJustReleased()){
+                if(Tom.latch.getLatchPosition() == Latch.OPEN){
+                    latchPosition = Latch.CLOSE;
+                }else{
+                    latchPosition = Latch.OPEN;
+                }
 
             }
 
@@ -265,6 +281,7 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case PIVOT_RETRACT:
                     if(time.milliseconds()>200){
+                        latchPosition = Latch.CLOSE;
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakeState = IntakeState.IDLE;
                     }
@@ -303,6 +320,7 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case PIVOT_RETRACT:
                     if(time.milliseconds()>200){
+                        latchPosition = Latch.CLOSE;
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakePower = 1;
                         autoPlaceState = State.OUTTAKE_READY;
@@ -327,6 +345,7 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case OUTTAKE_EXTEND:
                     if(time.milliseconds()>150){
+                        latchPosition = Latch.OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
 //                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
@@ -348,6 +367,7 @@ public class TeleOpParent extends LinearOpMode {
 
             //AUTO PLACE CONTROLLER (MASTER BUTTON)
             if(gamepad1.right_stick_button){
+                latchPosition = Latch.OPEN;
                 clawPosition = Claw.CLOSE;
                 time.reset();
                 autoPlaceState = State.SLIDES_RETRACT;
