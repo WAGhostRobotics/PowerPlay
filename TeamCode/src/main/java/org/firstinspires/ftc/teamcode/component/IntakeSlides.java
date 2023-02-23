@@ -12,7 +12,6 @@ public class IntakeSlides {
     private final double ERROR = 10;
 
 
-    private final double stallCurrent = 6;
 
 
 
@@ -54,9 +53,6 @@ public class IntakeSlides {
         return slides.getCurrent(CurrentUnit.AMPS);
     }
 
-    public boolean isStalling(){
-        return slides.getCurrent(CurrentUnit.AMPS)>stallCurrent;
-    }
 
 
     public void init(HardwareMap hwMap, boolean teleop) {

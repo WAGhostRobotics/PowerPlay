@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.component;
 
+
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
@@ -15,7 +18,7 @@ public class OuttakeSlides {
     private final double minPower = 0.3;
     private final double maxPower = 1;
 
-    private final double stallCurrent = 5.9;
+    private double stallCurrent = 5.9;
 
 
     public enum TurnValue {
@@ -45,6 +48,8 @@ public class OuttakeSlides {
            slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
            slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
        }
+
+       stallCurrent = hwMap.voltageSensor.iterator().next().getVoltage()/2.2;
     }
 
     public void moveToPosition(int ticks){
