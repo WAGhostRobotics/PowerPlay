@@ -174,10 +174,12 @@ public class TeleOpParent extends LinearOpMode {
 
             if(gamepad1.b || gamepad2.b){
                 outtakePosition = OuttakeSlides.TurnValue.MID.getTicks();
+                latchPosition = Latch.CLOSE;
             }
 
             if(gamepad1.y || gamepad2.y) {
                 outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                latchPosition = Latch.CLOSE;
             }
 
 
@@ -281,7 +283,6 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case PIVOT_RETRACT:
                     if(time.milliseconds()>200){
-                        latchPosition = Latch.CLOSE;
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakeState = IntakeState.IDLE;
                     }
@@ -295,11 +296,14 @@ public class TeleOpParent extends LinearOpMode {
             //OUTTAKE STATE MACHINE
             switch (autoPlaceState) {
                 case SLIDES_RETRACT:
-                    if(time.milliseconds()>200){
+                    if(time.milliseconds()>400){
                         intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                         outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         spinPosition = Claw.IN;
+
+                        autoPlaceState = State.PLACE_CONE;
+
                     }
                     break;
                 case PLACE_CONE:
@@ -320,7 +324,7 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case PIVOT_RETRACT:
                     if(time.milliseconds()>200){
-                        latchPosition = Latch.CLOSE;
+
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         intakePower = 1;
                         autoPlaceState = State.OUTTAKE_READY;
@@ -328,6 +332,7 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case OUTTAKE_READY:
                     if(Tom.claw.clawIsFinished()){
+                        latchPosition = Latch.CLOSE;
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
 
                     intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();

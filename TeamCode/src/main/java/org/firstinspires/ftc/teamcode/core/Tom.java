@@ -82,12 +82,15 @@ public class Tom {
             intake.init(hwMap, false);
             outtake.init(hwMap, false);
 //            System.exit(0);
+
+            imu = new RevIMU(hardwareMap, "imu");
+            imu.init();
         }
     }
 
 
     public static void initIMU(){
-        imu = new RevIMU(hardwareMap);
+        imu = new RevIMU(hardwareMap, "imu");
         imu.init();
 
     }

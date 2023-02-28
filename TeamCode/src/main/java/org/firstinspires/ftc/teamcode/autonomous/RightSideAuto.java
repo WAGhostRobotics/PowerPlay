@@ -250,7 +250,7 @@ public class RightSideAuto extends LinearOpMode {
                     break;
                 case GO_TO_PLACE:
                     if(!drive.isBusy()){
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.AUTO_TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
 
                         armPosition = Arm.TurnValue.CONE1.getPosition();
@@ -279,7 +279,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>100){
+                    if(time.milliseconds()>250){
                         latchPosition = Latch.OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         time.reset();
@@ -296,7 +296,7 @@ public class RightSideAuto extends LinearOpMode {
                         intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks();
                         state = State.INTAKE_GRAB;
                     }else if(stallingTime.milliseconds()>1700){
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.AUTO_TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
                         state = State.WAIT_FOR_OUTTAKE;
                     }
@@ -309,7 +309,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case DONE_GRABBING:
-                    if(time.milliseconds() > 200){
+                    if(time.milliseconds() > 350){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }
@@ -351,7 +351,7 @@ public class RightSideAuto extends LinearOpMode {
 
                 case PIVOT_RETRACT:
                     if(time.milliseconds()>100){
-                        latchPosition = Latch.CLOSE;
+
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         state = State.OUTTAKE_READY;
                     }
@@ -359,6 +359,7 @@ public class RightSideAuto extends LinearOpMode {
                 case OUTTAKE_READY:
                     if(Tom.arm.isFinished()){
                         state = State.WAIT_FOR_OUTTAKE;
+                        latchPosition = Latch.CLOSE;
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
                         spinPosition = Claw.OUT;
@@ -407,15 +408,15 @@ public class RightSideAuto extends LinearOpMode {
                         drive.followTrajectoryAsync(park);
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
+                        time.reset();
                         state = State.IDLE;
                     }
                     break;
-                case GRAB_LAST:
-                    if(Tom.intake.isFinished()&&Tom.arm.isFinished()){
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                }
-                break;
+
                 case IDLE:
+                    if(time.milliseconds()>300){
+                        latchPosition = Latch.CLOSE;
+                    }
                     break;
 
             }

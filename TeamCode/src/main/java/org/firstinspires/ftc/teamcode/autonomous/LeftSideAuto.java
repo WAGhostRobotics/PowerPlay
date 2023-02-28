@@ -87,7 +87,7 @@ public class LeftSideAuto extends LinearOpMode {
         Pose2d goToConePosition = new Pose2d(58.625, -1.75, Math.toRadians(286));
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-                .splineToSplineHeading(new Pose2d(35, -0.25, Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(35, -1, Math.toRadians(0)), Math.toRadians(0))
                 .splineToSplineHeading(goToConePosition, Math.toRadians(354))
                 .build();
 
@@ -124,7 +124,7 @@ public class LeftSideAuto extends LinearOpMode {
                 telemetry.update();
             }
 
-            Tom.arm.moveToPosition(Arm.TurnValue.PARTIAL.getPosition());
+            Tom.arm.moveToPosition(Arm.TurnValue.START_AUTO.getPosition());
             Tom.claw.setClawPosition(Claw.OPEN);
 
             if(gamepad1.a){
@@ -247,7 +247,7 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case GO_TO_PLACE:
                     if(!drive.isBusy()){
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.AUTO_TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
 
                         armPosition = Arm.TurnValue.CONE1.getPosition();
@@ -276,7 +276,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>100){
+                    if(time.milliseconds()>250){
                         latchPosition = Latch.OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         time.reset();
@@ -290,10 +290,10 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
                 case INTAKE_FULLY_EXTEND:
                     if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks();
+                        intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks();
                         state = State.INTAKE_GRAB;
                     }else if(stallingTime.milliseconds()>1700){
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.AUTO_TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
                         state = State.WAIT_FOR_OUTTAKE;
                     }
@@ -306,7 +306,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case DONE_GRABBING:
-                    if(time.milliseconds() > 200){
+                    if(time.milliseconds() > 350){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }
@@ -347,8 +347,7 @@ public class LeftSideAuto extends LinearOpMode {
                     break;
 
                 case PIVOT_RETRACT:
-                    if(time.milliseconds()>100){
-                        latchPosition = Latch.CLOSE;
+                    if(time.milliseconds()>200){
                         armPosition = Arm.TurnValue.PARTIAL.getPosition();
                         state = State.OUTTAKE_READY;
                     }
@@ -356,6 +355,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case OUTTAKE_READY:
                     if(Tom.arm.isFinished()){
                         state = State.WAIT_FOR_OUTTAKE;
+                        latchPosition = Latch.CLOSE;
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
                         spinPosition = Claw.OUT;
@@ -404,15 +404,15 @@ public class LeftSideAuto extends LinearOpMode {
                         drive.followTrajectoryAsync(park);
                         intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
                         armPosition = Arm.TurnValue.RETRACTED.getPosition();
+                        time.reset();
                         state = State.IDLE;
                     }
                     break;
-                case GRAB_LAST:
-                    if(Tom.intake.isFinished()&&Tom.arm.isFinished()){
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                }
-                break;
+
                 case IDLE:
+                    if(time.milliseconds()>300){
+                        latchPosition = Latch.CLOSE;
+                    }
                     break;
 
             }
