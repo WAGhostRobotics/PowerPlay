@@ -26,7 +26,7 @@ public class OuttakeSlides {
         RETRACTED(0),
         MID(570),
         ON_THE_WAY_DOWN(700),
-        TOP(920),
+        TOP(910),
         AUTO_TOP(930);//900
 
         int ticks;
