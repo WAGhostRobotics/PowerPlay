@@ -332,10 +332,11 @@ public class TeleOpParent extends LinearOpMode {
                     break;
                 case OUTTAKE_READY:
                     if(Tom.claw.clawIsFinished()){
-                        latchPosition = Latch.CLOSE;
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
 
-                    intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
+                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
+                        time.reset();
+
+                        intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
                         armPosition = Arm.TurnValue.EXTENDED.getPosition();
                         spinPosition = Claw.OUT;
                         autoPlaceState = State.WAIT_FOR_OUTTAKE;
@@ -346,6 +347,8 @@ public class TeleOpParent extends LinearOpMode {
                         time.reset();
                         autoPlaceState = State.OUTTAKE_EXTEND;
 
+                    }else if(time.milliseconds()>300){
+                        latchPosition = Latch.CLOSE;
                     }
                     break;
                 case OUTTAKE_EXTEND:

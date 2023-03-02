@@ -17,18 +17,18 @@ public class Arm {
 
 
     public enum TurnValue {
-        EXTENDED(0.02),
-        ON_THE_FLOOR(0.05),
-        SUPER_EXTENDED(0.05),
-        START_AUTO(0.81),
-        PARTIAL(0.63),
-        RETRACTED(0.82),
-        LOW(0.52),
-        CONE1(0.17),
-        CONE2(0.13),
-        CONE3(0.085),
-        CONE4(0.05),
-        CONE5(0.02);
+        EXTENDED(0.032),
+        ON_THE_FLOOR(0.06),
+        SUPER_EXTENDED(0.06),
+        START_AUTO(0.835),
+        PARTIAL(0.64),
+        RETRACTED(0.855),
+        LOW(0.53),
+        CONE1(0.18),
+        CONE2(0.145),
+        CONE3(0.10),
+        CONE4(0.07),
+        CONE5(0.032);
 
         double position;
 

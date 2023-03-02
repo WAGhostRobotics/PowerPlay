@@ -140,8 +140,8 @@ public class RightSideAuto extends LinearOpMode {
 
         if (location == Webcam.Location.ONE) {
             park = drive.trajectoryBuilder(goToCone.end())
-                    .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
-                    .splineToSplineHeading(new Pose2d(50.569, 26, 0), Math.toRadians(60))
+                    .splineToConstantHeading(new Vector2d(58.569, 1), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(50.569, 26, 0), Math.toRadians(90))
                     .build();
         }else if (location == Webcam.Location.TWO) {
             park = drive.trajectoryBuilder(goToCone.end())
@@ -266,7 +266,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case WAIT_FOR_OUTTAKE:
-                    if(Tom.outtake.isFinished()){
+                    if(Tom.outtake.isFinished()||stallingTime.milliseconds()>500){
                         time.reset();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;
@@ -276,10 +276,12 @@ public class RightSideAuto extends LinearOpMode {
                             state = State.READY_TO_PARK;
                         }
 
+                    }else if(time.milliseconds()>200){
+                        latchPosition = Latch.CLOSE;
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>250){
+                    if(time.milliseconds()>100){
                         latchPosition = Latch.OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         time.reset();
@@ -309,7 +311,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case DONE_GRABBING:
-                    if(time.milliseconds() > 350){
+                    if(time.milliseconds() > 300){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }
@@ -359,7 +361,7 @@ public class RightSideAuto extends LinearOpMode {
                 case OUTTAKE_READY:
                     if(Tom.arm.isFinished()){
                         state = State.WAIT_FOR_OUTTAKE;
-                        latchPosition = Latch.CLOSE;
+
                         outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
                         intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
                         spinPosition = Claw.OUT;
