@@ -26,8 +26,8 @@ public class Arm {
         LOW(0.53),
         CONE1(0.18),
         CONE2(0.145),
-        CONE3(0.10),
-        CONE4(0.07),
+        CONE3(0.105),
+        CONE4(0.073),
         CONE5(0.032);
 
         double position;

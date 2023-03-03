@@ -66,6 +66,7 @@ public class RightSideAuto extends LinearOpMode {
         double latchPosition = Latch.CLOSE;
         int cone = 1;
         boolean placing = false;
+        int failsafeTime = 27000;
 
         State state;
 
@@ -84,10 +85,10 @@ public class RightSideAuto extends LinearOpMode {
 //                        , -1.75, Math.toRadians(74.5)))
 //                .build();
 
-        Pose2d goToConePosition = new Pose2d(57.875, -1.75, Math.toRadians(74.5));
+        Pose2d goToConePosition = new Pose2d(57.875, -1.75, Math.toRadians(74.75));
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-                .splineToSplineHeading(new Pose2d(35, -0.25, Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(35, -0.5, Math.toRadians(0)), Math.toRadians(0))
                 .splineToSplineHeading(goToConePosition, Math.toRadians(194.5))
                 .build();
 
@@ -139,11 +140,15 @@ public class RightSideAuto extends LinearOpMode {
         Trajectory park;
 
         if (location == Webcam.Location.ONE) {
+
+
             park = drive.trajectoryBuilder(goToCone.end())
                     .splineToConstantHeading(new Vector2d(58.569, 1), Math.toRadians(180))
-                    .splineToSplineHeading(new Pose2d(50.569, 26, 0), Math.toRadians(90))
+                    .splineToSplineHeading(new Pose2d(48.569, 26, 0), Math.toRadians(90))
                     .build();
         }else if (location == Webcam.Location.TWO) {
+
+            failsafeTime = 28500;
             park = drive.trajectoryBuilder(goToCone.end())
                     .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
                     .splineToSplineHeading(new Pose2d(50.569, 0, 0), Math.toRadians(290))
@@ -266,7 +271,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case WAIT_FOR_OUTTAKE:
-                    if(Tom.outtake.isFinished()||stallingTime.milliseconds()>500){
+                    if(Tom.outtake.isFinished()||stallingTime.milliseconds()>750){
                         time.reset();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;
@@ -281,7 +286,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>100){
+                    if(time.milliseconds()>250){
                         latchPosition = Latch.OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         time.reset();
@@ -311,7 +316,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case DONE_GRABBING:
-                    if(time.milliseconds() > 300){
+                    if(time.milliseconds() > 350){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }
@@ -416,14 +421,14 @@ public class RightSideAuto extends LinearOpMode {
                     break;
 
                 case IDLE:
-                    if(time.milliseconds()>300){
-                        latchPosition = Latch.CLOSE;
+                    if(Tom.arm.isFinished()&&Tom.intake.isFinished()){
+                        clawPosition = Claw.OPEN;
                     }
                     break;
 
             }
 
-            if(autoTime.milliseconds()>27000 && state != State.READY_TO_PARK && state != State.PARK && state != State.IDLE && state != State.GRAB_LAST){
+            if(autoTime.milliseconds()>failsafeTime && state != State.READY_TO_PARK && state != State.PARK && state != State.IDLE && state != State.GRAB_LAST){
                 armPosition = Arm.TurnValue.PARTIAL.getPosition();
                 spinPosition = Claw.IN;
                 intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();

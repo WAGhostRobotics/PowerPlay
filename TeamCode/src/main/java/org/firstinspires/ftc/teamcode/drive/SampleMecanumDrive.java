@@ -58,7 +58,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static double LATERAL_MULTIPLIER = 60.0/40.1;
 
-    public static Pose2d permissableError = new Pose2d(1.5, 1.5, Math.toRadians(9));
+    public static Pose2d permissableError = new Pose2d(1.6, 1.6, Math.toRadians(8));
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -83,7 +83,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.25, 0.25, Math.toRadians(2)), 1);
+                new Pose2d(0.25, 0.25, Math.toRadians(2)), 1.0);
 
 
 
