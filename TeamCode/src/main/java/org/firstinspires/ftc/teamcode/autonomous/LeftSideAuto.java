@@ -210,6 +210,9 @@ public class LeftSideAuto extends LinearOpMode {
 
                 Tom.latch.setLatchPosition(latchPosition);
             }else{
+
+                Tom.latch.setLatchPosition(Latch.CLOSE);
+
                 Tom.intake.moveToPosition(IntakeSlides.TurnValue.PARTIAL.getTicks(), 1);
                 if(!Tom.intake.isBusy()){
                     Tom.intake.stopArm();
@@ -266,7 +269,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case WAIT_FOR_OUTTAKE:
-                    if(Tom.outtake.isFinished()||stallingTime.milliseconds()>750){
+                    if(Tom.outtake.isFinished()){
                         time.reset();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;

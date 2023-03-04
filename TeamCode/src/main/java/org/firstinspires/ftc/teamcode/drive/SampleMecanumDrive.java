@@ -58,7 +58,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static double LATERAL_MULTIPLIER = 60.0/40.1;
 
-    public static Pose2d permissableError = new Pose2d(1.6, 1.6, Math.toRadians(8));
+    public static Pose2d permissibleError = new Pose2d(1.6, 1.6, Math.toRadians(8));
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -220,9 +220,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     public boolean inError(Pose2d targetPos){
         Pose2d error = getPoseEstimate().minus(targetPos);
 
-        return Math.abs(error.getX())>permissableError.getX()||
-                Math.abs(error.getY())>permissableError.getY()||
-                Math.abs(error.getHeading())>permissableError.getHeading();
+        return Math.abs(error.getX())> permissibleError.getX()||
+                Math.abs(error.getY())> permissibleError.getY()||
+                Math.abs(error.getHeading())> permissibleError.getHeading();
     }
 
     public void update() {

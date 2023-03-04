@@ -85,7 +85,7 @@ public class RightSideAuto extends LinearOpMode {
 //                        , -1.75, Math.toRadians(74.5)))
 //                .build();
 
-        Pose2d goToConePosition = new Pose2d(57.875, -1.75, Math.toRadians(74.75));
+        Pose2d goToConePosition = new Pose2d(57.875, -1.75, Math.toRadians(75.4));
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
                 .splineToSplineHeading(new Pose2d(35, -0.5, Math.toRadians(0)), Math.toRadians(0))
@@ -144,7 +144,7 @@ public class RightSideAuto extends LinearOpMode {
 
             park = drive.trajectoryBuilder(goToCone.end())
                     .splineToConstantHeading(new Vector2d(58.569, 1), Math.toRadians(180))
-                    .splineToSplineHeading(new Pose2d(48.569, 26, 0), Math.toRadians(90))
+                    .splineToSplineHeading(new Pose2d(48.569, 24, 0), Math.toRadians(90))
                     .build();
         }else if (location == Webcam.Location.TWO) {
 
@@ -215,6 +215,9 @@ public class RightSideAuto extends LinearOpMode {
 
                 Tom.latch.setLatchPosition(latchPosition);
             }else{
+
+                Tom.latch.setLatchPosition(Latch.CLOSE);
+
                 Tom.intake.moveToPosition(IntakeSlides.TurnValue.PARTIAL.getTicks(), 1);
                 if(!Tom.intake.isBusy()){
                     Tom.intake.stopArm();
@@ -271,7 +274,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case WAIT_FOR_OUTTAKE:
-                    if(Tom.outtake.isFinished()||stallingTime.milliseconds()>750){
+                    if(Tom.outtake.isFinished()){
                         time.reset();
 //                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
 //                        spinPosition = Claw.OUT;

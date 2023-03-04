@@ -24,7 +24,7 @@ public class OuttakeSlides {
     public enum TurnValue {
         SUPER_RETRACTED(-49),
         RETRACTED(0),
-        MID(570),
+        MID(540),
         ON_THE_WAY_DOWN(700),
         TOP(880),
         AUTO_TOP(880);//900
