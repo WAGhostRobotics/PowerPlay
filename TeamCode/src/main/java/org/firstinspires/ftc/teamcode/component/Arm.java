@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.component;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     private Servo arm1;
     private Servo arm2;
-    private DcMotor armPosition;
+    private DcMotorEx armPosition;
     private final double ERROR = 300;
     private double targetPos = 0;
 
@@ -51,9 +52,10 @@ public class Arm {
 
 
         if(teleop){
-            armPosition = hwMap.get(DcMotor.class, "armPosition");
+            armPosition = hwMap.get(DcMotorEx.class, "armPosition");
+            armPosition.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }else{
-            armPosition = hwMap.get(DcMotor.class, "armPosition");
+            armPosition = hwMap.get(DcMotorEx.class, "armPosition");
             armPosition.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 

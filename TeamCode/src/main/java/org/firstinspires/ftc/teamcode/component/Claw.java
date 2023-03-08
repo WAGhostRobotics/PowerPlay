@@ -12,9 +12,9 @@ public class Claw {
 
     public static final double CLOSE = 0.38;
 
-    public static final double IN = 0.458;
+    public static final double IN = 0.454;
 
-    public static final double OUT = 0.335;
+    public static final double OUT = 0.336;
 
     private double spinTargetPosition = IN;
 

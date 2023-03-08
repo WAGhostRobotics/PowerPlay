@@ -7,9 +7,9 @@ public class Latch {
 
     public Servo latch;
 
-    public static final double OPEN = 0.55;
+    public static final double OPEN = 0.5;
 
-    public static final double CLOSE = 0.045;
+    public static final double CLOSE = 0.075;
 
     private double latchTargetPosition = OPEN;
 

@@ -85,7 +85,7 @@ public class RightSideAuto extends LinearOpMode {
 //                        , -1.75, Math.toRadians(74.5)))
 //                .build();
 
-        Pose2d goToConePosition = new Pose2d(57.875, -1.75, Math.toRadians(75.4));
+        Pose2d goToConePosition = new Pose2d(57.985, -1.75, Math.toRadians(74.74));
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
                 .splineToSplineHeading(new Pose2d(35, -0.5, Math.toRadians(0)), Math.toRadians(0))
@@ -204,6 +204,10 @@ public class RightSideAuto extends LinearOpMode {
                     Tom.outtake.stopArm();
                 }
 
+                if(outtakePosition==OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks()&&Tom.outtake.getTicks()<=0){
+                    outtakePosition = 0;
+                }
+
 
 
                 Tom.arm.moveToPosition(armPosition);
@@ -289,7 +293,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>250){
+                    if(time.milliseconds()>320&& Tom.outtake.isFinished()){
                         latchPosition = Latch.OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         time.reset();
@@ -319,7 +323,7 @@ public class RightSideAuto extends LinearOpMode {
                     }
                     break;
                 case DONE_GRABBING:
-                    if(time.milliseconds() > 350){
+                    if(time.milliseconds() > 350 && Tom.intake.isFinished()){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }

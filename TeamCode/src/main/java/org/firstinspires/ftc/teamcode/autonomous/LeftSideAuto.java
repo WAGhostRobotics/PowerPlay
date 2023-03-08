@@ -86,7 +86,7 @@ public class LeftSideAuto extends LinearOpMode {
 //                .build();
 
 
-        Pose2d goToConePosition = new Pose2d(58.625, -1.75, Math.toRadians(285.75));
+        Pose2d goToConePosition = new Pose2d(58.65, -1.80, Math.toRadians(286));
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
                 .splineToSplineHeading(new Pose2d(35, -1, Math.toRadians(0)), Math.toRadians(0))
@@ -146,7 +146,7 @@ public class LeftSideAuto extends LinearOpMode {
                     .splineToSplineHeading(new Pose2d(49.569, 26, 0), Math.toRadians(90))
                     .build();
         }else if (location == Webcam.Location.TWO) {
-            failsafeTime = 28500;
+            failsafeTime = 28000;
             park = drive.trajectoryBuilder(goToCone.end())
                     .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
                     .splineToSplineHeading(new Pose2d(50.569, 0, 0), Math.toRadians(290))
@@ -199,7 +199,9 @@ public class LeftSideAuto extends LinearOpMode {
                     Tom.outtake.stopArm();
                 }
 
-
+                if(outtakePosition==OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks()&&Tom.outtake.getTicks()<=0){
+                    outtakePosition = 0;
+                }
 
                 Tom.arm.moveToPosition(armPosition);
 
@@ -249,6 +251,7 @@ public class LeftSideAuto extends LinearOpMode {
                 case CORRECT_POSITION:
                     if(!drive.isBusy()){
                         state = lastState;
+
                     }
                     break;
                 case GO_TO_PLACE:
@@ -284,7 +287,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>250){
+                    if(time.milliseconds()>320 && Tom.outtake.isFinished()){
                         latchPosition = Latch.OPEN;
                         outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
                         time.reset();
@@ -314,7 +317,7 @@ public class LeftSideAuto extends LinearOpMode {
                     }
                     break;
                 case DONE_GRABBING:
-                    if(time.milliseconds() > 350){
+                    if(time.milliseconds() > 350&& Tom.intake.isFinished()){
                         armPosition = Arm.TurnValue.LOW.getPosition();
                         state = State.RETRACT_READY;
                     }

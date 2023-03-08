@@ -35,7 +35,8 @@ public class TeleOpParent extends LinearOpMode {
     DriveStyle.DriveType type = DriveStyle.DriveType.MECANUMARCADE;
 
 
-    public double power = 1;
+    public double power = 0.8;
+    public double turningMultiplier = 0.8;
 
 
     enum IntakeState{
@@ -131,11 +132,18 @@ public class TeleOpParent extends LinearOpMode {
                 drive.driveFieldCentric(
                         power * (Math.pow(driverOp.getLeftX(), 3)),
                         power * (Math.pow(driverOp.getLeftY(), 3)),
-                        power * (Math.pow(driverOp.getRightX(), 3)),
+                        turningMultiplier * power * (Math.pow(driverOp.getRightX(), 3)),
                         Tom.imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                         false
                 );
             }
+
+            if(intakePosition>=IntakeSlides.TurnValue.PARTIAL.getTicks()&& armPosition <= Arm.TurnValue.LOW.getPosition()){
+                    turningMultiplier = 0.4;
+                }else{
+                    turningMultiplier = 0.8;
+                }
+
 
             //re-initializes imu to correct heading if teleop starts at the wrong heading
             if (gamepad2.left_stick_button){
@@ -164,6 +172,10 @@ public class TeleOpParent extends LinearOpMode {
             Tom.outtake.moveToPosition(outtakePosition, 1);
             if(!Tom.outtake.isBusy()){
                 Tom.outtake.stopArm();
+            }
+
+            if(outtakePosition==OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks()&&Tom.outtake.getTicks()<=0){
+                outtakePosition = 0;
             }
 
             //OUTTAKE SLIDES CONTROLLER
