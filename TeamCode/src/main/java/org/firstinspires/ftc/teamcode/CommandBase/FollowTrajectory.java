@@ -5,12 +5,12 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.library.Command;
 
-public class GoToPosition extends Command {
+public class FollowTrajectory extends Command {
 
     SampleMecanumDrive drive;
     Trajectory traj;
 
-    public GoToPosition(SampleMecanumDrive drive, Trajectory traj){
+    public FollowTrajectory(SampleMecanumDrive drive, Trajectory traj){
         this.drive = drive;
         this.traj = traj;
     }

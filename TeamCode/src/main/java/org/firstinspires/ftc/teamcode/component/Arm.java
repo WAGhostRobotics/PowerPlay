@@ -65,6 +65,19 @@ public class Arm {
         return armPosition.getCurrentPosition();
     }
 
+    public void setTargetPosition(double position){
+        targetPos = position;
+    }
+
+    public double getTargetPosition(){
+       return targetPos;
+    }
+
+    public void update(){
+        arm1.setPosition(targetPos);
+        arm2.setPosition(targetPos);
+    }
+
     public void moveToPosition(double position){
         targetPos = position;
         arm1.setPosition(position);

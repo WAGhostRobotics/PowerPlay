@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.CommandBase.AutoStackTeleOp;
+import org.firstinspires.ftc.teamcode.CommandBase.Collect;
 import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
@@ -62,6 +64,9 @@ public class TeleOpParent extends LinearOpMode {
     IntakeState intakeState = IntakeState.IDLE;
     double intakePower = 1;
     int intake = -1;
+
+    Collect collectionScheduler = new Collect();
+    AutoStackTeleOp autoStackScheduler = new AutoStackTeleOp();
 
 
     @Override
@@ -160,47 +165,31 @@ public class TeleOpParent extends LinearOpMode {
             startReader.readValue();
             startReader2.readValue();
 
-            Tom.claw.setClawPosition(clawPosition);
 
-
-            Tom.claw.setSpinPosition(spinPosition);
-
-            Tom.latch.setLatchPosition(latchPosition);
 
 
             //OUTTAKE SLIDES UPDATE
-            Tom.outtake.moveToPosition(outtakePosition, 1);
-            if(!Tom.outtake.isBusy()){
-                Tom.outtake.stopArm();
-            }
-
-            if(outtakePosition==OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks()&&Tom.outtake.getTicks()<=0){
-                outtakePosition = 0;
-            }
+            Tom.outtake.update();
+            Tom.intake.update();
+            Tom.arm.update();
 
             //OUTTAKE SLIDES CONTROLLER
             if(gamepad1.x || gamepad2.x){
-                outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                latchPosition = Latch.OPEN;
+                Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks());
+                Tom.latch.setLatchPosition(Latch.OPEN);
             }
 
             if(gamepad1.b || gamepad2.b){
-                outtakePosition = OuttakeSlides.TurnValue.MID.getTicks();
-                latchPosition = Latch.CLOSE;
+                Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.MID.getTicks());
+                Tom.latch.setLatchPosition(Latch.CLOSE);
             }
 
             if(gamepad1.y || gamepad2.y) {
-                outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
-                latchPosition = Latch.CLOSE;
+                Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.TOP.getTicks());
+                Tom.latch.setLatchPosition(Latch.CLOSE);
             }
 
 
-//            //ARM UPDATE
-            Tom.arm.moveToPosition(armPosition);
-//            Tom.arm.updateTargetPos(armPosition);
-//            if(Tom.arm.isFinished()){
-//                Tom.arm.moveToPosition(armPosition, 0.14);
-//            }
 
 
             //TELEMETRY
@@ -218,216 +207,89 @@ public class TeleOpParent extends LinearOpMode {
             telemetry.update();
 
 
+            autoStackScheduler.update();
+            collectionScheduler.update();
 
-
-            //INTAKE SLIDES UPDATE
-            Tom.intake.moveToPosition(intakePosition, Tom.intake.getAdjustedPower());
-            if(!Tom.intake.isBusy()){
-                Tom.intake.stopArm();
-            }
 
 
             //INTAKE CONTROLLER
             if(gamepad1.dpad_right || gamepad2.dpad_right){
-                latchPosition = Latch.OPEN;
-                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
-                armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                spinPosition = Claw.IN;
-
-                intakeState = IntakeState.SLIDES_RETRACT;
-                autoPlaceState = State.IDLE;
+                collectionScheduler.init();
+                autoStackScheduler.stop();
             }
 
             if(gamepad1.dpad_down || gamepad2.dpad_down){
-                intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
-                armPosition = Arm.TurnValue.EXTENDED.getPosition();
-                spinPosition = Claw.OUT;
-                clawPosition = Claw.OPEN;
-                intakeState = IntakeState.IDLE;
-                autoPlaceState = State.IDLE;
+
+                Tom.intake.setTargetPosition(IntakeSlides.TurnValue.PARTIAL.getTicks());
+                Tom.arm.setTargetPosition(Arm.TurnValue.EXTENDED.getPosition());
+                Tom.claw.setClawPosition(Claw.OPEN);
+                Tom.claw.setSpinPosition(Claw.OUT);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
 
             }
 
             if(startReader.wasJustReleased() || startReader2.wasJustReleased()){
                 if(Tom.latch.getLatchPosition() == Latch.OPEN){
-                    latchPosition = Latch.CLOSE;
+                    Tom.latch.setLatchPosition(Latch.CLOSE);
                 }else{
-                    latchPosition = Latch.OPEN;
+                    Tom.latch.setLatchPosition(Latch.OPEN);
                 }
 
             }
 
             if(gamepad1.dpad_left || gamepad2.dpad_left) {
-                intakePosition = IntakeSlides.TurnValue.EXTENDED.getTicks();
-                armPosition = Arm.TurnValue.SUPER_EXTENDED.getPosition();
-                spinPosition = Claw.OUT;
-                clawPosition = Claw.OPEN;
-                intakeState = IntakeState.IDLE;
-                autoPlaceState = State.IDLE;
+                Tom.intake.setTargetPosition(IntakeSlides.TurnValue.EXTENDED.getTicks());
+                Tom.arm.setTargetPosition(Arm.TurnValue.SUPER_EXTENDED.getPosition());
+                Tom.claw.setClawPosition(Claw.OPEN);
+                Tom.claw.setSpinPosition(Claw.OUT);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
 
             }
 
             if(gamepad1.dpad_up || gamepad2.dpad_up){
-                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                armPosition = Arm.TurnValue.LOW.getPosition();
-                spinPosition = Claw.OUT;
+                Tom.intake.setTargetPosition(IntakeSlides.TurnValue.RETRACTED.getTicks());
+                Tom.arm.setTargetPosition(Arm.TurnValue.LOW.getPosition());
+                Tom.claw.setSpinPosition(Claw.OUT);
             }
 
 
-            //INTAKE STATE MACHINE
-            switch (intakeState) {
-                case SLIDES_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
-
-                        intakeState = IntakeState.CLAW_OPEN;
-                    }
-                    break;
-                case CLAW_OPEN:
-                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        clawPosition = Claw.OPEN;
-                        time.reset();
-                        intakeState = IntakeState.PIVOT_RETRACT;
-                    }
-                    break;
-                case PIVOT_RETRACT:
-                    if(time.milliseconds()>200){
-                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                        intakeState = IntakeState.IDLE;
-                    }
-                    break;
-                case IDLE:
-                    break;
-
-            }
 
 
-            //OUTTAKE STATE MACHINE
-            switch (autoPlaceState) {
-                case SLIDES_RETRACT:
-                    if(time.milliseconds()>400){
-                        intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                        outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
-                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                        spinPosition = Claw.IN;
-
-                        autoPlaceState = State.PLACE_CONE;
-
-                    }
-                    break;
-                case PLACE_CONE:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
-
-                        autoPlaceState = State.CLAW_OPEN;
-                    }
-                    break;
-                case CLAW_OPEN:
-                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        clawPosition = Claw.OPEN;
-                        time.reset();
-                        autoPlaceState = State.PIVOT_RETRACT;
-                    }
-                    break;
-                case PIVOT_RETRACT:
-                    if(time.milliseconds()>200){
-
-                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                        intakePower = 1;
-                        autoPlaceState = State.OUTTAKE_READY;
-                    }
-                    break;
-                case OUTTAKE_READY:
-                    if(Tom.claw.clawIsFinished()){
-
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
-                        time.reset();
-
-                        intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                        armPosition = Arm.TurnValue.EXTENDED.getPosition();
-                        spinPosition = Claw.OUT;
-                        autoPlaceState = State.WAIT_FOR_OUTTAKE;
-                    }
-                    break;
-                case WAIT_FOR_OUTTAKE:
-                    if(Tom.outtake.isFinished()){
-                        time.reset();
-                        autoPlaceState = State.OUTTAKE_EXTEND;
-
-                    }else if(time.milliseconds()>300){
-                        latchPosition = Latch.CLOSE;
-                    }
-                    break;
-                case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>150){
-                        latchPosition = Latch.OPEN;
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-//                        intakePosition = IntakeSlides.TurnValue.PARTIAL.getTicks();
-//                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
-//                        Tom.claw.out();
-                        autoPlaceState = State.OUTTAKE_RETRACT;
-
-                    }
-                    break;
-                case OUTTAKE_RETRACT:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        intakePosition = IntakeSlides.TurnValue.AUTO_STACK.getTicks(); //possibly make this earlier
-                        autoPlaceState = State.IDLE;
-                    }
-                    break;
-                case IDLE:
-                    break;
-
-            }
 
             //AUTO PLACE CONTROLLER (MASTER BUTTON)
             if(gamepad1.right_stick_button){
-                latchPosition = Latch.OPEN;
-                clawPosition = Claw.CLOSE;
-                time.reset();
-                autoPlaceState = State.SLIDES_RETRACT;
-
-                intakeState = IntakeState.IDLE;
+                autoStackScheduler.init();
+                collectionScheduler.stop();
             }
 
             //CLAW CODE
             if (aReader.wasJustReleased()|| aReader2.wasJustReleased()){
                 if (Tom.claw.isOpen()){
-                    clawPosition = Claw.CLOSE;
+                    Tom.claw.setClawPosition(Claw.CLOSE);
                 } else {
-                    clawPosition = Claw.OPEN;
+                    Tom.claw.setClawPosition(Claw.OPEN);
                 }
             }
 
 
             //OUTTAKE MINOR ADJUSTMENTS
             if (gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
-                outtakePosition += 10;
+                Tom.outtake.setTargetPosition(Tom.outtake.getTicks()+10);
 
 
             } else if (gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
-                outtakePosition -= 10;
-
-                if(outtakePosition<0){
-                    outtakePosition = 0;
-                }
+                Tom.outtake.setTargetPosition(Tom.outtake.getTicks()-10);
             }
 
             //INTAKE MINOR ADJUSTMENT
             if (gamepad1.left_bumper || gamepad2.left_bumper) {
-                intakePosition += 10;
+                Tom.intake.setTargetPosition(Tom.intake.getTicks()+10);
             } else if (gamepad1.right_bumper || gamepad2.right_bumper) {
-                intakePosition -= 10;
-
-                if(intakePosition<0){
-                    intakePosition = 0;
-                }
+                Tom.intake.setTargetPosition(Tom.intake.getTicks()-10);
             }
 
 
@@ -436,15 +298,17 @@ public class TeleOpParent extends LinearOpMode {
             if(gamepad1.back){
                 armPosition -= 0.01;
 
-                if(armPosition<0){
-                    armPosition = 0;
+                Tom.arm.setTargetPosition(Tom.arm.getPosition()-0.01);
+
+                if(Tom.arm.getTargetPosition()<=0){
+                    Tom.arm.setTargetPosition(0);
                 }
 
             }else if(gamepad1.left_stick_button){
-                armPosition += 0.01;
+                Tom.arm.setTargetPosition(Tom.arm.getPosition()+0.01);
 
-                if(armPosition>1){
-                    armPosition = 1;
+                if(Tom.arm.getTargetPosition()>=1){
+                    Tom.arm.setTargetPosition(1);
                 }
 
             }

@@ -12,12 +12,12 @@ public class OuttakeMove extends Command {
 
     @Override
     public void init() {
-        return;
+        Tom.outtake.setTargetPosition(ticks);
     }
 
     @Override
     public void update() {
-        Tom.outtake.moveToPosition(ticks);
+
     }
 
     @Override

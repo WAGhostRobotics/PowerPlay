@@ -16,14 +16,15 @@ public class IntakeMove extends Command {
 
     @Override
     public void init() {
-        return;
+        Tom.intake.setTargetPosition(ticks);
+        Tom.arm.setTargetPosition(armPosition);
+        Tom.claw.setSpinPosition(spinPosition);
+
     }
 
     @Override
     public void update() {
-        Tom.intake.moveToPosition(ticks);
-        Tom.arm.moveToPosition(armPosition);
-        Tom.claw.setSpinPosition(spinPosition);
+
     }
 
     @Override

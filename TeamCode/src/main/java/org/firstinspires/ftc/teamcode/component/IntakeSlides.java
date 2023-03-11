@@ -65,6 +65,23 @@ public class IntakeSlides {
             slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        setTargetPosition(0);
+    }
+
+    public void setTargetPosition(int targetPos){
+        slides.setTargetPosition(targetPos);
+    }
+
+    public void update(){
+        int multiplier = 1;//positive if the claw needs to go up, negative if it needs to go down
+
+        if(slides.getCurrentPosition()>slides.getTargetPosition()){
+            multiplier = -1;
+        }
+        //sets power and mode
+        slides.setPower(multiplier * POWER);
+        slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void moveToPosition(int ticks){

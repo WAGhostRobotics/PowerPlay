@@ -1,28 +1,32 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.autonomous.DetectionTest.FEET_PER_METER;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.CommandBase.GoToPosition;
+import org.firstinspires.ftc.teamcode.CommandBase.Collect;
+import org.firstinspires.ftc.teamcode.CommandBase.FollowTrajectory;
 import org.firstinspires.ftc.teamcode.CommandBase.IntakeMove;
-import org.firstinspires.ftc.teamcode.CommandBase.Latch;
 import org.firstinspires.ftc.teamcode.CommandBase.OuttakeMove;
+import org.firstinspires.ftc.teamcode.CommandBase.PlaceConeAuto;
 import org.firstinspires.ftc.teamcode.CommandBase.Wait;
 import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
+import org.firstinspires.ftc.teamcode.component.Latch;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
+import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.library.Command;
 import org.firstinspires.ftc.teamcode.library.ParallelCommand;
+import org.firstinspires.ftc.teamcode.library.RunCommand;
 import org.firstinspires.ftc.teamcode.library.SequentialCommand;
-import  org.firstinspires.ftc.teamcode.CommandBase.GoToPosition;
-import org.firstinspires.ftc.teamcode.core.Tom;
-
-import java.util.ArrayList;
+import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Sample Auto", group = "competition")
 public class SampleAuto extends LinearOpMode {
@@ -31,52 +35,57 @@ public class SampleAuto extends LinearOpMode {
     Pose2d goToConePosition = new Pose2d(58.65, -1.80, Math.toRadians(286));
 
     Trajectory goToCone;
+    Trajectory park;
+    Trajectory correct;
 
+    SampleMecanumDrive drive;
+
+    Webcam.Location location;
 
     SequentialCommand scheduler = new SequentialCommand(
-            new ArrayList<Command>(){
-                {
-//                    add(new GoToPosition(drive, goToCone));
-                    add(new IntakeMove(0, Arm.TurnValue.PARTIAL.getPosition(), Claw.IN));
-                    add(new ParallelCommand(
+            new FollowTrajectory(drive, goToCone),
+            new IntakeMove(0, Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
+            new PlaceConeAuto(Arm.TurnValue.CONE1.getPosition()),
+            new PlaceConeAuto(Arm.TurnValue.CONE2.getPosition()),
+            new PlaceConeAuto(Arm.TurnValue.CONE3.getPosition()),
+            new PlaceConeAuto(Arm.TurnValue.CONE4.getPosition()),
+            new PlaceConeAuto(Arm.TurnValue.CONE5.getPosition()),
+            new ParallelCommand(
+                    new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
+                    new SequentialCommand(
+                            new Wait(200),
+                            new RunCommand(()-> Tom.latch.setLatchPosition(Latch.CLOSE)))),
+            new Wait(300),
+            new ParallelCommand(
+                    new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
+                    new RunCommand(()->Tom.latch.setLatchPosition(Latch.OPEN))),
+            new FollowTrajectory(drive, park)
 
+    );
 
-                            new ArrayList<Command>(){
-                                {
+    SequentialCommand failsafePark = new SequentialCommand(
+            new ParallelCommand(
+                    new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
+                    new RunCommand(()->Tom.latch.setLatchPosition(Latch.OPEN)),
+                    new FollowTrajectory(drive, park),
+                    new SequentialCommand(
+                            new IntakeMove(IntakeSlides.TurnValue.RETRACTED.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN)),
+                            new Collect()
+                    )
 
-                                    add(new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()));
-                                    add(new SequentialCommand(
+    );
 
-                                            new ArrayList<Command>(){
-                                                {
-                                                   add(new Wait(200));
-                                                   add(new Latch(true));
-                                                }
-                                            }
+    SequentialCommand correction = new SequentialCommand(
+            new ParallelCommand(
+                    new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
+                    new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN)),
+                    new FollowTrajectory(drive, correct)
 
-                                    ));
-                                    add(new IntakeMove(IntakeSlides.TurnValue.ALMOST_DONE.getTicks(),
-                                            Arm.TurnValue.CONE1.getPosition(),
-                                            Claw.OUT));
+    );
 
-                                }
-                            }
-
-
-                    ));
-                    add(new Wait(3000));
-                    add(new ParallelCommand(
-                            new ArrayList<Command>(){
-                                {
-                                    add(new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()));
-                                    add(new Latch(false));
-                                }
-                            }
-                    ));
-                }
-
-
-            }
+    SequentialCommand stallingMeasures = new SequentialCommand(
+            new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
+            new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks())
     );
 
     @Override
@@ -84,7 +93,7 @@ public class SampleAuto extends LinearOpMode {
 
         Tom.init(hardwareMap, false);
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(new Pose2d(0,0,0));
 
          goToCone = drive.trajectoryBuilder(new Pose2d())
@@ -93,22 +102,93 @@ public class SampleAuto extends LinearOpMode {
                 .build();
 
         while (!isStarted() && !isStopRequested()) {
-            telemetry.addLine("Idk if this is gonna work");
-            telemetry.update();
+            Tom.webcam.scanForTags();
+             location = Tom.webcam.getLocation();
+            AprilTagDetection tagOfInterest = Tom.webcam.getTagOfInterest();
+
+
+
+            //telemetry for the position
+            if (location != null && tagOfInterest != null) {
+                telemetry.addData("Location", location);
+                telemetry.addData("Tag ID", tagOfInterest.id);
+                telemetry.addLine("\n\nLocation data:");
+                tagToTelemetry(tagOfInterest);
+                telemetry.update();
+            }
+
+            Tom.arm.moveToPosition(Arm.TurnValue.START_AUTO.getPosition());
+            Tom.claw.setClawPosition(Claw.OPEN);
+
+            if(gamepad1.a){
+                Tom.latch.setLatchPosition(Latch.CLOSE);
+            }
         }
 
         scheduler.init();
+        failsafePark.stop();
+        correction.stop();
+        stallingMeasures.stop();
+
+        ElapsedTime autoTime = new ElapsedTime();
+        autoTime.reset();
+
+        Trajectory park;
+
+        if (location == Webcam.Location.ONE) {
+            park = drive.trajectoryBuilder(goToCone.end())
+                    .splineToConstantHeading(new Vector2d(58.569, 1), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(49.569, 26, 0), Math.toRadians(90))
+                    .build();
+        }else if (location == Webcam.Location.TWO) {
+            park = drive.trajectoryBuilder(goToCone.end())
+                    .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(50.569, 0, 0), Math.toRadians(290))
+                    .build();
+        }else {
+            park = drive.trajectoryBuilder(goToCone.end())
+                    .splineToConstantHeading(new Vector2d(58.569, 1), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(50.569, -26, 0), Math.toRadians(270))
+                    .build();
+        }
+
+
 
         while(opModeIsActive() && !isStopRequested()){
-            scheduler.update();
-            if(scheduler.isFinished()){
-                telemetry.addLine("done");
-                telemetry.update();
+            if(autoTime.milliseconds()>27300&& !scheduler.isFinished()&&scheduler.getIndex() != scheduler.getSize()-1){
+                failsafePark.init();
+
             }else{
-                telemetry.addData("Index", scheduler.getIndex());
-                telemetry.update();
+                if(drive.inError(goToConePosition)){
+                    correct =  drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .lineToSplineHeading(goToConePosition)
+                            .build();
+
+                    correction.init();
+                }else{
+                    scheduler.initIndex();
+                    scheduler.update();
+                }
             }
+
+            failsafePark.update();
+            correction.update();
+
+            Tom.outtake.update();
+            Tom.intake.update();
+            Tom.arm.update();
         }
+    }
+
+
+    private void tagToTelemetry(AprilTagDetection detection) {
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 
 }
