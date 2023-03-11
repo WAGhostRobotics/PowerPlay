@@ -15,8 +15,10 @@ public class Wait extends Command {
 
     @Override
     public void init() {
-        timer = new ElapsedTime();
-        timer.reset();
+        if(timer == null){
+            timer = new ElapsedTime();
+            timer.reset();
+        }
     }
 
     @Override
