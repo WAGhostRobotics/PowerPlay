@@ -177,16 +177,25 @@ public class TeleOpParent extends LinearOpMode {
             if(gamepad1.x || gamepad2.x){
                 Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks());
                 Tom.latch.setLatchPosition(Latch.OPEN);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
             }
 
             if(gamepad1.b || gamepad2.b){
                 Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.MID.getTicks());
                 Tom.latch.setLatchPosition(Latch.CLOSE);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
             }
 
             if(gamepad1.y || gamepad2.y) {
                 Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.TOP.getTicks());
                 Tom.latch.setLatchPosition(Latch.CLOSE);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
             }
 
 
@@ -254,6 +263,9 @@ public class TeleOpParent extends LinearOpMode {
                 Tom.intake.setTargetPosition(IntakeSlides.TurnValue.RETRACTED.getTicks());
                 Tom.arm.setTargetPosition(Arm.TurnValue.LOW.getPosition());
                 Tom.claw.setSpinPosition(Claw.OUT);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
             }
 
 
@@ -280,16 +292,27 @@ public class TeleOpParent extends LinearOpMode {
             if (gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
                 Tom.outtake.setTargetPosition(Tom.outtake.getTicks()+10);
 
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
 
             } else if (gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
                 Tom.outtake.setTargetPosition(Tom.outtake.getTicks()-10);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
             }
 
             //INTAKE MINOR ADJUSTMENT
             if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 Tom.intake.setTargetPosition(Tom.intake.getTicks()+10);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
             } else if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 Tom.intake.setTargetPosition(Tom.intake.getTicks()-10);
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
             }
 
 
@@ -304,12 +327,17 @@ public class TeleOpParent extends LinearOpMode {
                     Tom.arm.setTargetPosition(0);
                 }
 
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
             }else if(gamepad1.left_stick_button){
                 Tom.arm.setTargetPosition(Tom.arm.getPosition()+0.01);
 
                 if(Tom.arm.getTargetPosition()>=1){
                     Tom.arm.setTargetPosition(1);
                 }
+
+                collectionScheduler.stop();
+                autoStackScheduler.stop();
 
             }
 

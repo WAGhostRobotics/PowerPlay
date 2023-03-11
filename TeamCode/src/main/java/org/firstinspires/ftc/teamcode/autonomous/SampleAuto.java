@@ -166,7 +166,6 @@ public class SampleAuto extends LinearOpMode {
 
                     correction.init();
                 }else{
-                    scheduler.initIndex();
                     scheduler.update();
                 }
             }

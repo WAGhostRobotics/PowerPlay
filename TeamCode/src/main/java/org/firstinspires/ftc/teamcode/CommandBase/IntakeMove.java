@@ -14,17 +14,12 @@ public class IntakeMove extends Command {
         this.spinPosition = spinPosition;
     }
 
-    @Override
-    public void init() {
-        Tom.intake.setTargetPosition(ticks);
-        Tom.arm.setTargetPosition(armPosition);
-        Tom.claw.setSpinPosition(spinPosition);
-
-    }
 
     @Override
     public void update() {
-
+        Tom.intake.setTargetPosition(ticks);
+        Tom.arm.setTargetPosition(armPosition);
+        Tom.claw.setSpinPosition(spinPosition);
     }
 
     @Override

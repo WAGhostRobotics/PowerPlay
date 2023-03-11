@@ -59,6 +59,10 @@ public class OuttakeSlides {
         slides.setTargetPosition(targetPos);
     }
 
+    public int getTargetPosition(){
+        return slides.getTargetPosition();
+    }
+
     public void update(){
         if(slides.getTargetPosition()==OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks()&&slides.getCurrentPosition()<=0){
             slides.setTargetPosition(0);

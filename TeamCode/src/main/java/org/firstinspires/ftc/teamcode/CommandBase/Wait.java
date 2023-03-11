@@ -23,7 +23,10 @@ public class Wait extends Command {
 
     @Override
     public void update() {
-        return;
+        if(timer == null){
+            timer = new ElapsedTime();
+            timer.reset();
+        }
     }
 
     @Override
