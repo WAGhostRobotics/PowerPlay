@@ -204,6 +204,7 @@ public class TeleOpParent extends LinearOpMode {
 
 
             //TELEMETRY
+//            telemetry.addData("Distance", Tom.claw.getDistance());
             telemetry.addData("Outtake current", Tom.outtake.getCurrent());
             telemetry.addData("Intake current", Tom.intake.getCurrent());
             telemetry.addData("Outtake position", Tom.outtake.getTicks());

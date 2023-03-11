@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.component;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Claw {
 
     public Servo claw;
     public Servo spin;
+//    private DistanceSensor clawSensor;
 
     public static final double OPEN = 0.08;
 
@@ -28,9 +32,15 @@ public class Claw {
         claw = hardwareMap.get(Servo.class, "claw");
         spin = hardwareMap.get(Servo.class, "spin");
         claw.setDirection(Servo.Direction.REVERSE);
+
+//        clawSensor = hardwareMap.get(DistanceSensor.class, "clawSensor");
         close();
         in();
     }
+
+//    public double getDistance(){
+//        return clawSensor.getDistance(DistanceUnit.INCH);
+//    }
 
     public double getSpinTargetPosition(){
         return spinTargetPosition;

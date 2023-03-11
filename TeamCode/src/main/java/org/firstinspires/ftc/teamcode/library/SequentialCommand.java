@@ -8,6 +8,8 @@ public class SequentialCommand extends Command{
 
     private int index;
 
+    private boolean finished = false;
+
     public SequentialCommand(ArrayList<Command> commandList){
         this.commandList = commandList;
         index = 0;
@@ -20,17 +22,28 @@ public class SequentialCommand extends Command{
 
     @Override
     public void update() {
-        if(commandList.get(0).isFinished()){
-            index++;
-            commandList.get(index).init();
-        }else{
+
+            if(commandList.get(index).isFinished()){
+                if(index<commandList.size()-1){
+                    index++;
+                    commandList.get(index).init();
+
+                }else{
+                    finished = true;
+                }
+            }
+
             commandList.get(index).update();
-        }
+
     }
 
     @Override
     public boolean isFinished() {
-        return commandList.get(commandList.size()-1).isFinished();
+        return finished;
+    }
+
+    public int getIndex(){
+        return index;
     }
 
 
