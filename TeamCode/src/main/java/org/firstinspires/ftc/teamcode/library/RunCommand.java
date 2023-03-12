@@ -2,14 +2,15 @@ package org.firstinspires.ftc.teamcode.library;
 
 public class RunCommand extends Command{
 
+    RunFunction func;
 
     public RunCommand(RunFunction function){
-        function.run();
+        this.func = function;
     }
 
     @Override
     public void init() {
-
+        func.run();
     }
 
     @Override
