@@ -24,6 +24,6 @@ public class IntakeMove extends Command {
 
     @Override
     public boolean isFinished() {
-        return Tom.intake.isFinished()&&Tom.arm.isFinished();
+        return Tom.intake.isFinished()&&Tom.arm.isFinished()&&Tom.arm.getTargetPosition()==armPosition&&Tom.intake.getTargetPosition()==ticks;
     }
 }

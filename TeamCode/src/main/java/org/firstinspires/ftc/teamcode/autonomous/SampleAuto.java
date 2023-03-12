@@ -83,10 +83,6 @@ public class SampleAuto extends LinearOpMode {
 
     );
 
-    SequentialCommand stallingMeasures = new SequentialCommand(
-            new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
-            new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks())
-    );
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -128,7 +124,6 @@ public class SampleAuto extends LinearOpMode {
         scheduler.init();
         failsafePark.stop();
         correction.stop();
-        stallingMeasures.stop();
 
         ElapsedTime autoTime = new ElapsedTime();
         autoTime.reset();
@@ -155,9 +150,10 @@ public class SampleAuto extends LinearOpMode {
 
 
         while(opModeIsActive() && !isStopRequested()){
-            if(autoTime.milliseconds()>27300&& !scheduler.isFinished()&&scheduler.getIndex() != scheduler.getSize()-1){
+            if(autoTime.milliseconds()>27300&& !scheduler.isFinished()&&scheduler.getIndex() != scheduler.getSize()-1&& failsafePark.isFinished()){
                 failsafePark.init();
-
+                correction.stop();
+                scheduler.stop();
             }else{
                 if(drive.inError(goToConePosition)){
                     correct =  drive.trajectoryBuilder(drive.getPoseEstimate())

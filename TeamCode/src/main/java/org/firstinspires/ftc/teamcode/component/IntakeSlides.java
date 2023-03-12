@@ -73,6 +73,12 @@ public class IntakeSlides {
         slides.setTargetPosition(targetPos);
     }
 
+    public int getTargetPosition(){
+        return slides.getTargetPosition();
+    }
+
+
+
     public void update(){
         int multiplier = 1;//positive if the claw needs to go up, negative if it needs to go down
 

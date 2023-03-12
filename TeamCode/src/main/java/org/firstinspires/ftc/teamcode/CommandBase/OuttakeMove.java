@@ -18,6 +18,6 @@ public class OuttakeMove extends Command {
 
     @Override
     public boolean isFinished() {
-        return Tom.outtake.isFinished();
+        return Tom.outtake.isFinished()&&Tom.outtake.getTargetPosition()==ticks;
     }
 }

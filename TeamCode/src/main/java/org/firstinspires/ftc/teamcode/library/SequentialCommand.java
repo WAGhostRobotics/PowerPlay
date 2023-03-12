@@ -37,7 +37,10 @@ public class SequentialCommand extends Command{
                         finished = true;
                     }
                 }
+
+
                 commandList[index].update();
+
             }
 
 
