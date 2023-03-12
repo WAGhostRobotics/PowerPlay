@@ -78,8 +78,8 @@ public class SampleAuto extends LinearOpMode {
     SequentialCommand correction = new SequentialCommand(
             new ParallelCommand(
                     new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
-                    new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN)),
-                    new FollowTrajectory(drive, correct)
+                    new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
+                    new FollowTrajectory(drive, correct))
 
     );
 
