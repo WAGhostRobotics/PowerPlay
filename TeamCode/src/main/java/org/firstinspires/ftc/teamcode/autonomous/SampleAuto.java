@@ -161,7 +161,7 @@ public class SampleAuto extends LinearOpMode {
                             .build();
 
                     correction.init();
-                }else{
+                }else if (correction.isFinished()){
                     scheduler.update();
                 }
             }
