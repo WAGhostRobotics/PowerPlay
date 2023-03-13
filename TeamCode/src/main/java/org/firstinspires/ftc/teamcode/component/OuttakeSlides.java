@@ -64,9 +64,7 @@ public class OuttakeSlides {
     }
 
     public void update(){
-        if(slides.getTargetPosition()==OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks()&&slides.getCurrentPosition()<=0){
-            slides.setTargetPosition(0);
-        }else{
+        if(!(slides.getTargetPosition()==OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks()&&slides.getCurrentPosition()<=0)){
             int multiplier = 1;//positive if the claw needs to go up, negative if it needs to go down
 
             if(slides.getCurrentPosition()>slides.getTargetPosition()){

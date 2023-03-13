@@ -5,8 +5,8 @@ import org.firstinspires.ftc.teamcode.library.Command;
 
 public class IntakeMove extends Command {
 
-    int ticks;
-    double armPosition;
+    int ticks = 0;
+    double armPosition = 0;
     double spinPosition;
     public IntakeMove(int ticks, double armPosition, double spinPosition){
         this.ticks = ticks;
@@ -26,4 +26,5 @@ public class IntakeMove extends Command {
     public boolean isFinished() {
         return Tom.intake.isFinished()&&Tom.arm.isFinished()&&Tom.arm.getTargetPosition()==armPosition&&Tom.intake.getTargetPosition()==ticks;
     }
+
 }

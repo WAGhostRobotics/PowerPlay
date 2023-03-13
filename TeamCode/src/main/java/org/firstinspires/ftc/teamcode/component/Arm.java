@@ -92,5 +92,9 @@ public class Arm {
         return Math.abs(armPosition.getCurrentPosition()-encoderPosition)<=ERROR;
     }
 
+    public double encoderPositionTranslation(){
+        return ((-3857.3770491803)*targetPos) + 3343.1475409836;
+    }
+
 
 }

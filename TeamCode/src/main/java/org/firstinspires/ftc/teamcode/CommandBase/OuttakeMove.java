@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.library.Command;
 
 public class OuttakeMove extends Command {
 
-    int ticks;
+    int ticks = 0;
     public OuttakeMove(int ticks){
         this.ticks = ticks;
     }
