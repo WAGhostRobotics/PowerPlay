@@ -154,8 +154,8 @@ public class SampleAuto extends LinearOpMode {
                 failsafePark.init();
                 correction.stop();
                 scheduler.stop();
-            }else{
-                if(drive.inError(goToConePosition)&& correction.isFinished()&&scheduler.getIndex()>0){
+            }else if(failsafePark.isFinished()){
+                if(drive.inError(goToConePosition)&& correction.isFinished()&&scheduler.getIndex()>0&&scheduler.getIndex() != scheduler.getSize()-1){
                     correct =  drive.trajectoryBuilder(drive.getPoseEstimate())
                             .lineToSplineHeading(goToConePosition)
                             .build();
