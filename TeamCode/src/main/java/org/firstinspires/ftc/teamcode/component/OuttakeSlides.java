@@ -73,6 +73,8 @@ public class OuttakeSlides {
             //sets power and mode
             slides.setPower(multiplier * POWER);
             slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }else{
+            slides.setPower(0);
         }
 
     }
