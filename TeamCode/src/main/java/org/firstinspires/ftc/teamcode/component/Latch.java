@@ -9,7 +9,7 @@ public class Latch {
 
     public static final double OPEN = 0.5;
 
-    public static final double CLOSE = 0.075;
+    public static final double CLOSE = 0.06;
 
     private double latchTargetPosition = OPEN;
 

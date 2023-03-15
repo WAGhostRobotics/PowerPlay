@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.autonomous.DetectionTest.FEET_PER_METER;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -8,6 +9,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.CommandBase.Collect;
+import org.firstinspires.ftc.teamcode.CommandBase.CorrectionTrajectory;
+import org.firstinspires.ftc.teamcode.CommandBase.FollowTrajectory;
+import org.firstinspires.ftc.teamcode.CommandBase.IntakeMove;
+import org.firstinspires.ftc.teamcode.CommandBase.OuttakeMove;
+import org.firstinspires.ftc.teamcode.CommandBase.PlaceConeAuto;
+import org.firstinspires.ftc.teamcode.CommandBase.Wait;
 import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
@@ -16,102 +24,45 @@ import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.teleop.TeleOpParent;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.library.ParallelCommand;
+import org.firstinspires.ftc.teamcode.library.RunCommand;
+import org.firstinspires.ftc.teamcode.library.SequentialCommand;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Right Side", group = "competition")
 public class RightSideAuto extends LinearOpMode {
-    Webcam.Location location = null;
-    AprilTagDetection tagOfInterest = null;
-    static final double FEET_PER_METER = 3.28084;
 
-    LeftSideAuto.State currentState = LeftSideAuto.State.IDLE;
 
-    double power = 1;
-    int position = 0;
+    Pose2d goToConePosition = new Pose2d(57.85, -0.25, Math.toRadians(74.84));
 
-    enum State {
-        GO_TO_PLACE,
-        WAIT_FOR_OUTTAKE,
-        OUTTAKE_EXTEND,
-        INTAKE_FULLY_EXTEND,
-        INTAKE_GRAB,
-        DONE_GRABBING,
-        RETRACT_READY,
-        SLIDES_RETRACT,
-        WAIT_FOR_CLAW,
-        CLAW_OPEN,
-        PIVOT_RETRACT,
-        OUTTAKE_READY,
-        READY_TO_PARK,
-        PARK,
-        GRAB_LAST,
-        CORRECT_POSITION,
-        IDLE
-    }
+    Trajectory goToCone;
+    Trajectory park;
+    Trajectory correct;
+
+    SampleMecanumDrive drive;
+
+    Webcam.Location location;
+
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // feedback after OpMode started
-        telemetry.addData("Status", "Initializing...");
-        telemetry.update();
-
-        int intakePosition = 0;
-        int outtakePosition = 0;
-        double armPosition = Arm.TurnValue.PARTIAL.getPosition();
-        double clawPosition = Claw.OPEN;
-        double spinPosition = Claw.IN;
-        double latchPosition = Latch.CLOSE;
-        int cone = 1;
-        boolean placing = false;
-        int failsafeTime = 27000;
-
-        State state;
-
-        State lastState;
-
 
         Tom.init(hardwareMap, false);
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(new Pose2d(0,0,0));
 
 
-//        Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-//                .lineToSplineHeading(new Pose2d(57.875
-//                        , -1.75, Math.toRadians(74.5)))
-//                .build();
-
-        Pose2d goToConePosition = new Pose2d(57.985, -1.75, Math.toRadians(74.74));
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-                .splineToSplineHeading(new Pose2d(35, -0.5, Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(35, 0, Math.toRadians(0)), Math.toRadians(0))
                 .splineToSplineHeading(goToConePosition, Math.toRadians(194.5))
                 .build();
-
-        Trajectory correctPosition;
-
-
-
-
-
-
-
-
-        // updates feedback after initialization finished
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-        Tom.latch.setLatchPosition(Latch.OPEN);
-
-        //telemetry of the vision data
         while (!isStarted() && !isStopRequested()) {
             Tom.webcam.scanForTags();
             location = Tom.webcam.getLocation();
-            tagOfInterest = Tom.webcam.getTagOfInterest();
+            AprilTagDetection tagOfInterest = Tom.webcam.getTagOfInterest();
 
 
 
@@ -130,321 +81,103 @@ public class RightSideAuto extends LinearOpMode {
             if(gamepad1.a){
                 Tom.latch.setLatchPosition(Latch.CLOSE);
             }
-
         }
+
 
         ElapsedTime autoTime = new ElapsedTime();
         autoTime.reset();
 
 
-        Trajectory park;
-
         if (location == Webcam.Location.ONE) {
-
-
             park = drive.trajectoryBuilder(goToCone.end())
                     .splineToConstantHeading(new Vector2d(58.569, 1), Math.toRadians(180))
-                    .splineToSplineHeading(new Pose2d(48.569, 24, 0), Math.toRadians(90))
+                    .splineToSplineHeading(new Pose2d(49.569, 26, 0), Math.toRadians(90))
                     .build();
         }else if (location == Webcam.Location.TWO) {
-
-            failsafeTime = 28500;
             park = drive.trajectoryBuilder(goToCone.end())
                     .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
                     .splineToSplineHeading(new Pose2d(50.569, 0, 0), Math.toRadians(290))
                     .build();
         }else {
             park = drive.trajectoryBuilder(goToCone.end())
-                    .splineToConstantHeading(new Vector2d(54.569, 1), Math.toRadians(180))
-                    .splineToSplineHeading(new Pose2d(50.569, -26, 0), Math.toRadians(290))
+                    .splineToConstantHeading(new Vector2d(58.569, 1), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(50.569, -26, 0), Math.toRadians(270))
                     .build();
         }
 
+        SequentialCommand scheduler = new SequentialCommand(
+                new FollowTrajectory(drive, goToCone),
+                new IntakeMove(0, Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
+                new PlaceConeAuto(Arm.TurnValue.CONE1.getPosition()),
+                new PlaceConeAuto(Arm.TurnValue.CONE2.getPosition()),
+                new PlaceConeAuto(Arm.TurnValue.CONE3.getPosition()),
+                new PlaceConeAuto(Arm.TurnValue.CONE4.getPosition()),
+                new PlaceConeAuto(Arm.TurnValue.CONE5.getPosition()),
+                new ParallelCommand(
+                        new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
+                        new SequentialCommand(
+                                new Wait(200),
+                                new RunCommand(()-> Tom.latch.setLatchPosition(Latch.CLOSE)))),
+                new Wait(300),
+                new ParallelCommand(
+                        new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
+                        new RunCommand(()->Tom.latch.setLatchPosition(Latch.OPEN))),
+                new FollowTrajectory(drive, park)
 
+        );
 
+        SequentialCommand failsafePark = new SequentialCommand(
+                new ParallelCommand(
+                        new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
+                        new RunCommand(()->Tom.latch.setLatchPosition(Latch.OPEN)),
+                        new FollowTrajectory(drive, park),
+                        new SequentialCommand(
+                                new IntakeMove(IntakeSlides.TurnValue.RETRACTED.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
+                        new Collect())
+                )
 
+        );
 
-        state = State.GO_TO_PLACE;
-        lastState = State.GO_TO_PLACE;
-        drive.followTrajectoryAsync(goToCone);
+        SequentialCommand correction = new SequentialCommand(
+                new ParallelCommand(
+                        new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
+                        new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
+                        new CorrectionTrajectory(drive, goToConePosition))
 
+        );
 
-        ElapsedTime time = new ElapsedTime();
-        time.reset();
+        scheduler.init();
+        failsafePark.stop();
+        correction.stop();
 
-        ElapsedTime stallingTime = new ElapsedTime();
 
         while(opModeIsActive() && !isStopRequested()){
-
-            Pose2d error = drive.getPoseEstimate().minus(goToConePosition);
-            telemetry.addData("X", error.getX());
-            telemetry.addData("Y", error.getY());
-            telemetry.addData("Heading", error.getHeading());
-            telemetry.addData("Stalling", Tom.outtake.isStalling());
-            telemetry.addData("State", state.name());
-            telemetry.addData("Last State", lastState.name());
-            telemetry.addData("Outtake current", Tom.outtake.getCurrent());
+            if(autoTime.milliseconds()>27300&& !scheduler.isFinished()&&scheduler.getIndex() != scheduler.getSize()-1&& failsafePark.isFinished()){
+                failsafePark.init();
+                correction.stop();
+                scheduler.stop();
+            }else if(failsafePark.isFinished()){
+                if(drive.inError(goToConePosition)&& correction.isFinished()&&scheduler.getIndex()>0&&scheduler.getIndex() != scheduler.getSize()-1&& !scheduler.isFinished()){
+                    correction.init();
+                }else if (correction.isFinished()){
+                    scheduler.update();
+                }
+            }
+            telemetry.addData("Condition 1", drive.inError(goToConePosition));
+            telemetry.addData("Condition 2", correction.isFinished());
+            telemetry.addData("Condition 3", scheduler.getIndex()>0);
+            telemetry.addData("Condition 4", scheduler.getIndex() != scheduler.getSize()-1);
+            telemetry.addData("Condition 5", !scheduler.isFinished());
             telemetry.update();
 
-            if(!Tom.outtake.isStalling()){
-                stallingTime.reset();
-            }
 
-            if(state != State.CORRECT_POSITION){
-                //INTAKE SLIDES UPDATE
-                Tom.intake.moveToPosition(intakePosition, 1);
-                if(!Tom.intake.isBusy()){
-                    Tom.intake.stopArm();
-                }
-
-
-                //OUTTAKE SLIDES UPDATE
-                Tom.outtake.moveToPosition(outtakePosition, 1);
-                if(!Tom.outtake.isBusy()){
-                    Tom.outtake.stopArm();
-                }
-
-                if(outtakePosition==OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks()&&Tom.outtake.getTicks()<=0){
-                    outtakePosition = 0;
-                }
-
-
-
-                Tom.arm.moveToPosition(armPosition);
-
-                Tom.claw.setClawPosition(clawPosition);
-
-
-                Tom.claw.setSpinPosition(spinPosition);
-
-                Tom.latch.setLatchPosition(latchPosition);
-            }else{
-
-                Tom.latch.setLatchPosition(Latch.CLOSE);
-
-                Tom.intake.moveToPosition(IntakeSlides.TurnValue.PARTIAL.getTicks(), 1);
-                if(!Tom.intake.isBusy()){
-                    Tom.intake.stopArm();
-                }
-
-
-                Tom.outtake.moveToPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks(), 1);
-                if(!Tom.outtake.isBusy()){
-                    Tom.outtake.stopArm();
-                }
-
-
-
-                Tom.arm.moveToPosition(Arm.TurnValue.LOW.getPosition());
-
-            }
+            failsafePark.update();
+            correction.update();
 
             drive.update();
-
-            if(state != State.CORRECT_POSITION && placing && drive.inError(goToConePosition)){
-                lastState = state;
-                state = State.CORRECT_POSITION;
-
-                correctPosition = drive.trajectoryBuilder(drive.getPoseEstimate())
-                        .lineToSplineHeading(goToConePosition)
-                        .build();
-
-                drive.followTrajectoryAsync(correctPosition);
-            }
-
-
-            //OUTTAKE STATE MACHINE
-            switch (state) {
-                case CORRECT_POSITION:
-                    if(!drive.isBusy()){
-                        state = lastState;
-                    }
-                    break;
-                case GO_TO_PLACE:
-                    if(!drive.isBusy()){
-                        outtakePosition = OuttakeSlides.TurnValue.AUTO_TOP.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
-
-                        armPosition = Arm.TurnValue.CONE1.getPosition();
-
-                        cone++;
-                        spinPosition = Claw.OUT;
-
-                        placing = true;
-
-                        state = State.WAIT_FOR_OUTTAKE;
-
-
-                    }
-                    break;
-                case WAIT_FOR_OUTTAKE:
-                    if(Tom.outtake.isFinished()){
-                        time.reset();
-//                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
-//                        spinPosition = Claw.OUT;
-                        state = State.OUTTAKE_EXTEND;
-
-                        if(cone == 7){
-                            state = State.READY_TO_PARK;
-                        }
-
-                    }else if(time.milliseconds()>200){
-                        latchPosition = Latch.CLOSE;
-                    }
-                    break;
-                case OUTTAKE_EXTEND:
-                    if(time.milliseconds()>320&& Tom.outtake.isFinished()){
-                        latchPosition = Latch.OPEN;
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                        time.reset();
-//                        armPosition = Arm.TurnValue.EXTENDED.getTicks();
-//                        spinPosition = Claw.OUT;
-                        state = State.INTAKE_FULLY_EXTEND;
-
-                        stallingTime.reset();
-
-                    }
-                    break;
-                case INTAKE_FULLY_EXTEND:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        intakePosition = IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks();
-                        state = State.INTAKE_GRAB;
-                    }else if(stallingTime.milliseconds()>1700){
-                        outtakePosition = OuttakeSlides.TurnValue.AUTO_TOP.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
-                        state = State.WAIT_FOR_OUTTAKE;
-                    }
-                    break;
-                case INTAKE_GRAB:
-                    if(Tom.intake.isFinished()){
-                        clawPosition = Claw.CLOSE;
-                        time.reset();
-                        state = State.DONE_GRABBING;
-                    }
-                    break;
-                case DONE_GRABBING:
-                    if(time.milliseconds() > 350 && Tom.intake.isFinished()){
-                        armPosition = Arm.TurnValue.LOW.getPosition();
-                        state = State.RETRACT_READY;
-                    }
-                    break;
-                case RETRACT_READY:
-                    if(Tom.arm.isFinished()){
-                        intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                        outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
-                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                        spinPosition = Claw.IN;
-                        state = State.WAIT_FOR_CLAW;
-                    }
-                    break;
-                case WAIT_FOR_CLAW:
-                    if(Tom.intake.isFinished() && Tom.outtake.isFinished()&&Tom.arm.isFinished()&&Tom.claw.spinIsFinished()){
-                        time.reset();
-
-
-                        state = State.SLIDES_RETRACT;
-                    }
-                    break;
-                case SLIDES_RETRACT:
-                    if(time.milliseconds()>150){
-                        intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
-
-
-                        state = State.CLAW_OPEN;
-                    }
-                    break;
-                case CLAW_OPEN:
-                    if(Tom.intake.isFinished() &&Tom.arm.isFinished()){
-                        clawPosition = Claw.OPEN;
-                        outtakePosition = OuttakeSlides.TurnValue.RETRACTED.getTicks();
-                        time.reset();
-                        state = State.PIVOT_RETRACT;
-                    }
-                    break;
-
-                case PIVOT_RETRACT:
-                    if(time.milliseconds()>100){
-
-                        armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                        state = State.OUTTAKE_READY;
-                    }
-                    break;
-                case OUTTAKE_READY:
-                    if(Tom.arm.isFinished()){
-                        state = State.WAIT_FOR_OUTTAKE;
-
-                        outtakePosition = OuttakeSlides.TurnValue.TOP.getTicks();
-                        intakePosition = IntakeSlides.TurnValue.ALMOST_DONE.getTicks();
-                        spinPosition = Claw.OUT;
-                        switch(cone){
-                            case 1:
-                                armPosition = Arm.TurnValue.CONE1.getPosition();
-                                break;
-                            case 2:
-                                armPosition = Arm.TurnValue.CONE2.getPosition();
-                                break;
-                            case 3:
-                                armPosition = Arm.TurnValue.CONE3.getPosition();
-                                break;
-                            case 4:
-                                armPosition = Arm.TurnValue.CONE4.getPosition();
-                                break;
-                            case 5:
-                                armPosition = Arm.TurnValue.CONE5.getPosition();
-                                break;
-                            case 6:
-                                armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                                spinPosition = Claw.IN;
-                                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                                break;
-
-                        }
-                        cone++;
-
-                        time.reset();
-
-                    }
-                    break;
-                case READY_TO_PARK:
-
-
-                    if(time.milliseconds()>100){
-                        placing = false;
-                        latchPosition = Latch. OPEN;
-                        outtakePosition = OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks();
-                        state = State.PARK;
-                    }
-                    break;
-
-                case PARK:
-                    if(Tom.outtake.isFinished()||Tom.outtake.isStalling()){
-                        drive.followTrajectoryAsync(park);
-                        intakePosition = IntakeSlides.TurnValue.PLACE_CONE.getTicks();
-                        armPosition = Arm.TurnValue.RETRACTED.getPosition();
-                        time.reset();
-                        state = State.IDLE;
-                    }
-                    break;
-
-                case IDLE:
-                    if(Tom.arm.isFinished()&&Tom.intake.isFinished()){
-                        clawPosition = Claw.OPEN;
-                    }
-                    break;
-
-            }
-
-            if(autoTime.milliseconds()>failsafeTime && state != State.READY_TO_PARK && state != State.PARK && state != State.IDLE && state != State.GRAB_LAST){
-                armPosition = Arm.TurnValue.PARTIAL.getPosition();
-                spinPosition = Claw.IN;
-                intakePosition = IntakeSlides.TurnValue.RETRACTED.getTicks();
-                outtakePosition = Tom.outtake.getTicks();
-                time.reset();
-                state = State.READY_TO_PARK;
-            }
-
-
+            Tom.outtake.update();
+            Tom.intake.update();
+            Tom.arm.update();
         }
     }
 
@@ -458,4 +191,5 @@ public class RightSideAuto extends LinearOpMode {
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
+
 }

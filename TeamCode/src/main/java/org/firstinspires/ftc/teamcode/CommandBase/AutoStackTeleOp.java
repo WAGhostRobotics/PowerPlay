@@ -20,7 +20,7 @@ public class AutoStackTeleOp extends SequentialCommand {
                 new ParallelCommand(
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
                         new SequentialCommand(
-                                new Wait(200),
+                                new Wait(150),
                                 new RunCommand(()-> Tom.latch.setLatchPosition(Latch.CLOSE))),
                         new IntakeMove(IntakeSlides.TurnValue.RETRACTED.getTicks(),
                                 Arm.TurnValue.EXTENDED.getPosition(),

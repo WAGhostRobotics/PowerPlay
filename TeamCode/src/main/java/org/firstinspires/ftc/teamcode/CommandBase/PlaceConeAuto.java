@@ -17,11 +17,11 @@ public class PlaceConeAuto extends SequentialCommand {
                 new ParallelCommand(
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
                         new SequentialCommand(
-                                new Wait(200),
+                                new Wait(150),
                                 new RunCommand(()-> Tom.latch.setLatchPosition(Latch.CLOSE))),
                         new IntakeMove(IntakeSlides.TurnValue.ALMOST_DONE.getTicks(),
                                 coneArmPosition,
-                                Claw.OUT)),
+                                Claw.OUT, false)),
                 new ParallelCommand(
                         new Wait(300),
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks())

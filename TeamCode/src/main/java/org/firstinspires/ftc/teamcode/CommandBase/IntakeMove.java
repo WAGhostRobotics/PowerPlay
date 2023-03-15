@@ -8,10 +8,21 @@ public class IntakeMove extends Command {
     int ticks = 0;
     double armPosition = 0;
     double spinPosition;
+
+    boolean waitForFinish = true;
+
     public IntakeMove(int ticks, double armPosition, double spinPosition){
         this.ticks = ticks;
         this.armPosition = armPosition;
         this.spinPosition = spinPosition;
+    }
+
+    public IntakeMove(int ticks, double armPosition, double spinPosition, boolean waitForFinish){
+        this.ticks = ticks;
+        this.armPosition = armPosition;
+        this.spinPosition = spinPosition;
+
+        this.waitForFinish = waitForFinish;
     }
 
 
@@ -24,7 +35,8 @@ public class IntakeMove extends Command {
 
     @Override
     public boolean isFinished() {
-        return Tom.intake.isFinished()&&Tom.arm.isFinished()&&Tom.arm.getTargetPosition()==armPosition&&Tom.intake.getTargetPosition()==ticks;
+        return (Tom.intake.isFinished()&&Tom.arm.isFinished()&&Tom.arm.getTargetPosition()==armPosition&&Tom.intake.getTargetPosition()==ticks)
+                || !waitForFinish;
     }
 
 }

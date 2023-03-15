@@ -29,6 +29,8 @@ public class Tom {
     public static Arm arm;
     public static Latch latch;
 
+
+
     public static void init(HardwareMap hwMap, boolean initTeleOp) {
         // Assign HardwareMap
         hardwareMap = hwMap;

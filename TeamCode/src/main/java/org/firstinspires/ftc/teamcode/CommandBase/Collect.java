@@ -19,8 +19,10 @@ public class Collect extends SequentialCommand {
                         new IntakeMove(IntakeSlides.TurnValue.RETRACTED.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
                         new OuttakeMove(OuttakeSlides.TurnValue.SUPER_RETRACTED.getTicks())),
                 new RunCommand(()->Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks())),
+                new Wait(100),
                 new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.RETRACTED.getPosition(), Claw.IN),
                 new RunCommand(()-> Tom.claw.open()),
+                new Wait(150),
                 new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN)
         );
     }
