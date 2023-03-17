@@ -13,7 +13,7 @@ public class OuttakeSlides {
 
     private DcMotorEx slides;
     private final double POWER = 1;
-    private final double ERROR = 67.5;
+    private final double ERROR = 40;
 
     private final double minPower = 0.3;
     private final double maxPower = 1;
@@ -26,8 +26,8 @@ public class OuttakeSlides {
         RETRACTED(0),
         MID(540),
         ON_THE_WAY_DOWN(700),
-        TOP(890), // 880
-        AUTO_TOP(890); //880
+        TOP(900), // 880
+        AUTO_TOP(900); //880
 
         int ticks;
 

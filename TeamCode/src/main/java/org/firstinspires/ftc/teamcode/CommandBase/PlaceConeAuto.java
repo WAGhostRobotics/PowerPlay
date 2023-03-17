@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.library.SequentialCommand;
 
 public class PlaceConeAuto extends SequentialCommand {
 
-    public PlaceConeAuto(double coneArmPosition){
+    public PlaceConeAuto(double coneArmPosition, int intakeSlidesPosition, double spinPosition){
         super(
                 new ParallelCommand(
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
@@ -21,18 +21,18 @@ public class PlaceConeAuto extends SequentialCommand {
                                 new RunCommand(()-> Tom.latch.setLatchPosition(Latch.CLOSE))),
                         new IntakeMove(IntakeSlides.TurnValue.ALMOST_DONE.getTicks(),
                                 coneArmPosition,
-                                Claw.OUT, false)),
+                                spinPosition, false)),
                 new ParallelCommand(
-                        new Wait(300),
+                        new Wait(350),
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks())
                 ),
                 new ParallelCommand(
                         new OuttakeRetractAuto(),
                         new RunCommand(()->Tom.latch.setLatchPosition(Latch.OPEN))),
-                new IntakeMove(IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks(), coneArmPosition, Claw.OUT),
+                new SpecialIntakeCommand(intakeSlidesPosition, coneArmPosition, spinPosition),
                 new RunCommand(()->Tom.claw.setClawPosition(Claw.CLOSE)),
                 new Wait(350),
-                new IntakeMove(IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks(), Arm.TurnValue.LOW.getPosition(), Claw.OUT),
+                new IntakeMove(intakeSlidesPosition, Arm.TurnValue.LOW.getPosition(), spinPosition),
                 new Collect()
         );
     }

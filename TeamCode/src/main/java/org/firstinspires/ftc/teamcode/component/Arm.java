@@ -25,11 +25,11 @@ public class Arm {
         PARTIAL(0.64),
         RETRACTED(0.855),
         LOW(0.53),
-        CONE1(0.18),
+        CONE1(0.19),
         CONE2(0.145),
-        CONE3(0.105),
-        CONE4(0.073),
-        CONE5(0.032);
+        CONE3(0.115),
+        CONE4(0.074),
+        CONE5(0.042);
 
         double position;
 

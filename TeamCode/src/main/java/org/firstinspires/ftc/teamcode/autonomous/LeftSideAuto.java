@@ -33,7 +33,7 @@ import org.openftc.apriltag.AprilTagDetection;
 public class LeftSideAuto extends LinearOpMode {
 
 
-    Pose2d goToConePosition = new Pose2d(58.65, -1.80, Math.toRadians(286));
+    Pose2d goToConePosition = new Pose2d(59.15, -0.80, Math.toRadians(286));
 
     Trajectory goToCone;
     Trajectory park;
@@ -107,11 +107,11 @@ public class LeftSideAuto extends LinearOpMode {
         SequentialCommand scheduler = new SequentialCommand(
                 new FollowTrajectory(drive, goToCone),
                 new IntakeMove(0, Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
-                new PlaceConeAuto(Arm.TurnValue.CONE1.getPosition()),
-                new PlaceConeAuto(Arm.TurnValue.CONE2.getPosition()),
-                new PlaceConeAuto(Arm.TurnValue.CONE3.getPosition()),
-                new PlaceConeAuto(Arm.TurnValue.CONE4.getPosition()),
-                new PlaceConeAuto(Arm.TurnValue.CONE5.getPosition()),
+                new PlaceConeAuto(Arm.TurnValue.CONE1.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks(), Claw.OUT-Claw.AUTO_OUT_DIFFERENCE),
+                new PlaceConeAuto(Arm.TurnValue.CONE2.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks(), Claw.OUT-Claw.AUTO_OUT_DIFFERENCE),
+                new PlaceConeAuto(Arm.TurnValue.CONE3.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks(), Claw.OUT-Claw.AUTO_OUT_DIFFERENCE),
+                new PlaceConeAuto(Arm.TurnValue.CONE4.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks(), Claw.OUT-Claw.AUTO_OUT_DIFFERENCE),
+                new PlaceConeAuto(Arm.TurnValue.CONE5.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED_LEFT.getTicks(), Claw.OUT-Claw.AUTO_OUT_DIFFERENCE),
                 new ParallelCommand(
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
                         new SequentialCommand(
@@ -127,12 +127,13 @@ public class LeftSideAuto extends LinearOpMode {
 
         SequentialCommand failsafePark = new SequentialCommand(
                 new ParallelCommand(
+                        new RunCommand(()->Tom.latch.setLatchPosition(Latch.CLOSE)),
                         new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
                         new RunCommand(()->Tom.latch.setLatchPosition(Latch.OPEN)),
                         new FollowTrajectory(drive, park),
                         new SequentialCommand(
-                                new IntakeMove(IntakeSlides.TurnValue.RETRACTED.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN)),
-                        new Collect()
+                                new IntakeMove(IntakeSlides.TurnValue.RETRACTED.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
+                                new Collect())
                 )
 
         );
@@ -166,6 +167,7 @@ public class LeftSideAuto extends LinearOpMode {
             failsafePark.update();
             correction.update();
 
+            drive.update();
             Tom.outtake.update();
             Tom.intake.update();
             Tom.arm.update();

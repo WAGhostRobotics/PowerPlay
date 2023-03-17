@@ -33,7 +33,7 @@ import org.openftc.apriltag.AprilTagDetection;
 public class RightSideAuto extends LinearOpMode {
 
 
-    Pose2d goToConePosition = new Pose2d(57.85, -0.25, Math.toRadians(74.84));
+    Pose2d goToConePosition = new Pose2d(58.5, 0.75, Math.toRadians(73.37));
 
     Trajectory goToCone;
     Trajectory park;
@@ -56,7 +56,7 @@ public class RightSideAuto extends LinearOpMode {
 
 
         Trajectory goToCone = drive.trajectoryBuilder(new Pose2d())
-                .splineToSplineHeading(new Pose2d(35, 0, Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(35, 0.25, Math.toRadians(0)), Math.toRadians(0))
                 .splineToSplineHeading(goToConePosition, Math.toRadians(194.5))
                 .build();
         while (!isStarted() && !isStopRequested()) {
@@ -108,11 +108,11 @@ public class RightSideAuto extends LinearOpMode {
         SequentialCommand scheduler = new SequentialCommand(
                 new FollowTrajectory(drive, goToCone),
                 new IntakeMove(0, Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
-                new PlaceConeAuto(Arm.TurnValue.CONE1.getPosition()),
-                new PlaceConeAuto(Arm.TurnValue.CONE2.getPosition()),
-                new PlaceConeAuto(Arm.TurnValue.CONE3.getPosition()),
-                new PlaceConeAuto(Arm.TurnValue.CONE4.getPosition()),
-                new PlaceConeAuto(Arm.TurnValue.CONE5.getPosition()),
+                new PlaceConeAuto(Arm.TurnValue.CONE1.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks(), Claw.OUT+Claw.AUTO_OUT_DIFFERENCE),
+                new PlaceConeAuto(Arm.TurnValue.CONE2.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks(), Claw.OUT+Claw.AUTO_OUT_DIFFERENCE),
+                new PlaceConeAuto(Arm.TurnValue.CONE3.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks(), Claw.OUT+Claw.AUTO_OUT_DIFFERENCE),
+                new PlaceConeAuto(Arm.TurnValue.CONE4.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks(), Claw.OUT+Claw.AUTO_OUT_DIFFERENCE),
+                new PlaceConeAuto(Arm.TurnValue.CONE5.getPosition(), IntakeSlides.TurnValue.AUTO_EXTENDED.getTicks(), Claw.OUT+Claw.AUTO_OUT_DIFFERENCE),
                 new ParallelCommand(
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),
                         new SequentialCommand(
@@ -128,6 +128,10 @@ public class RightSideAuto extends LinearOpMode {
 
         SequentialCommand failsafePark = new SequentialCommand(
                 new ParallelCommand(
+                        new SequentialCommand(
+                                new Wait(300),
+                                new RunCommand(()->Tom.latch.setLatchPosition(Latch.CLOSE))
+                        ),
                         new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
                         new RunCommand(()->Tom.latch.setLatchPosition(Latch.OPEN)),
                         new FollowTrajectory(drive, park),
@@ -160,15 +164,18 @@ public class RightSideAuto extends LinearOpMode {
                 if(drive.inError(goToConePosition)&& correction.isFinished()&&scheduler.getIndex()>0&&scheduler.getIndex() != scheduler.getSize()-1&& !scheduler.isFinished()){
                     correction.init();
                 }else if (correction.isFinished()){
+
                     scheduler.update();
                 }
             }
-            telemetry.addData("Condition 1", drive.inError(goToConePosition));
-            telemetry.addData("Condition 2", correction.isFinished());
-            telemetry.addData("Condition 3", scheduler.getIndex()>0);
-            telemetry.addData("Condition 4", scheduler.getIndex() != scheduler.getSize()-1);
-            telemetry.addData("Condition 5", !scheduler.isFinished());
-            telemetry.update();
+
+
+//            telemetry.addData("Condition 1", drive.inError(goToConePosition));
+//            telemetry.addData("Condition 2", correction.isFinished());
+//            telemetry.addData("Condition 3", scheduler.getIndex()>0);
+//            telemetry.addData("Condition 4", scheduler.getIndex() != scheduler.getSize()-1);
+//            telemetry.addData("Condition 5", !scheduler.isFinished());
+//            telemetry.update();
 
 
             failsafePark.update();

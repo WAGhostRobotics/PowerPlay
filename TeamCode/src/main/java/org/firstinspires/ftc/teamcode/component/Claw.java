@@ -10,7 +10,9 @@ public class Claw {
 
     public Servo claw;
     public Servo spin;
-//    private DistanceSensor clawSensor;
+    private DistanceSensor clawSensor;
+
+    public static final double THRESHOLD = 1;
 
     public static final double OPEN = 0.08;
 
@@ -19,6 +21,8 @@ public class Claw {
     public static final double IN = 0.454;
 
     public static final double OUT = 0.336;
+
+    public static final double AUTO_OUT_DIFFERENCE = 0.01;
 
     private double spinTargetPosition = IN;
 
@@ -33,14 +37,18 @@ public class Claw {
         spin = hardwareMap.get(Servo.class, "spin");
         claw.setDirection(Servo.Direction.REVERSE);
 
-//        clawSensor = hardwareMap.get(DistanceSensor.class, "clawSensor");
+        clawSensor = hardwareMap.get(DistanceSensor.class, "clawSensor");
         close();
         in();
     }
 
-//    public double getDistance(){
-//        return clawSensor.getDistance(DistanceUnit.INCH);
-//    }
+    public double getDistance(){
+        return clawSensor.getDistance(DistanceUnit.INCH);
+    }
+
+    public boolean coneInRange(){
+        return clawSensor.getDistance(DistanceUnit.INCH)< THRESHOLD;
+    }
 
     public double getSpinTargetPosition(){
         return spinTargetPosition;

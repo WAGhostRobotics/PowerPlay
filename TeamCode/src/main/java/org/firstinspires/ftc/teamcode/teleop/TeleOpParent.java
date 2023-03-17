@@ -207,10 +207,17 @@ public class TeleOpParent extends LinearOpMode {
             }
 
 
+            boolean button1 = gamepad1.right_bumper;
+            boolean button2 = gamepad1.left_bumper;
+
+            if(button1&&button2){
+                Tom.claw.setSpinPosition(Claw.OUT+Claw.AUTO_OUT_DIFFERENCE);
+            }
+
 
 
             //TELEMETRY
-//            telemetry.addData("Distance", Tom.claw.getDistance());
+            telemetry.addData("Distance", Tom.claw.getDistance());
             telemetry.addData("Collector Index", collectionScheduler.getIndex());
             telemetry.addData("Done", collectionScheduler.isFinished());
             telemetry.addData("Outtake current", Tom.outtake.getCurrent());
@@ -299,13 +306,13 @@ public class TeleOpParent extends LinearOpMode {
 
 
             //OUTTAKE MINOR ADJUSTMENTS
-            if (gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
+            if (-gamepad1.right_stick_y>0.5 || gamepad2.right_trigger >= 0.1) {
                 Tom.outtake.setTargetPosition(Tom.outtake.getTargetPosition()+10);
 
                 collectionScheduler.stop();
                 autoStackScheduler.stop();
 
-            } else if (gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
+            } else if (-gamepad1.right_stick_y<-0.5 || gamepad2.left_trigger >= 0.1) {
                 Tom.outtake.setTargetPosition(Tom.outtake.getTargetPosition()-10);
 
                 collectionScheduler.stop();
@@ -313,12 +320,12 @@ public class TeleOpParent extends LinearOpMode {
             }
 
             //INTAKE MINOR ADJUSTMENT
-            if (gamepad1.left_bumper || gamepad2.left_bumper) {
+            if (gamepad1.right_stick_x<-0.5 || gamepad2.left_bumper) {
                 Tom.intake.setTargetPosition(Tom.intake.getTargetPosition()+10);
 
                 collectionScheduler.stop();
                 autoStackScheduler.stop();
-            } else if (gamepad1.right_bumper || gamepad2.right_bumper) {
+            } else if (gamepad1.right_stick_x>0.5 || gamepad2.right_bumper) {
                 Tom.intake.setTargetPosition(Tom.intake.getTargetPosition()-10);
 
                 collectionScheduler.stop();
