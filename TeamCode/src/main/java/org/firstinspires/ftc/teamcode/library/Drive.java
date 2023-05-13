@@ -96,6 +96,10 @@ public class Drive {
 
         t2 = (spline.approximateLength() - 2 * (0.5 * MAX_ACCEL * Math.pow(t1, 2)))/MAX_VEL - t1 - t3; // time in da middle
 
+
+        if(t2<0){
+            t2 = 0;
+        }
         time = t1 + t2 + t3;
 
         xControl = new PIDController(0,0,0);
