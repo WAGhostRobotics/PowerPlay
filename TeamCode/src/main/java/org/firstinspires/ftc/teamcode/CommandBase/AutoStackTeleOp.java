@@ -15,7 +15,7 @@ public class AutoStackTeleOp extends SequentialCommand {
     public AutoStackTeleOp(){
         super(
                 new RunCommand(()->Tom.claw.close()),
-                new Wait(300),
+                new Wait(900),
                 new Collect(),
                 new ParallelCommand(
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks()),

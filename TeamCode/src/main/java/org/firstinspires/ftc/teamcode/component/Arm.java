@@ -14,22 +14,22 @@ public class Arm {
     private final double ERROR = 300;
     private double targetPos = 0;
 
-
+    //
 
 
     public enum TurnValue {
-        EXTENDED(0.032),
-        ON_THE_FLOOR(0.06),
-        SUPER_EXTENDED(0.06),
-        START_AUTO(0.835),
-        PARTIAL(0.64),
-        RETRACTED(0.855),
-        LOW(0.53),
+        EXTENDED(0.025),
+        ON_THE_FLOOR(0.05),
+        SUPER_EXTENDED(0.05),
+        START_AUTO(0.825),
+        PARTIAL(0.63),
+        RETRACTED(0.835),
+        LOW(0.52),
         CONE1(0.19),
         CONE2(0.145),
         CONE3(0.115),
         CONE4(0.074),
-        CONE5(0.042);
+        CONE5(0.025);
 
         double position;
 

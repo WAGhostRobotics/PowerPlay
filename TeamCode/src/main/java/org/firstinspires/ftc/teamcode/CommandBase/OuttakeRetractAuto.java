@@ -20,12 +20,12 @@ public class OuttakeRetractAuto extends Command {
     @Override
     public void update() {
 
-        if(!Tom.outtake.isStalling()){
-            stallingTimer.reset();
-        }
+//        if(!Tom.outtake.isStalling()){
+//            stallingTimer.reset();
+//        }
 
 
-        if(stallingTimer.milliseconds()>1700){
+        if(stallingTimer.milliseconds()>2000){
             extending = true;
             Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.TOP.getTicks());
         }else if (!extending){

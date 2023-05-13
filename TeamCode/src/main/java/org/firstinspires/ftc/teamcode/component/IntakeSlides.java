@@ -8,22 +8,22 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class IntakeSlides {
     private DcMotorEx slides;
-    private final double POWER = 1;
-    private final double ERROR = 10;
+    private final double POWER = 0.55;
+    private final double ERROR = 19;
 
 
 
 
 
     public enum TurnValue {
-        RETRACTED(0),
-        PLACE_CONE(0),
+        RETRACTED(9),
+        PLACE_CONE(9),
         AUTO_STACK(95),
         PARTIAL(30),
         ALMOST_DONE(150),
         EXTENDED(425),
         AUTO_EXTENDED(282),//280
-        AUTO_EXTENDED_LEFT(286);
+        AUTO_EXTENDED_LEFT(290);
 
 
         int ticks;
@@ -37,14 +37,22 @@ public class IntakeSlides {
         }
     }
 
-    private final double MAX = TurnValue.EXTENDED.getTicks();
-    private final double MIN = TurnValue.RETRACTED.getTicks();
+    private final double MAX = 50;
+    private final double MIN = 0;
 
-    private final double minPower = 0.3;
+    private final double minPower = 0.5;
     private final double maxPower = 1;
 
     public double getAdjustedPower(){
-        double power = (((maxPower-minPower)*(slides.getCurrentPosition()-MIN))/(MIN-MAX)) + maxPower;
+        double power = (((maxPower-minPower)*(Math.abs(slides.getTargetPosition()-slides.getCurrentPosition())-MIN))/(MAX-MIN)) + minPower;
+
+
+        if(power>=1){
+            power = 1;
+        }else if(power<=0){
+            power = 0;
+        }
+
 
         return power;
     }
@@ -86,6 +94,8 @@ public class IntakeSlides {
             multiplier = -1;
         }
         //sets power and mode
+
+//        double power = getAdjustedPower();
         slides.setPower(multiplier * POWER);
         slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

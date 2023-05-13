@@ -13,7 +13,7 @@ public class OuttakeSlides {
 
     private DcMotorEx slides;
     private final double POWER = 1;
-    private final double ERROR = 40;
+    private final double ERROR = 70;
 
     private final double minPower = 0.3;
     private final double maxPower = 1;
@@ -24,7 +24,7 @@ public class OuttakeSlides {
     public enum TurnValue {
         SUPER_RETRACTED(-49),
         RETRACTED(0),
-        MID(540),
+        MID(520),
         ON_THE_WAY_DOWN(700),
         TOP(900), // 880
         AUTO_TOP(900); //880

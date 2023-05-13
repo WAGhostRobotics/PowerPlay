@@ -128,12 +128,9 @@ public class LeftSideAuto extends LinearOpMode {
         SequentialCommand failsafePark = new SequentialCommand(
                 new ParallelCommand(
                         new RunCommand(()->Tom.latch.setLatchPosition(Latch.CLOSE)),
-                        new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
-                        new RunCommand(()->Tom.latch.setLatchPosition(Latch.OPEN)),
+//                        new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
                         new FollowTrajectory(drive, park),
-                        new SequentialCommand(
-                                new IntakeMove(IntakeSlides.TurnValue.RETRACTED.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
-                                new Collect())
+                        new Collect()
                 )
 
         );
@@ -141,7 +138,6 @@ public class LeftSideAuto extends LinearOpMode {
         SequentialCommand correction = new SequentialCommand(
                 new ParallelCommand(
                         new OuttakeMove(OuttakeSlides.TurnValue.RETRACTED.getTicks()),
-                        new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN),
                         new CorrectionTrajectory(drive, goToConePosition))
 
         );
@@ -156,7 +152,7 @@ public class LeftSideAuto extends LinearOpMode {
                 failsafePark.init();
                 correction.stop();
                 scheduler.stop();
-            }else if(failsafePark.isFinished()){
+            }else if(autoTime.milliseconds()<=27300&& failsafePark.isFinished()){
                 if(drive.inError(goToConePosition)&& correction.isFinished()&&scheduler.getIndex()>0&&scheduler.getIndex() != scheduler.getSize()-1){
                     correction.init();
                 }else if (correction.isFinished()){

@@ -151,7 +151,7 @@ public class TeleOpParent extends LinearOpMode {
                 );
             }
 
-            if(Tom.intake.getTargetPosition()>=IntakeSlides.TurnValue.PARTIAL.getTicks()&& Tom.intake.getTargetPosition() <= Arm.TurnValue.LOW.getPosition()){
+            if(Tom.intake.getTargetPosition()>=IntakeSlides.TurnValue.PARTIAL.getTicks()&& Tom.arm.getTargetPosition() <= Arm.TurnValue.LOW.getPosition()){
                     turningMultiplier = 0.4;
                 }else{
                     turningMultiplier = 0.8;
@@ -216,8 +216,7 @@ public class TeleOpParent extends LinearOpMode {
 
 
 
-            //TELEMETRY
-            telemetry.addData("Distance", Tom.claw.getDistance());
+
             telemetry.addData("Collector Index", collectionScheduler.getIndex());
             telemetry.addData("Done", collectionScheduler.isFinished());
             telemetry.addData("Outtake current", Tom.outtake.getCurrent());
