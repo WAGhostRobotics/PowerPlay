@@ -108,15 +108,15 @@ public class WonkyDrive {
 
 
         //movement vector is magnitude: gameMagnitude direct: theta
+        double ac;
+        if(y2 == 0){
+            radius = Double.MAX_VALUE;
+        }else{
+            radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
 
-
-        radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
-
-        if(radius == 0){
-            radius = 0.1;
         }
 
-        double ac = Math.pow(velocity, 2)/radius;
+        ac = Math.pow(velocity, 2)/radius;
 
         theta -= Math.toDegrees(Math.atan2(ac*THE_HOLY_CONSTANT, gamepadMagnitude));
         gamepadMagnitude = Math.hypot(gamepadMagnitude, ac*THE_HOLY_CONSTANT);
@@ -157,8 +157,24 @@ public class WonkyDrive {
 
     public void updateValues(){
 
-        y1 = (getY()-lasty)/(getX()-lastx);
-        y2 = (y1-lasty1)/(getX()-lastx);
+        if((getX()-lastx) == 0){
+            if(getY()-lasty!= 0){
+                y1 = Double.MAX_VALUE;
+            }else{
+                y1 = 1;
+            }
+
+            if(y1-lasty1!= 0){
+                y2 = Double.MAX_VALUE;
+            }else{
+                y2 = 0;
+            }
+        }else{
+            y1 = (getY()-lasty)/(getX()-lastx);
+            y2 = (y1-lasty1)/(getX()-lastx);
+        }
+
+
 
         velocity = Math.sqrt(
                 Math.pow(((getX()-lastx)/time.seconds()), 2) + Math.pow(((getY()-lasty)/time.seconds()), 2)
