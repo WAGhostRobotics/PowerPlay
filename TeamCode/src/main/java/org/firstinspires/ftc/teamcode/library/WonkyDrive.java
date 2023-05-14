@@ -59,6 +59,8 @@ public class WonkyDrive {
     public static final double TICKS_PER_REV = 537.6;
 
     public final double THE_HOLY_CONSTANT = 0.01;
+    
+    double ac;
 
 
     public WonkyDrive(BNO055IMU imu, DcMotor frontLeft, DcMotor frontRight,
@@ -108,23 +110,13 @@ public class WonkyDrive {
 
 
         //movement vector is magnitude: gameMagnitude direct: theta
-        double ac;
-        if(y2 == 0){
-            radius = Double.MAX_VALUE;
-        }else{
+        if(!Double.isNaN(y1)&&!Double.isNaN(y2)){
             radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
+            ac = Math.pow(velocity, 2)/radius;
+            theta -= Math.toDegrees(Math.atan2(ac*THE_HOLY_CONSTANT, gamepadMagnitude));
+            gamepadMagnitude = Math.hypot(gamepadMagnitude, ac*THE_HOLY_CONSTANT);
 
         }
-
-        ac = Math.pow(velocity, 2)/radius;
-
-        theta -= Math.toDegrees(Math.atan2(ac*THE_HOLY_CONSTANT, gamepadMagnitude));
-        gamepadMagnitude = Math.hypot(gamepadMagnitude, ac*THE_HOLY_CONSTANT);
-
-
-
-
-
 
         theta -= 45;
 
@@ -158,17 +150,8 @@ public class WonkyDrive {
     public void updateValues(){
 
         if((getX()-lastx) == 0){
-            if(getY()-lasty!= 0){
-                y1 = Double.MAX_VALUE;
-            }else{
-                y1 = 1;
-            }
-
-            if(y1-lasty1!= 0){
-                y2 = Double.MAX_VALUE;
-            }else{
-                y2 = 0;
-            }
+            y1 = Double.NaN;
+            y2 = Double.NaN;
         }else{
             y1 = (getY()-lasty)/(getX()-lastx);
             y2 = (y1-lasty1)/(getX()-lastx);
