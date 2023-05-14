@@ -51,6 +51,8 @@ public class CustomLocalizerTest extends LinearOpMode {
             drive.update();
 
 
+            localizer.update();
+            
             telemetry.addData("x", localizer.getX());
             telemetry.addData("y", localizer.getY());
             telemetry.addData("heading", localizer.getHeading(Localizer.Angle.DEGREES));
