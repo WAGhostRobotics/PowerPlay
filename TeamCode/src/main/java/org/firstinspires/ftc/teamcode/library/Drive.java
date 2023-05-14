@@ -24,6 +24,8 @@ public class Drive {
         this.frontRight = frontRight;
         this.backRight = backRight;
         this.backLeft = backLeft;
+
+
     }
 
     public void driveMax(double magnitude, double theta, double driveTurn, double movementPower){

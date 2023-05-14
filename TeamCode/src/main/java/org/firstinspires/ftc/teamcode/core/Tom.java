@@ -58,6 +58,7 @@ public class Tom {
 
 
 
+
         if(initTeleOp){
 
             frontLeft = new Motor(hwMap, "lf");
@@ -80,6 +81,8 @@ public class Tom {
             intake.init(hwMap, true);
             outtake.init(hwMap, true);
         }else{
+
+
             arm.init(hwMap, false);
             intake.init(hwMap, false);
             outtake.init(hwMap, false);

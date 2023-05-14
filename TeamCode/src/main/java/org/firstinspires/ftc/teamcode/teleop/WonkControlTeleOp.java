@@ -35,7 +35,7 @@ public class WonkControlTeleOp extends LinearOpMode {
             Tom.initIMU();
         }
 
-        waitForStart();
+
 
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "lf");
         DcMotor frontRight = hardwareMap.get(DcMotor.class, "rf");
@@ -59,6 +59,7 @@ public class WonkControlTeleOp extends LinearOpMode {
 
         WonkyDrive wonk = new WonkyDrive(imu, frontLeft, frontRight, backRight, backLeft, xEncoder, yEncoder);
 
+        waitForStart();
 
         while (opModeIsActive()) {
 

@@ -48,6 +48,10 @@ public class WonkyDrive {
     double lasty1;
     double lastx;
 
+    double currentY;
+    double currentX;
+
+
     double velocity;
 
     ElapsedTime time;
@@ -149,23 +153,26 @@ public class WonkyDrive {
 
     public void updateValues(){
 
-        if((getX()-lastx) == 0){
+        currentX = getX();
+        currentY = getY();
+
+        if((currentX-lastx) == 0){
             y1 = Double.NaN;
             y2 = Double.NaN;
         }else{
-            y1 = (getY()-lasty)/(getX()-lastx);
-            y2 = (y1-lasty1)/(getX()-lastx);
+            y1 = (currentY-lasty)/(currentX-lastx);
+            y2 = (y1-lasty1)/(currentX-lastx);
         }
 
 
 
         velocity = Math.sqrt(
-                Math.pow(((getX()-lastx)/time.seconds()), 2) + Math.pow(((getY()-lasty)/time.seconds()), 2)
+                Math.pow(((currentX-lastx)/time.seconds()), 2) + Math.pow(((currentY-lasty)/time.seconds()), 2)
         );   //pythagorean theorme :)
 
         lasty1 = y1;
-        lastx = getX();
-        lasty = getY();
+        lastx = currentX;
+        lasty = currentY;
 
         time.reset();
     }
