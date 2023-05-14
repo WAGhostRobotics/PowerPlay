@@ -101,6 +101,7 @@ public class MotionPlanner {
         t = timer.seconds()/time;
 
         Point pointWhereItShouldBe = spline.getPoint(t);
+        Point derivative = spline.getDerivative(t);
 
         x = localizer.getX();
         y = localizer.getY();
@@ -139,7 +140,7 @@ public class MotionPlanner {
             } else {
 
                 magnitude = 1;
-                theta = Math.toDegrees(Math.atan2(pointWhereItShouldBe.getY(), pointWhereItShouldBe.getX()));
+                theta = Math.toDegrees(Math.atan2(derivative.getY(), derivative.getX()));
 
                 x_power = magnitude * Math.cos(Math.toRadians(theta)) + xControl.calculate(x, pointWhereItShouldBe.getX());
                 y_power = magnitude * Math.sin(Math.toRadians(theta)) + yControl.calculate(y, pointWhereItShouldBe.getY());
