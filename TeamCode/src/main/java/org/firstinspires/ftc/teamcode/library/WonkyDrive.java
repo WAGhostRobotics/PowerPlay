@@ -59,7 +59,7 @@ public class WonkyDrive {
     public static final double TICKS_PER_REV = 537.6;
 
     public final double THE_HOLY_CONSTANT = 0.01;
-    
+
     double ac;
 
 

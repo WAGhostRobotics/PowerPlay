@@ -129,14 +129,15 @@ public class Drive {
                 &&(Math.abs(spline.getEndPoint().getY()-y)<= y_error)
                 &&(Math.abs(heading-currentHeading)<= heading_error))){
 
-            if(xControlEnd == null || yControlEnd == null || headingControlEnd == null){
-                xControlEnd = new PIDController(0,0,0);
-                yControlEnd = new PIDController(0,0,0);
-                headingControlEnd = new PIDController(0,0,0);
-            }
 
             if(Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y) <
                     Math.hypot(encoderTicksToInches(xEncoder.getCorrectedVelocity()), encoderTicksToInches(yEncoder.getCorrectedVelocity()))/(2*MAX_ACCEL)){
+
+                if(xControlEnd == null || yControlEnd == null || headingControlEnd == null){
+                    xControlEnd = new PIDController(0,0,0);
+                    yControlEnd = new PIDController(0,0,0);
+                    headingControlEnd = new PIDController(0,0,0);
+                }
 
                 temp_x = xControlEnd.calculate(0, spline.getEndPoint().getX()-x);
                 temp_y = yControlEnd.calculate(0, spline.getEndPoint().getY()-y);
@@ -164,10 +165,6 @@ public class Drive {
                 }
 
                 //sets powers scaled to desired speed
-                frontLeft.setPower(movementPower*frontLeftPower);
-                frontRight.setPower(movementPower*frontRightPower);
-                backLeft.setPower(movementPower*backLeftPower);
-                backRight.setPower(movementPower*backRightPower);
 
             } else {
 
@@ -210,13 +207,11 @@ public class Drive {
 
 
                 //sets powers scaled to desired speed
-                frontLeft.setPower(movementPower*frontLeftPower);
-                frontRight.setPower(movementPower*frontRightPower);
-                backLeft.setPower(movementPower*backLeftPower);
-                backRight.setPower(movementPower*backRightPower);
             }
-
-
+            frontLeft.setPower(movementPower*frontLeftPower);
+            frontRight.setPower(movementPower*frontRightPower);
+            backLeft.setPower(movementPower*backLeftPower);
+            backRight.setPower(movementPower*backRightPower);
 
 
         }
