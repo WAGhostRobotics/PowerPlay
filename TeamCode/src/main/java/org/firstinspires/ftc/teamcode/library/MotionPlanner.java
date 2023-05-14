@@ -111,8 +111,8 @@ public class MotionPlanner {
                 &&(Math.abs(heading-currentHeading)<= heading_error))){
 
 
-            if(Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y) <
-                    Math.hypot(localizer.getX(), localizer.getY())/(2*MAX_ACCEL)){
+            if((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y) <
+                    Math.hypot(localizer.getX(), localizer.getY())/(2*MAX_ACCEL))||t>=1){
 
                 if(xControlEnd == null || yControlEnd == null || headingControlEnd == null){
                     xControlEnd = new PIDController(0,0,0);
