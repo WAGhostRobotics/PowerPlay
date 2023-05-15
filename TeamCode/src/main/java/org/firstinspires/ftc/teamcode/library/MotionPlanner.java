@@ -130,7 +130,7 @@ public class MotionPlanner {
                 driveTurn = headingControl.calculate(currentHeading, heading);
 
 
-                drive.drive(magnitude, theta, driveTurn, movementPower);
+                drive.drive(magnitude, theta, -driveTurn, movementPower);
 
                 //sets powers scaled to desired speed
 
@@ -143,13 +143,13 @@ public class MotionPlanner {
                 y_power = magnitude * Math.sin(Math.toRadians(theta)) + yControl.calculate(y, pointWhereItShouldBe.getY());
 
                 x_rotated = x_power * Math.cos(Math.toRadians(heading)) + y_power * Math.sin(Math.toRadians(heading));
-                y_rotated = x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
+                y_rotated = -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
                 theta = Math.toDegrees(Math.atan2(x_rotated, y_rotated));
                 driveTurn = headingControl.calculate(currentHeading, heading);
 
-                drive.driveMax(magnitude, theta, driveTurn, movementPower);
+                drive.driveMax(magnitude, theta, -driveTurn, movementPower);
             }
 
         }
