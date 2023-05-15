@@ -38,10 +38,10 @@ public class Drive {
         maxMovement = Math.max(Math.abs(sin), Math.abs(cos));
 
         //determines powers and scales based on max movement
-        frontLeftPower = (magnitude * cos / maxMovement + driveTurn);
-        frontRightPower = (magnitude * sin / maxMovement - driveTurn);
-        backLeftPower = (magnitude * sin / maxMovement + driveTurn);
-        backRightPower = (magnitude * cos / maxMovement - driveTurn);
+        frontLeftPower = (magnitude * cos / maxMovement - driveTurn);
+        frontRightPower = (magnitude * sin / maxMovement + driveTurn);
+        backLeftPower = (magnitude * sin / maxMovement - driveTurn);
+        backRightPower = (magnitude * cos / maxMovement + driveTurn);
 
         //scales if -1 < powers < 1
         if(magnitude + Math.abs(driveTurn)>1){
@@ -74,10 +74,10 @@ public class Drive {
         maxMovement = Math.max(Math.abs(sin), Math.abs(cos));
 
         //determines powers and scales based on max movement
-        frontLeftPower = (magnitude * cos / maxMovement + driveTurn);
-        frontRightPower = (magnitude * sin / maxMovement - driveTurn);
-        backLeftPower = (magnitude * sin / maxMovement + driveTurn);
-        backRightPower = (magnitude * cos / maxMovement - driveTurn);
+        frontLeftPower = (magnitude * cos / maxMovement - driveTurn);
+        frontRightPower = (magnitude * sin / maxMovement + driveTurn);
+        backLeftPower = (magnitude * sin / maxMovement - driveTurn);
+        backRightPower = (magnitude * cos / maxMovement + driveTurn);
 
         //scales if -1 < powers < 1
         if(magnitude + Math.abs(driveTurn)>1){

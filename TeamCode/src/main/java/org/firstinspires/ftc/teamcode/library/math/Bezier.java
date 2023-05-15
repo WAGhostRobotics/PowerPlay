@@ -43,6 +43,29 @@ public class Bezier {
 
         int n = waypoints.length-1;
 
+        for (int i = 0; i <= n-1; i++) {
+
+            double b = choose(n-1, i) * Math.pow((1-t), n-i-1) * Math.pow(t, i);
+
+            x += b * (waypoints[i+1].getX()-waypoints[i].getX());
+            y += b * (waypoints[i+1].getY()-waypoints[i].getY());
+        }
+
+        x *= n;
+        y *= n;
+
+        return new Point(x, y);
+
+    }
+
+    public Point getDerivative2(double t){
+
+        double x = 0;
+
+        double y = 0;
+
+        int n = waypoints.length-1;
+
         for (int i = 0; i <= n; i++) {
 
             double b = choose(n, i);
@@ -61,8 +84,8 @@ public class Bezier {
                 pow3 = Math.pow(1-t, n-i);
                 pow4 = Math.pow(t, i-1);
 
-                x += b * (n-i) * pow * pow2 * waypoints[i].getX() + b * pow3 * i * pow4 * waypoints[i].getX();
-                y += b * (n-i) * pow * pow2 * waypoints[i].getY() + b * pow3 * i * pow4 * waypoints[i].getY();
+                x += -1 * b * (n-i) * pow * pow2 * waypoints[i].getX() + b * pow3 * i * pow4 * waypoints[i].getX();
+                y += -1 * b * (n-i) * pow * pow2 * waypoints[i].getY() + b * pow3 * i * pow4 * waypoints[i].getY();
             }
 
 

@@ -108,9 +108,7 @@ public class MotionPlanner {
         currentHeading = localizer.getHeading(Localizer.Angle.DEGREES);
 
 
-        if(!((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y)< translational_error)
-                &&(Math.abs(heading-currentHeading)<= heading_error))){
-
+        if(!isFinished()){
 
             if((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y) <
                     Math.hypot(localizer.getX(), localizer.getY())/(2*MAX_ACCEL))||t>=1){
@@ -124,12 +122,11 @@ public class MotionPlanner {
                 x_power = xControlEnd.calculate(0, spline.getEndPoint().getX()-x);
                 y_power = yControlEnd.calculate(0, spline.getEndPoint().getY()-y);
 
-                x_rotated = x_power * Math.cos(Math.toRadians(heading)) - y_power * Math.sin(Math.toRadians(heading));
-                y_rotated = x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
-
+                x_rotated = x_power * Math.cos(Math.toRadians(heading)) + y_power * Math.sin(Math.toRadians(heading));
+                y_rotated =  -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
-                theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
+                theta = Math.toDegrees(Math.atan2(x_rotated, -y_rotated));
                 driveTurn = headingControl.calculate(currentHeading, heading);
 
 
@@ -145,16 +142,21 @@ public class MotionPlanner {
                 x_power = magnitude * Math.cos(Math.toRadians(theta)) + xControl.calculate(x, pointWhereItShouldBe.getX());
                 y_power = magnitude * Math.sin(Math.toRadians(theta)) + yControl.calculate(y, pointWhereItShouldBe.getY());
 
-                x_rotated = x_power * Math.cos(Math.toRadians(heading)) - y_power * Math.sin(Math.toRadians(heading));
+                x_rotated = x_power * Math.cos(Math.toRadians(heading)) + y_power * Math.sin(Math.toRadians(heading));
                 y_rotated = x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
-                theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
+                theta = Math.toDegrees(Math.atan2(x_rotated, y_rotated));
                 driveTurn = headingControl.calculate(currentHeading, heading);
 
                 drive.driveMax(magnitude, theta, driveTurn, movementPower);
             }
 
         }
+    }
+
+    private boolean isFinished() {
+        return ((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y)< translational_error)
+                &&(Math.abs(heading-currentHeading)<= heading_error));
     }
 }
