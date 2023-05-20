@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.CommandBase;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.library.Command;
+import org.firstinspires.ftc.teamcode.library.commandSystem.Command;
 
 public class FollowTrajectory extends Command {
 

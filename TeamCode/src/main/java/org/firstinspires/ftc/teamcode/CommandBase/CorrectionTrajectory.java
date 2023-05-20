@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.library.Command;
+import org.firstinspires.ftc.teamcode.library.commandSystem.Command;
 
 public class CorrectionTrajectory extends Command {
 

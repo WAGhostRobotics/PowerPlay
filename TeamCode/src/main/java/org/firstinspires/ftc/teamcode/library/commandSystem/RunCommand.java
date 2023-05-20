@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.library;
+package org.firstinspires.ftc.teamcode.library.commandSystem;
 
-public class RunCommand extends Command{
+public class RunCommand extends Command {
 
     RunFunction func;
 

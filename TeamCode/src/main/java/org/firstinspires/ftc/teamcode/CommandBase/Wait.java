@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.CommandBase;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.library.Command;
+import org.firstinspires.ftc.teamcode.library.commandSystem.Command;
 
 public class Wait extends Command {
 

@@ -24,9 +24,9 @@ import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.component.Webcam;
 import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.library.ParallelCommand;
-import org.firstinspires.ftc.teamcode.library.RunCommand;
-import org.firstinspires.ftc.teamcode.library.SequentialCommand;
+import org.firstinspires.ftc.teamcode.library.commandSystem.ParallelCommand;
+import org.firstinspires.ftc.teamcode.library.commandSystem.RunCommand;
+import org.firstinspires.ftc.teamcode.library.commandSystem.SequentialCommand;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Autonomous(name = "Right Side", group = "competition")

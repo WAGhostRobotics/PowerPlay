@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.library;
+package org.firstinspires.ftc.teamcode.library.commandSystem;
 
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.library.commandSystem.Command;
 
-public class SequentialCommand extends Command{
+public class SequentialCommand extends Command {
 
     Command[] commandList;
 

@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.library;
+package org.firstinspires.ftc.teamcode.library.autoDrive;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.library.math.Bezier;
-import org.firstinspires.ftc.teamcode.library.math.Point;
+import org.firstinspires.ftc.teamcode.library.autoDrive.math.Bezier;
+import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 
 public class MotionPlanner {
 

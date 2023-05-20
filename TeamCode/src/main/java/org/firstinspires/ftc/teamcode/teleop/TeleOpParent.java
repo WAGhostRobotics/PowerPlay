@@ -17,16 +17,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.CommandBase.AutoStackTeleOp;
 import org.firstinspires.ftc.teamcode.CommandBase.Collect;
-import org.firstinspires.ftc.teamcode.CommandBase.IntakeMove;
-import org.firstinspires.ftc.teamcode.CommandBase.OuttakeMove;
 import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.Claw;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
 import org.firstinspires.ftc.teamcode.component.Latch;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.DriveStyle;
-import org.firstinspires.ftc.teamcode.library.DriverOrientedControl;
+import org.firstinspires.ftc.teamcode.library.teleopDrive.DriveStyle;
+import org.firstinspires.ftc.teamcode.library.teleopDrive.DriverOrientedControl;
 
 
 public class TeleOpParent extends LinearOpMode {

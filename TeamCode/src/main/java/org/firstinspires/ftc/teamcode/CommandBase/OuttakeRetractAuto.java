@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.Command;
+import org.firstinspires.ftc.teamcode.library.commandSystem.Command;
 
 public class OuttakeRetractAuto extends Command {
 

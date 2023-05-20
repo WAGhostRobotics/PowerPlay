@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.Drive;
-import org.firstinspires.ftc.teamcode.library.Localizer;
-import org.firstinspires.ftc.teamcode.library.MotionPlanner;
-import org.firstinspires.ftc.teamcode.library.math.Bezier;
-import org.firstinspires.ftc.teamcode.library.math.Point;
+import org.firstinspires.ftc.teamcode.library.autoDrive.Drive;
+import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
+import org.firstinspires.ftc.teamcode.library.autoDrive.MotionPlanner;
+import org.firstinspires.ftc.teamcode.library.autoDrive.math.Bezier;
+import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 
 
 @Autonomous(name = "Bruh GG", group = "competition")

@@ -6,9 +6,9 @@ import org.firstinspires.ftc.teamcode.component.IntakeSlides;
 import org.firstinspires.ftc.teamcode.component.Latch;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.ParallelCommand;
-import org.firstinspires.ftc.teamcode.library.RunCommand;
-import org.firstinspires.ftc.teamcode.library.SequentialCommand;
+import org.firstinspires.ftc.teamcode.library.commandSystem.ParallelCommand;
+import org.firstinspires.ftc.teamcode.library.commandSystem.RunCommand;
+import org.firstinspires.ftc.teamcode.library.commandSystem.SequentialCommand;
 
 public class AutoStackTeleOp extends SequentialCommand {
 

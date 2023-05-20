@@ -7,11 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.Drive;
-import org.firstinspires.ftc.teamcode.library.Localizer;
-import org.firstinspires.ftc.teamcode.library.MotionPlanner;
-import org.firstinspires.ftc.teamcode.library.math.Bezier;
-import org.firstinspires.ftc.teamcode.library.math.Point;
+import org.firstinspires.ftc.teamcode.library.autoDrive.Drive;
+import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 
 
 @Autonomous(name = "Max Velocity Finder", group = "competition")

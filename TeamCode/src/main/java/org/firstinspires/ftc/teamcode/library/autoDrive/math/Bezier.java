@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.library.math;
+package org.firstinspires.ftc.teamcode.library.autoDrive.math;
 
 public class Bezier {
 

@@ -6,17 +6,12 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.Localizer;
-import org.firstinspires.ftc.teamcode.library.WonkyDrive;
-import org.firstinspires.ftc.teamcode.util.Encoder;
+import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
+import org.firstinspires.ftc.teamcode.library.teleopDrive.WonkyDrive;
 
 
 @TeleOp(name = "Wonk TeleOp", group = "competition")

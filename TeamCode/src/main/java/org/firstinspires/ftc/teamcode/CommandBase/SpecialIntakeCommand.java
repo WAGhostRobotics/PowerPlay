@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.CommandBase;
 
-import org.firstinspires.ftc.teamcode.component.Arm;
 import org.firstinspires.ftc.teamcode.component.IntakeSlides;
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.Command;
+import org.firstinspires.ftc.teamcode.library.commandSystem.Command;
 
 public class SpecialIntakeCommand extends Command {
 
