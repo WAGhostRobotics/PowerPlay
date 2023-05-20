@@ -6,18 +6,15 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.DriveStyle;
+import org.firstinspires.ftc.teamcode.library.Localizer;
 import org.firstinspires.ftc.teamcode.library.WonkyDrive;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
@@ -30,34 +27,16 @@ public class WonkControlTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Tom.init(hardwareMap, true);
+        Tom.init(hardwareMap, false);
         if(Tom.imu==null){
             Tom.initIMU();
         }
 
 
+        Localizer localizer = new Localizer(hardwareMap);
 
-        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "lf");
-        DcMotor frontRight = hardwareMap.get(DcMotor.class, "rf");
-        DcMotor backLeft = hardwareMap.get(DcMotor.class, "lr");
-        DcMotor backRight = hardwareMap.get(DcMotor.class, "rr");
 
-//            frontLeft.setInverted(true);
-//            frontRight.setInverted(true);
-//            backLeft.setInverted(true);
-//            backRight.setInverted(true);
-
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        Encoder xEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "lf"));
-        Encoder yEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rf"));
-
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        WonkyDrive wonk = new WonkyDrive(imu, frontLeft, frontRight, backRight, backLeft, xEncoder, yEncoder);
+        WonkyDrive wonk = new WonkyDrive(hardwareMap, localizer);
 
         waitForStart();
 
@@ -71,11 +50,14 @@ public class WonkControlTeleOp extends LinearOpMode {
 //                Tom.initIMU();
 //            }
 
-            wonk.drive(gamepad2, 0.6);
+            wonk.drive(gamepad2, 1);
+
+
 
             telemetry.addData("X", wonk.getX());
             telemetry.addData("Y", wonk.getY());
             telemetry.addData("Angle", wonk.getAngle());
+            telemetry.addData("Ac", wonk.getAc());
             telemetry.update();
 
         }

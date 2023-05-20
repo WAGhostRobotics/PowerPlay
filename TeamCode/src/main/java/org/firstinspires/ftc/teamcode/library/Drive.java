@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.library;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Drive {
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backRight;
-    private DcMotor backLeft;
+    private DcMotorEx frontLeft;
+    private DcMotorEx frontRight;
+    private DcMotorEx backRight;
+    private DcMotorEx backLeft;
 
     private double sin;
     private double cos;
@@ -17,13 +18,27 @@ public class Drive {
     private double backLeftPower;
     private double backRightPower;
 
+    String telemetry = "";
 
-    public Drive(DcMotor frontLeft, DcMotor frontRight,
-                 DcMotor backRight, DcMotor backLeft){
-        this.frontLeft = frontLeft;
-        this.frontRight = frontRight;
-        this.backRight = backRight;
-        this.backLeft = backLeft;
+
+    public Drive(HardwareMap hardwareMap){
+        frontLeft = hardwareMap.get(DcMotorEx.class, "lf");
+        frontRight = hardwareMap.get(DcMotorEx.class, "rf");
+        backLeft = hardwareMap.get(DcMotorEx.class, "lr");
+        backRight = hardwareMap.get(DcMotorEx.class, "rr");
+
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
     }
@@ -51,7 +66,7 @@ public class Drive {
             backRightPower /= magnitude + driveTurn;
         }
 
-        double max = Math.max(frontLeftPower, Math.max(frontRightPower, Math.max(backLeftPower, backRightPower)));
+        double max = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
 
         frontLeftPower /= max;
         frontRightPower /= max;
@@ -62,6 +77,10 @@ public class Drive {
         frontRight.setPower(movementPower*frontRightPower);
         backLeft.setPower(movementPower*backLeftPower);
         backRight.setPower(movementPower*backRightPower);
+
+
+        telemetry = "" + frontLeftPower + " \n" + frontRightPower + " \n" + backLeftPower + " \n" + backRightPower;
+
     }
 
     public void drive(double magnitude, double theta, double driveTurn, double movementPower){

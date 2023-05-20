@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.library;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -12,13 +15,11 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class WonkyDrive {
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backRight;
-    private DcMotor backLeft;
+    private DcMotorEx frontLeft;
+    private DcMotorEx frontRight;
+    private DcMotorEx backRight;
+    private DcMotorEx backLeft;
 
-    private Encoder xEncoder;
-    private Encoder yEncoder;
 
     public BNO055IMU imu;
 
@@ -52,31 +53,55 @@ public class WonkyDrive {
     double currentX;
 
 
+
     double velocity;
 
     ElapsedTime time;
 
     double radius;
 
-    public static double WHEEL_RADIUS = 96.0/2/25.4 ; // in
-    public static double GEAR_RATIO = 1 ; // output (wheel) speed / input (motor) speed
-    public static final double TICKS_PER_REV = 537.6;
+    public String stuff = "";
 
-    public final double THE_HOLY_CONSTANT = 0.01;
+
+    public final double THE_HOLY_CONSTANT = 0.0003; //0.01
 
     double ac;
 
+    public Localizer localizer;
 
-    public WonkyDrive(BNO055IMU imu, DcMotor frontLeft, DcMotor frontRight,
-                      DcMotor backRight, DcMotor backLeft, Encoder xEncoder, Encoder yEncoder){
-        this.imu = imu;
 
-        this.frontLeft = frontLeft;
-        this.frontRight = frontRight;
-        this.backRight = backRight;
-        this.backLeft = backLeft;
-        this.xEncoder = xEncoder;
-        this.yEncoder = yEncoder;
+    public WonkyDrive(HardwareMap hardwareMap, Localizer localizer){
+
+
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        frontLeft = hardwareMap.get(DcMotorEx.class, "lf");
+        frontRight = hardwareMap.get(DcMotorEx.class, "rf");
+        backLeft = hardwareMap.get(DcMotorEx.class, "lr");
+        backRight = hardwareMap.get(DcMotorEx.class, "rr");
+
+//            frontLeft.setInverted(true);
+//            frontRight.setInverted(true);
+//            backLeft.setInverted(true);
+//            backRight.setInverted(true);
+
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+
+
+        this.localizer = localizer;
 
 
 //        xEncoder.setDirection(Encoder.Direction.REVERSE);
@@ -84,9 +109,9 @@ public class WonkyDrive {
 
         y1 = 0;
         y2 = 0;
-        lasty = yEncoder.getCurrentPosition();
+        lasty = 0;
         lasty1 = 0;
-        lastx = xEncoder.getCurrentPosition();
+        lastx = 0;
 
         time = new ElapsedTime();
     }
@@ -94,7 +119,9 @@ public class WonkyDrive {
 
     public void drive(Gamepad gamepad2, double movementPower){
 
+
         updateValues();
+
 
 
         //gamepad input (range -1 to 1)
@@ -107,19 +134,21 @@ public class WonkyDrive {
         robotTheta = getAngle();
 
         //power of movement hypotenuse
-        gamepadMagnitude = Math.hypot(driveX, driveY);
+        gamepadMagnitude = Range.clip(Math.hypot(driveX, driveY), 0, 1);
 
         //angle of wheels (45 deg for mecanum wheel adjustment)
         theta = gamepadTheta - robotTheta;
 
 
         //movement vector is magnitude: gameMagnitude direct: theta
-        if(!Double.isNaN(y1)&&!Double.isNaN(y2)){
+        if(!Double.isNaN(y1)&&!Double.isNaN(y2)&& gamepadMagnitude != 0){
             radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
             ac = Math.pow(velocity, 2)/radius;
-            theta -= Math.toDegrees(Math.atan2(ac*THE_HOLY_CONSTANT, gamepadMagnitude));
+            theta -= Math.toDegrees(Math.atan2( ac*THE_HOLY_CONSTANT, gamepadMagnitude));
             gamepadMagnitude = Math.hypot(gamepadMagnitude, ac*THE_HOLY_CONSTANT);
 
+        }else{
+            ac = 0;
         }
 
         theta -= 45;
@@ -149,9 +178,19 @@ public class WonkyDrive {
         backLeft.setPower(movementPower*backLeftPower);
         backRight.setPower(movementPower*backRightPower);
 
+        stuff = "" + frontLeftPower + " " + frontRightPower + " " + backLeftPower + " " + backRightPower;
+
     }
 
+    public double getAc(){
+        return ac;
+    }
+
+
+
     public void updateValues(){
+
+        localizer.update();
 
         currentX = getX();
         currentY = getY();
@@ -165,9 +204,10 @@ public class WonkyDrive {
         }
 
 
+        double t = time.seconds();
 
         velocity = Math.sqrt(
-                Math.pow(((currentX-lastx)/time.seconds()), 2) + Math.pow(((currentY-lasty)/time.seconds()), 2)
+                Math.pow(((currentX-lastx)/t), 2) + Math.pow(((currentY-lasty)/t), 2)
         );   //pythagorean theorme :)
 
         lasty1 = y1;
@@ -178,16 +218,14 @@ public class WonkyDrive {
     }
 
     public double getX(){
-        return encoderTicksToInches(xEncoder.getCurrentPosition());
+        return localizer.getRawY();
     }
 
     public double getY(){
-        return encoderTicksToInches(yEncoder.getCurrentPosition());
+        return localizer.getRawX();
     }
 
-    public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
-    }
+
 
     //gets angle from imu
     public double getAngle() {

@@ -1,16 +1,19 @@
 package org.firstinspires.ftc.teamcode.library;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class Localizer {
 
-    private Encoder xEncoderRight;
-    private Encoder yEncoder;
-    private Encoder xEncoderLeft;
+    private Encoder rightEncoder;
+    private Encoder frontEncoder;
+    private Encoder leftEncoder;
 
-    public static double WHEEL_RADIUS = 96.0/2/25.4 ; // in
-    public static double GEAR_RATIO = 1 ; // output (wheel) speed / input (motor) speed
-    public static final double TICKS_PER_REV = 537.6;
+    public static double TICKS_PER_REV = 8192;
+    public static double WHEEL_RADIUS = 1   ; // in
+    public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double LATERAL_DISTANCE = 14.125; // in; distance between the left and right wheels 4.125
     public static double FORWARD_OFFSET = -3.8; // in; offset of the lateral wheel
@@ -36,16 +39,19 @@ public class Localizer {
     double relY;
 
 
-    public Localizer(Encoder xEncoderRight,
-                     Encoder yEncoder, Encoder xEncoderLeft){
+    public Localizer(HardwareMap hardwareMap){
 
-        this.xEncoderRight = xEncoderRight;
-        this.yEncoder = yEncoder;
-        this.xEncoderLeft = xEncoderLeft;
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rf"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "lf"));
 
-        xEncoderRight.reset();
-        yEncoder.reset();
-        xEncoderLeft.reset();
+        // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+
+        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+
+        rightEncoder.reset();
+        frontEncoder.reset();
+        leftEncoder.reset();
 
         x = 0;
         y = 0;
@@ -93,25 +99,29 @@ public class Localizer {
     }
 
     public double getHeading(){
-        return (xEncoderRight.getCurrentPosition() - xEncoderLeft.getCurrentPosition())/(LATERAL_DISTANCE);
+        return (encoderTicksToInches(rightEncoder.getCurrentPosition()) - encoderTicksToInches(leftEncoder.getCurrentPosition()))/(LATERAL_DISTANCE);
     }
 
     public double getHeading(Angle angle){
         if(angle == Angle.RADIANS){
-            return (xEncoderRight.getCurrentPosition() - xEncoderLeft.getCurrentPosition())/(LATERAL_DISTANCE);
+            return (encoderTicksToInches(rightEncoder.getCurrentPosition()) - encoderTicksToInches(leftEncoder.getCurrentPosition()))/(LATERAL_DISTANCE);
         }else{
-            return (180/Math.PI)*(xEncoderRight.getCurrentPosition() - xEncoderLeft.getCurrentPosition())/(LATERAL_DISTANCE);
+            return (180/Math.PI)*(encoderTicksToInches(rightEncoder.getCurrentPosition()) - encoderTicksToInches(leftEncoder.getCurrentPosition()))/(LATERAL_DISTANCE);
 
         }
     }
 
 
-    private double getRawX(){
-        return encoderTicksToInches((xEncoderRight.getCurrentPosition() + xEncoderLeft.getCurrentPosition())/2.0);
+    public double getRawX(){
+        return (encoderTicksToInches(rightEncoder.getCurrentPosition()) + encoderTicksToInches(leftEncoder.getCurrentPosition()))/2.0;
     }
 
-    private double getRawY(){
-        return encoderTicksToInches(yEncoder.getCurrentPosition()) - (FORWARD_OFFSET * getHeading());
+    public double getRawY(){
+        return encoderTicksToInches(frontEncoder.getCurrentPosition()) - (FORWARD_OFFSET * getHeading());
+    }
+
+    public String getRawEncoders(){
+        return "" + rightEncoder.getCurrentPosition() + " " + leftEncoder.getCurrentPosition() + " " + frontEncoder.getCurrentPosition();
     }
 
     public static double encoderTicksToInches(double ticks) {

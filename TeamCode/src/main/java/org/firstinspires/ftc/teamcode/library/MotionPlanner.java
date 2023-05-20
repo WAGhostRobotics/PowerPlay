@@ -45,7 +45,7 @@ public class MotionPlanner {
     public static final double TICKS_PER_REV = 537.6;
 
     public static final int MAX_RPM = 349;
-    public static double MAX_VEL = (MAX_RPM/60.0) * (GEAR_RATIO) * (WHEEL_RADIUS) * (2* Math.PI) * 1.2; // was * 0.9
+    public static double MAX_VEL = (MAX_RPM/60.0) * (GEAR_RATIO) * (WHEEL_RADIUS) * (2* Math.PI) * 1.5; // was * 0.9
     public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = 4.5601312058986245;
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
@@ -92,6 +92,13 @@ public class MotionPlanner {
 
     }
 
+    public String getTelemetry(){
+        return "Time: " + time +
+                "\n Theta: " + theta +
+                "\n Magnitude: " + magnitude +
+                "\n " + drive.telemetry;
+    }
+
 
 
     public void update() {
@@ -130,7 +137,7 @@ public class MotionPlanner {
                 driveTurn = headingControl.calculate(currentHeading, heading);
 
 
-                drive.drive(magnitude, theta, -driveTurn, movementPower);
+                drive.drive(magnitude, theta, driveTurn, movementPower);
 
                 //sets powers scaled to desired speed
 
@@ -146,10 +153,10 @@ public class MotionPlanner {
                 y_rotated = -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
-                theta = Math.toDegrees(Math.atan2(x_rotated, y_rotated));
+                theta = Math.toDegrees(Math.atan2(x_rotated, -y_rotated));
                 driveTurn = headingControl.calculate(currentHeading, heading);
 
-                drive.driveMax(magnitude, theta, -driveTurn, movementPower);
+                drive.driveMax(magnitude, theta, driveTurn, movementPower);
             }
 
         }

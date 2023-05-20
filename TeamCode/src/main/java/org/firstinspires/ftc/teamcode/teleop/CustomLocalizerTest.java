@@ -23,17 +23,7 @@ public class CustomLocalizerTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-
-        Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rf"));
-        Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
-        Encoder frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "lf"));
-
-        // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-
-        rightEncoder.setDirection(Encoder.Direction.REVERSE);
-
-
-        Localizer localizer = new Localizer(rightEncoder, frontEncoder, leftEncoder);
+        Localizer localizer = new Localizer(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

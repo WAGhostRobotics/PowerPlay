@@ -77,6 +77,7 @@ public class Tom {
             backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
             backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
+
             arm.init(hwMap, true);
             intake.init(hwMap, true);
             outtake.init(hwMap, true);
