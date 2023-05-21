@@ -13,4 +13,7 @@ public class Point {
     public double getX(){return x;}
     public double getY(){return y;}
 
+    public boolean equals(Point p){
+        return (getX()==p.getX())&&(getY()==p.getY());
+    }
 }

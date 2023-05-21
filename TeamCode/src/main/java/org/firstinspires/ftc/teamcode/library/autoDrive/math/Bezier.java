@@ -110,9 +110,10 @@ public class Bezier {
 
     public double approximateLength() {
         double distance = 0;
-        for (double i=0.05; i<=1; i+=0.05) {
-            Point pt = getPoint(i);
-            Point pt2 = getPoint(i-0.05);
+        for(int i=5; i<=100; i+= 5) {
+            double z = ((double) i)/100;
+            Point pt = getPoint(z);
+            Point pt2 = getPoint(z-0.05);
             distance += Math.hypot(pt.getX()-pt2.getX(), pt.getY()-pt2.getY());
         }
 
@@ -122,5 +123,7 @@ public class Bezier {
     public Point getEndPoint() {
         return waypoints[waypoints.length-1];
     }
+
+    public Point getStartPoint(){return waypoints[0];}
 
 }
