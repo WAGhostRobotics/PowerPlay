@@ -33,7 +33,7 @@ import org.openftc.apriltag.AprilTagDetection;
 public class LeftSideAuto extends LinearOpMode {
 
 
-    Pose2d goToConePosition = new Pose2d(59.15, -0.80, Math.toRadians(286));
+    Pose2d goToConePosition = new Pose2d(58.35, 0.1, Math.toRadians(286));
 
     Trajectory goToCone;
     Trajectory park;
