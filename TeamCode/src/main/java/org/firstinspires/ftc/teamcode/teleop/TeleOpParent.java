@@ -205,12 +205,8 @@ public class TeleOpParent extends LinearOpMode {
             }
 
 
-            boolean button1 = gamepad1.right_bumper;
-            boolean button2 = gamepad1.left_bumper;
-
-            if(button1&&button2){
-                Tom.claw.setSpinPosition(Claw.OUT+Claw.AUTO_OUT_DIFFERENCE);
-            }
+            boolean button1 = gamepad2.right_bumper;
+            boolean button2 = gamepad2.left_bumper;
 
 
 
@@ -286,11 +282,6 @@ public class TeleOpParent extends LinearOpMode {
 
 
 
-            //AUTO PLACE CONTROLLER (MASTER BUTTON)
-            if(gamepad1.right_stick_button){
-                autoStackScheduler.init();
-                collectionScheduler.stop();
-            }
 
             //CLAW CODE
             if (aReader.wasJustReleased()|| aReader2.wasJustReleased()){
@@ -299,6 +290,11 @@ public class TeleOpParent extends LinearOpMode {
                 } else {
                     Tom.claw.setClawPosition(Claw.OPEN);
                 }
+            }
+
+            if(button1&&button2){
+                autoStackScheduler.init();
+                collectionScheduler.stop();
             }
 
 
