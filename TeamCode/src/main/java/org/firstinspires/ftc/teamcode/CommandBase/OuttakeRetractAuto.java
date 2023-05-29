@@ -34,6 +34,7 @@ public class OuttakeRetractAuto extends Command {
 
         if(Tom.outtake.isFinished()&&Tom.outtake.getTargetPosition()== OuttakeSlides.TurnValue.TOP.getTicks()){
             extending = false;
+            stallingTimer.reset();
         }
 
     }

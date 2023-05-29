@@ -21,7 +21,7 @@ public class Claw {
 
     public static final double OUT = 0.336;
 
-    public static final double AUTO_OUT_DIFFERENCE = 0.01;
+    public static final double AUTO_OUT_DIFFERENCE = 0.012;
 
     private double spinTargetPosition = IN;
 

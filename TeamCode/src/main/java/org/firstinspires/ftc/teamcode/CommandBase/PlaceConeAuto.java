@@ -23,7 +23,7 @@ public class PlaceConeAuto extends SequentialCommand {
                                 coneArmPosition,
                                 spinPosition, false)),
                 new ParallelCommand(
-                        new Wait(350),
+                        new Wait(450),
                         new OuttakeMove(OuttakeSlides.TurnValue.TOP.getTicks())
                 ),
                 new ParallelCommand(

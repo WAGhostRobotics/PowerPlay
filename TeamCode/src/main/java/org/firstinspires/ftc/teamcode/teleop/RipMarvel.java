@@ -27,8 +27,8 @@ import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.library.teleopDrive.DriveStyle;
 import org.firstinspires.ftc.teamcode.library.teleopDrive.DriverOrientedControl;
 
-@TeleOp(name = "KidMode", group = "competition")
-public class KidMode extends LinearOpMode {
+@TeleOp(name = "RipMarvel", group = "competition")
+public class RipMarvel extends LinearOpMode {
 
     Orientation angles;
     Acceleration gravity;
@@ -142,9 +142,9 @@ public class KidMode extends LinearOpMode {
                 );
             } else if (type == DriveStyle.DriveType.DRIVERORIENTED){
                 drive.driveFieldCentric(
-                        power * (Math.pow(driverOp.getLeftX(), 3)),
-                        power * (Math.pow(driverOp.getLeftY(), 3)),
-                        turningMultiplier * power * (Math.pow(driverOp.getRightX(), 3)),
+                        power * (Math.pow(driverOp2.getLeftX(), 3)),
+                        power * (Math.pow(driverOp2.getLeftY(), 3)),
+                        turningMultiplier * power * (Math.pow(driverOp2.getRightX(), 3)),
                         Tom.imu.getRotation2d().getDegrees(),   // gyro value passed in here must be in degrees
                         false
                 );
@@ -164,7 +164,7 @@ public class KidMode extends LinearOpMode {
             if (rightStickReader.getState()) {
                 power = 0.2;
             } else {
-                power = 0.4;
+                power = 0.65;
             }
             rightStickReader.readValue();
             aReader.readValue();
@@ -181,7 +181,7 @@ public class KidMode extends LinearOpMode {
             Tom.arm.update();
 
             //OUTTAKE SLIDES CONTROLLER
-            if(gamepad1.x){
+            if(gamepad1.x || gamepad2.x){
                 Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks());
                 Tom.latch.setLatchPosition(Latch.OPEN);
 
@@ -189,7 +189,7 @@ public class KidMode extends LinearOpMode {
                 autoStackScheduler.stop();
             }
 
-            if(gamepad1.b){
+            if(gamepad1.b || gamepad2.b){
                 Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.MID.getTicks());
                 Tom.latch.setLatchPosition(Latch.CLOSE);
 
@@ -197,7 +197,7 @@ public class KidMode extends LinearOpMode {
                 autoStackScheduler.stop();
             }
 
-            if(gamepad1.y) {
+            if(gamepad1.y || gamepad2.y) {
                 Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.TOP.getTicks());
                 Tom.latch.setLatchPosition(Latch.CLOSE);
 
@@ -206,12 +206,12 @@ public class KidMode extends LinearOpMode {
             }
 
 
-//            boolean button1 = gamepad1.right_bumper;
-//            boolean button2 = gamepad1.left_bumper;
-//
-//            if(button1&&button2){
-//                Tom.claw.setSpinPosition(Claw.OUT+Claw.AUTO_OUT_DIFFERENCE);
-//            }
+            boolean button1 = gamepad1.right_bumper;
+            boolean button2 = gamepad1.left_bumper;
+
+            if(button1&&button2){
+                Tom.claw.setSpinPosition(Claw.OUT+Claw.AUTO_OUT_DIFFERENCE);
+            }
 
 
 
@@ -237,12 +237,12 @@ public class KidMode extends LinearOpMode {
 
 
             //INTAKE CONTROLLER
-            if(gamepad1.dpad_right){
+            if(gamepad1.dpad_right || gamepad2.dpad_right){
                 collectionScheduler.init();
                 autoStackScheduler.stop();
             }
 
-            if(gamepad1.dpad_down){
+            if(gamepad1.dpad_down || gamepad2.dpad_down){
 
                 Tom.intake.setTargetPosition(IntakeSlides.TurnValue.PARTIAL.getTicks());
                 Tom.arm.setTargetPosition(Arm.TurnValue.EXTENDED.getPosition());
@@ -254,7 +254,7 @@ public class KidMode extends LinearOpMode {
 
             }
 
-            if(startReader.wasJustReleased()){
+            if(startReader.wasJustReleased() || startReader2.wasJustReleased()){
                 if(Tom.latch.getLatchPosition() == Latch.OPEN){
                     Tom.latch.setLatchPosition(Latch.CLOSE);
                 }else{
@@ -263,7 +263,7 @@ public class KidMode extends LinearOpMode {
 
             }
 
-            if(gamepad1.dpad_left) {
+            if(gamepad1.dpad_left || gamepad2.dpad_left) {
                 Tom.intake.setTargetPosition(IntakeSlides.TurnValue.EXTENDED.getTicks());
                 Tom.arm.setTargetPosition(Arm.TurnValue.SUPER_EXTENDED.getPosition());
                 Tom.claw.setClawPosition(Claw.OPEN);
@@ -274,7 +274,7 @@ public class KidMode extends LinearOpMode {
 
             }
 
-            if(gamepad1.dpad_up){
+            if(gamepad1.dpad_up || gamepad2.dpad_up){
                 Tom.intake.setTargetPosition(IntakeSlides.TurnValue.RETRACTED.getTicks());
                 Tom.arm.setTargetPosition(Arm.TurnValue.LOW.getPosition());
                 Tom.claw.setSpinPosition(Claw.OUT);
@@ -294,7 +294,7 @@ public class KidMode extends LinearOpMode {
             }
 
             //CLAW CODE
-            if (aReader2.wasJustReleased()){
+            if (aReader.wasJustReleased()|| aReader2.wasJustReleased()){
                 if (Tom.claw.isOpen()){
                     Tom.claw.setClawPosition(Claw.CLOSE);
                 } else {
@@ -304,13 +304,13 @@ public class KidMode extends LinearOpMode {
 
 
             //OUTTAKE MINOR ADJUSTMENTS
-            if (-gamepad1.right_stick_y>0.5) {
+            if (gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
                 Tom.outtake.setTargetPosition(Tom.outtake.getTargetPosition()+10);
 
                 collectionScheduler.stop();
                 autoStackScheduler.stop();
 
-            } else if (-gamepad1.right_stick_y<-0.5) {
+            } else if (gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
                 Tom.outtake.setTargetPosition(Tom.outtake.getTargetPosition()-10);
 
                 collectionScheduler.stop();
@@ -318,12 +318,12 @@ public class KidMode extends LinearOpMode {
             }
 
             //INTAKE MINOR ADJUSTMENT
-            if (gamepad1.right_stick_x<-0.5) {
+            if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 Tom.intake.setTargetPosition(Tom.intake.getTargetPosition()+10);
 
                 collectionScheduler.stop();
                 autoStackScheduler.stop();
-            } else if (gamepad1.right_stick_x>0.5) {
+            } else if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 Tom.intake.setTargetPosition(Tom.intake.getTargetPosition()-10);
 
                 collectionScheduler.stop();
