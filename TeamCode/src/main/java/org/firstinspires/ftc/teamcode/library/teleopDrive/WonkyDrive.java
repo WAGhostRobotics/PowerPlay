@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.library.teleopDrive;
 
 import com.arcrobotics.ftclib.controller.PController;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -140,49 +139,48 @@ public class WonkyDrive {
         gamepadTheta = Math.toDegrees(Math.atan2(driveY, driveX));
         robotTheta = getCurrentHeading();
 
+        currentHeading = getCurrentHeading();
 
-        //power of movement hypotenuse
+
+        double headingError = currentHeading - lastHeading;
+
+        if(headingError > 180){
+            headingError -= 360;
+        }else if(headingError<-180){
+            headingError += 360;
+        }
+
+        if(driveTurn != 0 || Math.abs(headingError) < 2 || driveX == 0 || driveY == 0){
+            updateHeading();
+        }else{
+            driveTurn = headingController.calculate(headingError, 0);
+        }
+
         gamepadMagnitude = Range.clip(Math.hypot(driveX, driveY), 0, 1);
-
-        //angle of wheels (45 deg for mecanum wheel adjustment)
         theta = gamepadTheta - robotTheta;
-
-
-        //movement vector is magnitude: gameMagnitude direct: theta
         if(!Double.isNaN(y1)&&!Double.isNaN(y2)&& gamepadMagnitude != 0){
             radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
             ac = Math.pow(velocity, 2)/radius;
-
+            theta -= Math.toDegrees(Math.atan2( ac*THE_HOLY_CONSTANT, gamepadMagnitude));
+            gamepadMagnitude = Math.hypot(gamepadMagnitude, ac*THE_HOLY_CONSTANT);
 
         }else{
             ac = 0;
         }
-
-        theta -= Math.toDegrees(Math.atan2( ac*THE_HOLY_CONSTANT, gamepadMagnitude));
-        gamepadMagnitude = Math.hypot(gamepadMagnitude, ac*THE_HOLY_CONSTANT);
-
         theta -= 45;
-
-        //sin and cos of robot movement
         sin = Math.sin(Math.toRadians(theta));
         cos = Math.cos(Math.toRadians(theta));
         maxMovement = Math.max(Math.abs(sin), Math.abs(cos));
-
-        //determines powers and scales based on max movement
         frontLeftPower = (gamepadMagnitude * cos / maxMovement + driveTurn);
         frontRightPower = (gamepadMagnitude * sin / maxMovement - driveTurn);
         backLeftPower = (gamepadMagnitude * sin / maxMovement + driveTurn);
         backRightPower = (gamepadMagnitude * cos / maxMovement - driveTurn);
-
-        //scales if -1> powers >1
         if(gamepadMagnitude + Math.abs(driveTurn)>1){
             frontLeftPower /= gamepadMagnitude + Math.abs(driveTurn);
             frontRightPower /= gamepadMagnitude + Math.abs(driveTurn);
             backLeftPower /= gamepadMagnitude + Math.abs(driveTurn);
             backRightPower /= gamepadMagnitude + Math.abs(driveTurn);
         }
-
-        //sets powers scaled to desired speed
         frontLeft.setPower(movementPower*frontLeftPower);
         frontRight.setPower(movementPower*frontRightPower);
         backLeft.setPower(movementPower*backLeftPower);
@@ -197,7 +195,7 @@ public class WonkyDrive {
     }
 
     public String getTelemetry(){
-        return stuff;
+        return "" + getCurrentHeading() + "\n" +  lastHeading;
     }
 
 

@@ -14,16 +14,12 @@ public class MotionPlanner {
     private Drive drive;
     private Localizer localizer;
 
-    private PIDController xControl;
-    private PIDController yControl;
+    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
+    private PIDController headingControl = new PIDController(0.3,0,0.05);
 
-    private PIDController headingControl;
+    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
+    private PIDController headingControlEnd = new PIDController(0.3,0,0.05);
 
-
-    private PIDController xControlEnd;
-    private PIDController yControlEnd;
-
-    private PIDController headingControlEnd;
 
     private double t1, t2, t3, time;
 
@@ -82,13 +78,10 @@ public class MotionPlanner {
         }
         time = t1 + t2 + t3;
 
-        xControl = new PIDController(0,0,0);
-        yControl = new PIDController(0,0,0);
-        headingControl = new PIDController(0,0,0);
 
-        xControlEnd = null;
-        yControlEnd = null;
-        headingControlEnd = null;
+        translationalControl.reset();
+        headingControl.reset();
+
 
     }
 
@@ -120,14 +113,14 @@ public class MotionPlanner {
             if((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y) <
                     Math.hypot(localizer.getX(), localizer.getY())/(2*MAX_ACCEL))||t>=1){
 
-                if(xControlEnd == null || yControlEnd == null || headingControlEnd == null){
-                    xControlEnd = new PIDController(0,0,0);
-                    yControlEnd = new PIDController(0,0,0);
-                    headingControlEnd = new PIDController(0,0,0);
+                if(translationalControlEnd == null || translationalControlEnd == null || headingControlEnd == null){
+                    translationalControlEnd.reset();
+                    translationalControlEnd.reset();
+                    headingControlEnd.reset();
                 }
 
-                x_power = xControlEnd.calculate(0, spline.getEndPoint().getX()-x);
-                y_power = yControlEnd.calculate(0, spline.getEndPoint().getY()-y);
+                x_power = translationalControlEnd.calculate(0, spline.getEndPoint().getX()-x);
+                y_power = translationalControlEnd.calculate(0, spline.getEndPoint().getY()-y);
 
                 x_rotated = x_power * Math.cos(Math.toRadians(heading)) + y_power * Math.sin(Math.toRadians(heading));
                 y_rotated =  -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
@@ -146,8 +139,8 @@ public class MotionPlanner {
                 magnitude = 1;
                 theta = Math.toDegrees(Math.atan2(derivative.getY(), derivative.getX()));
 
-                x_power = magnitude * Math.cos(Math.toRadians(theta)) + xControl.calculate(x, pointWhereItShouldBe.getX());
-                y_power = magnitude * Math.sin(Math.toRadians(theta)) + yControl.calculate(y, pointWhereItShouldBe.getY());
+                x_power = magnitude * Math.cos(Math.toRadians(theta)) + translationalControl.calculate(x, pointWhereItShouldBe.getX());
+                y_power = magnitude * Math.sin(Math.toRadians(theta)) + translationalControl.calculate(y, pointWhereItShouldBe.getY());
 
                 x_rotated = x_power * Math.cos(Math.toRadians(heading)) + y_power * Math.sin(Math.toRadians(heading));
                 y_rotated = -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
