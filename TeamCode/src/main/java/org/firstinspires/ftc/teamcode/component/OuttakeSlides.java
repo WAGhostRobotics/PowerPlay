@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 public class OuttakeSlides {
 
     private DcMotorEx slides;
-    private final double POWER = 1;
+    private final double POWER = 0.65;
     private final double ERROR = 70;
 
     private final double minPower = 0.3;

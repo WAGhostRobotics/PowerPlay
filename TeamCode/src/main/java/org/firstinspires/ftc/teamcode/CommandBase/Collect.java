@@ -21,6 +21,7 @@ public class Collect extends SequentialCommand {
                 new RunCommand(()->Tom.outtake.setTargetPosition(OuttakeSlides.TurnValue.RETRACTED.getTicks())),
                 new Wait(100),
                 new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.RETRACTED.getPosition(), Claw.IN),
+                new Wait(150),
                 new RunCommand(()-> Tom.claw.open()),
                 new Wait(150),
                 new IntakeMove(IntakeSlides.TurnValue.PLACE_CONE.getTicks(), Arm.TurnValue.PARTIAL.getPosition(), Claw.IN)

@@ -40,28 +40,6 @@ public class TeleOpParent extends LinearOpMode {
     public double power = 0.8;
     public double turningMultiplier = 0.8;
 
-
-    enum IntakeState{
-        SLIDES_RETRACT,
-        CLAW_OPEN,
-        PIVOT_RETRACT,
-        IDLE
-    }
-
-    enum State {
-        SLIDES_RETRACT,
-        PLACE_CONE,
-        CLAW_OPEN,
-        PIVOT_RETRACT,
-        OUTTAKE_READY,
-        OUTTAKE_EXTEND,
-        WAIT_FOR_OUTTAKE,
-        OUTTAKE_RETRACT,
-        IDLE
-    }
-
-    State autoPlaceState = State.IDLE;
-    IntakeState intakeState = IntakeState.IDLE;
     double intakePower = 1;
     int intake = -1;
 
@@ -163,7 +141,7 @@ public class TeleOpParent extends LinearOpMode {
             if (rightStickReader.getState()) {
                 power = 0.2;
             } else {
-                power = 0.65;
+                power = 0.8;
             }
             rightStickReader.readValue();
             aReader.readValue();
@@ -258,7 +236,7 @@ public class TeleOpParent extends LinearOpMode {
 
             }
 
-            if(gamepad1.dpad_left || gamepad2.dpad_left) {
+            if(gamepad1.dpad_left) {
                 Tom.intake.setTargetPosition(IntakeSlides.TurnValue.EXTENDED.getTicks());
                 Tom.arm.setTargetPosition(Arm.TurnValue.SUPER_EXTENDED.getPosition());
                 Tom.claw.setClawPosition(Claw.OPEN);
@@ -299,13 +277,13 @@ public class TeleOpParent extends LinearOpMode {
 
 
             //OUTTAKE MINOR ADJUSTMENTS
-            if (-gamepad1.right_stick_y>0.5 || gamepad2.right_trigger >= 0.1) {
+            if ( gamepad1.right_trigger >= 0.1 || gamepad2.right_trigger >= 0.1) {
                 Tom.outtake.setTargetPosition(Tom.outtake.getTargetPosition()+10);
 
                 collectionScheduler.stop();
                 autoStackScheduler.stop();
 
-            } else if (-gamepad1.right_stick_y<-0.5 || gamepad2.left_trigger >= 0.1) {
+            } else if (gamepad1.left_trigger >= 0.1 || gamepad2.left_trigger >= 0.1) {
                 Tom.outtake.setTargetPosition(Tom.outtake.getTargetPosition()-10);
 
                 collectionScheduler.stop();
@@ -313,12 +291,12 @@ public class TeleOpParent extends LinearOpMode {
             }
 
             //INTAKE MINOR ADJUSTMENT
-            if (gamepad1.right_stick_x<-0.5 || gamepad2.left_bumper) {
+            if (gamepad1.left_bumper || gamepad2.left_bumper) {
                 Tom.intake.setTargetPosition(Tom.intake.getTargetPosition()+10);
 
                 collectionScheduler.stop();
                 autoStackScheduler.stop();
-            } else if (gamepad1.right_stick_x>0.5 || gamepad2.right_bumper) {
+            } else if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 Tom.intake.setTargetPosition(Tom.intake.getTargetPosition()-10);
 
                 collectionScheduler.stop();

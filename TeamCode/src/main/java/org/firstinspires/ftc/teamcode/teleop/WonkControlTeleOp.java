@@ -6,6 +6,7 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,13 +20,20 @@ public class WonkControlTeleOp extends LinearOpMode {
 
     public double power = 0.8;
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Tom.init(hardwareMap, false);
-        if(Tom.imu==null){
-            Tom.initIMU();
-        }
+
+        Tom.init(hardwareMap, true);
+
+        MecanumDrive drive = new MecanumDrive(
+                Tom.frontLeft,
+                Tom.frontRight,
+                Tom.backLeft,
+                Tom.backRight
+        );
 
 
         Localizer localizer = new Localizer(hardwareMap);
@@ -51,8 +59,9 @@ public class WonkControlTeleOp extends LinearOpMode {
 
             telemetry.addData("X", wonk.getX());
             telemetry.addData("Y", wonk.getY());
-            telemetry.addData("Angle", wonk.getAngle());
+            telemetry.addData("Angle", wonk.getCurrentHeading());
             telemetry.addData("Ac", wonk.getAc());
+            telemetry.addLine(wonk.getTelemetry());
             telemetry.update();
 
         }

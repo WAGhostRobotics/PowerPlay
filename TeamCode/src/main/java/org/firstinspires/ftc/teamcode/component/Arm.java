@@ -23,11 +23,11 @@ public class Arm {
         SUPER_EXTENDED(0.05),
         START_AUTO(0.825),
         PARTIAL(0.63),
-        RETRACTED(0.835),
+        RETRACTED(0.828),
         LOW(0.52),
         CONE1(0.18),
         CONE2(0.135),
-        CONE3(0.115),
+        CONE3(0.105),
         CONE4(0.064),
         CONE5(0.025);
 
