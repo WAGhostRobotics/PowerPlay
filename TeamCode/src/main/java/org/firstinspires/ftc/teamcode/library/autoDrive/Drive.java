@@ -98,12 +98,12 @@ public class Drive {
         backLeftPower = (magnitude * sin / maxMovement + driveTurn);
         backRightPower = (magnitude * cos / maxMovement - driveTurn);
 
-        //scales if -1 < powers < 1
+        //scales if -1> powers >1
         if(magnitude + Math.abs(driveTurn)>1){
-            frontLeftPower /= magnitude + driveTurn;
-            frontRightPower /= magnitude + driveTurn;
-            backLeftPower /= magnitude + driveTurn;
-            backRightPower /= magnitude + driveTurn;
+            frontLeftPower /= magnitude + Math.abs(driveTurn);
+            frontRightPower /= magnitude + Math.abs(driveTurn);
+            backLeftPower /= magnitude + Math.abs(driveTurn);
+            backRightPower /= magnitude + Math.abs(driveTurn);
         }
 
 
