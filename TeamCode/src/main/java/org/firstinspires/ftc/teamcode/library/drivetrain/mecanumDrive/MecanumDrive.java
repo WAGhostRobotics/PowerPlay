@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.library.autoDrive;
+package org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Drive {
+import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
+
+public class MecanumDrive implements Drivetrain {
 
     private DcMotorEx frontLeft;
     private DcMotorEx frontRight;
@@ -21,7 +23,7 @@ public class Drive {
     String telemetry = "";
 
 
-    public Drive(HardwareMap hardwareMap){
+    public MecanumDrive(HardwareMap hardwareMap){
         frontLeft = hardwareMap.get(DcMotorEx.class, "lf");
         frontRight = hardwareMap.get(DcMotorEx.class, "rf");
         backLeft = hardwareMap.get(DcMotorEx.class, "lr");
@@ -43,6 +45,7 @@ public class Drive {
 
     }
 
+    @Override
     public void driveMax(double magnitude, double theta, double driveTurn, double movementPower){
 
         theta -= 45;
@@ -58,20 +61,12 @@ public class Drive {
         backLeftPower = (magnitude * sin / maxMovement - driveTurn);
         backRightPower = (magnitude * cos / maxMovement + driveTurn);
 
-        //scales if -1 < powers < 1
-        if(magnitude + Math.abs(driveTurn)>1){
-            frontLeftPower /= magnitude + driveTurn;
-            frontRightPower /= magnitude + driveTurn;
-            backLeftPower /= magnitude + driveTurn;
-            backRightPower /= magnitude + driveTurn;
-        }
+        //scales
+        frontLeftPower /= magnitude + Math.abs(driveTurn);
+        frontRightPower /= magnitude + Math.abs(driveTurn);
+        backLeftPower /= magnitude + Math.abs(driveTurn);
+        backRightPower /= magnitude + Math.abs(driveTurn);
 
-        double max = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
-
-        frontLeftPower /= max;
-        frontRightPower /= max;
-        backLeftPower /= max;
-        backRightPower /= max;
 
         frontLeft.setPower(movementPower*frontLeftPower);
         frontRight.setPower(movementPower*frontRightPower);
@@ -83,6 +78,12 @@ public class Drive {
 
     }
 
+    @Override
+    public String getTelemetry(){
+        return telemetry;
+    }
+
+    @Override
     public void drive(double magnitude, double theta, double driveTurn, double movementPower){
 
         theta -= 45;

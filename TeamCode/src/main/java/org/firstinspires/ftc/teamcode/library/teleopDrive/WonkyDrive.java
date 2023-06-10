@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.library.teleopDrive;
 
-import com.arcrobotics.ftclib.controller.PController;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 
 public class WonkyDrive {
@@ -71,12 +71,13 @@ public class WonkyDrive {
     double ac;
 
     public Localizer localizer;
+    public MecanumDrive drive;
 
 //    PIDController headingController = new PIDController(-1.0/90.0, 0, -1.0/45.0);
     PIDController headingController = new PIDController(0, 0, 0);
 
 
-    public WonkyDrive(HardwareMap hardwareMap, Localizer localizer){
+    public WonkyDrive(HardwareMap hardwareMap, Localizer localizer, MecanumDrive drive){
 
 
 
@@ -108,6 +109,7 @@ public class WonkyDrive {
 
 
         this.localizer = localizer;
+        this.drive = drive;
 
 
 //        xEncoder.setDirection(Encoder.Direction.REVERSE);
@@ -167,26 +169,8 @@ public class WonkyDrive {
         }else{
             ac = 0;
         }
-        theta -= 45;
-        sin = Math.sin(Math.toRadians(theta));
-        cos = Math.cos(Math.toRadians(theta));
-        maxMovement = Math.max(Math.abs(sin), Math.abs(cos));
-        frontLeftPower = (gamepadMagnitude * cos / maxMovement + driveTurn);
-        frontRightPower = (gamepadMagnitude * sin / maxMovement - driveTurn);
-        backLeftPower = (gamepadMagnitude * sin / maxMovement + driveTurn);
-        backRightPower = (gamepadMagnitude * cos / maxMovement - driveTurn);
-        if(gamepadMagnitude + Math.abs(driveTurn)>1){
-            frontLeftPower /= gamepadMagnitude + Math.abs(driveTurn);
-            frontRightPower /= gamepadMagnitude + Math.abs(driveTurn);
-            backLeftPower /= gamepadMagnitude + Math.abs(driveTurn);
-            backRightPower /= gamepadMagnitude + Math.abs(driveTurn);
-        }
-        frontLeft.setPower(movementPower*frontLeftPower);
-        frontRight.setPower(movementPower*frontRightPower);
-        backLeft.setPower(movementPower*backLeftPower);
-        backRight.setPower(movementPower*backRightPower);
 
-        stuff = "" + frontLeftPower + " " + frontRightPower + " " + backLeftPower + " " + backRightPower;
+        drive.drive(gamepadMagnitude, theta, driveTurn, movementPower);
 
     }
 

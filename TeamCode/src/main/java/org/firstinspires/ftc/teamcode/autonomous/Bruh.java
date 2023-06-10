@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.autoDrive.Drive;
+import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 import org.firstinspires.ftc.teamcode.library.autoDrive.MotionPlanner;
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.Bezier;
@@ -24,7 +24,7 @@ public class Bruh extends LinearOpMode {
 
 
         Localizer localizer = new Localizer(hardwareMap);
-        Drive drive = new Drive(hardwareMap);
+        MecanumDrive drive = new MecanumDrive(hardwareMap);
 
         MotionPlanner motionPlanner = new MotionPlanner(drive, localizer);
 

@@ -5,13 +5,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.Bezier;
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
+import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 
 public class MotionPlanner {
 
     private Bezier spline;
     private double heading;
 
-    private Drive drive;
+    private Drivetrain drive;
     private Localizer localizer;
 
     private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
@@ -52,10 +54,9 @@ public class MotionPlanner {
 
     private ElapsedTime timer;
 
-    public MotionPlanner(Drive drive, Localizer localizer){
+    public MotionPlanner(MecanumDrive drive, Localizer localizer){
 
         this.drive = drive;
-
         this.localizer = localizer;
 
 
@@ -89,7 +90,7 @@ public class MotionPlanner {
         return "Time: " + time +
                 "\n Theta: " + theta +
                 "\n Magnitude: " + magnitude +
-                "\n " + drive.telemetry;
+                "\n " + drive.getTelemetry();
     }
 
 
@@ -113,11 +114,10 @@ public class MotionPlanner {
             if((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y) <
                     Math.hypot(localizer.getX(), localizer.getY())/(2*MAX_ACCEL))||t>=1){
 
-                if(translationalControlEnd == null || translationalControlEnd == null || headingControlEnd == null){
-                    translationalControlEnd.reset();
-                    translationalControlEnd.reset();
-                    headingControlEnd.reset();
-                }
+
+                translationalControlEnd.reset();
+                headingControlEnd.reset();
+
 
                 x_power = translationalControlEnd.calculate(0, spline.getEndPoint().getX()-x);
                 y_power = translationalControlEnd.calculate(0, spline.getEndPoint().getY()-y);

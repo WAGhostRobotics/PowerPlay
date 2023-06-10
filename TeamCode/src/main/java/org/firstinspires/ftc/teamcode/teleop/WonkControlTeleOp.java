@@ -6,11 +6,11 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
+import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 import org.firstinspires.ftc.teamcode.library.teleopDrive.WonkyDrive;
 
@@ -28,18 +28,12 @@ public class WonkControlTeleOp extends LinearOpMode {
 
         Tom.init(hardwareMap, true);
 
-        MecanumDrive drive = new MecanumDrive(
-                Tom.frontLeft,
-                Tom.frontRight,
-                Tom.backLeft,
-                Tom.backRight
-        );
-
 
         Localizer localizer = new Localizer(hardwareMap);
+        MecanumDrive drive = new MecanumDrive(hardwareMap);
 
 
-        WonkyDrive wonk = new WonkyDrive(hardwareMap, localizer);
+        WonkyDrive wonk = new WonkyDrive(hardwareMap, localizer, drive);
 
         waitForStart();
 

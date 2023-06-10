@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.autoDrive.Drive;
+import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 
 
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 public class MaxVelocityFinder extends LinearOpMode {
 
     Localizer localizer;
-    Drive drive;
+    MecanumDrive drive;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,7 +26,7 @@ public class MaxVelocityFinder extends LinearOpMode {
 
 
         localizer = new Localizer(hardwareMap);
-        drive = new Drive(hardwareMap);
+        drive = new MecanumDrive(hardwareMap);
 
         double maxVelocity = 0;
         double velocity;

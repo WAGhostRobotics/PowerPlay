@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.component.IntakeSlides;
 import org.firstinspires.ftc.teamcode.component.Latch;
 import org.firstinspires.ftc.teamcode.component.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.teleopDrive.DriveStyle;
+import org.firstinspires.ftc.teamcode.library.drivetrain.DriveStyle;
 import org.firstinspires.ftc.teamcode.library.teleopDrive.DriverOrientedControl;
 
 @TeleOp(name = "KidMode", group = "competition")
