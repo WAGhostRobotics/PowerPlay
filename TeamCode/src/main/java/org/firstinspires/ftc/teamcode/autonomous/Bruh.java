@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 
 
+import com.outoftheboxrobotics.photoncore.PhotonCore;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -28,6 +30,8 @@ public class Bruh extends LinearOpMode {
 
         MotionPlanner motionPlanner = new MotionPlanner(drive, localizer);
 
+        PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.enable();
 
         waitForStart();
 
@@ -42,6 +46,8 @@ public class Bruh extends LinearOpMode {
 
             telemetry.addLine("" + motionPlanner.getTelemetry());
             telemetry.update();
+
+            PhotonCore.CONTROL_HUB.clearBulkCache();
         }
     }
 }

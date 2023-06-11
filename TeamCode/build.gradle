@@ -19,6 +19,10 @@ android {
     namespace = 'org.firstinspires.ftc.teamcode'
 }
 
+repositories {
+    maven { url = 'https://jitpack.io' }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
@@ -30,4 +34,6 @@ dependencies {
 
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
+
+    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v2.0.4'
 }

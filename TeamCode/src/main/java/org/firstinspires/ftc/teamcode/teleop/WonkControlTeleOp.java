@@ -6,6 +6,8 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.outoftheboxrobotics.photoncore.PhotonCore;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -35,6 +37,9 @@ public class WonkControlTeleOp extends LinearOpMode {
 
         WonkyDrive wonk = new WonkyDrive(hardwareMap, localizer, drive);
 
+        PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.enable();
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -57,6 +62,8 @@ public class WonkControlTeleOp extends LinearOpMode {
             telemetry.addData("Ac", wonk.getAc());
             telemetry.addLine(wonk.getTelemetry());
             telemetry.update();
+
+            PhotonCore.CONTROL_HUB.clearBulkCache();
 
         }
     }
