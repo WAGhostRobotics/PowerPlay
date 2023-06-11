@@ -38,6 +38,25 @@ public class MotionPlanner {
     private double y_rotated;
     private double currentHeading;
 
+
+    double y1;
+    double y2;
+
+    private double velocity;
+
+    double lasty;
+    double lasty1;
+    double lastx;
+
+    double currentY;
+    double currentX;
+
+    double radius;
+    public final double THE_HOLY_CONSTANT = 0.0006; //0.01
+
+    double ac;
+
+
     public static double WHEEL_RADIUS = 96.0/2/25.4 ; // in
     public static double GEAR_RATIO = 1 ; // output (wheel) speed / input (motor) speed
     public static final double TICKS_PER_REV = 537.6;
@@ -53,6 +72,7 @@ public class MotionPlanner {
     private final double heading_error = 8;
 
     private ElapsedTime timer;
+    private ElapsedTime ACtimer;
 
     public MotionPlanner(MecanumDrive drive, Localizer localizer){
 
@@ -67,6 +87,7 @@ public class MotionPlanner {
         this.heading = heading;
 
         timer = new ElapsedTime();
+        ACtimer = new ElapsedTime();
 
         t1 = MAX_VEL/MAX_ACCEL; // time to accelerate
         t3 = MAX_VEL/MAX_ACCEL; // time to decelerate
@@ -101,7 +122,7 @@ public class MotionPlanner {
 
         t = timer.seconds()/time;
 
-        Point pointWhereItShouldBe = spline.getPoint(t);
+        Point target = spline.getPoint(t);
         Point derivative = spline.getDerivative(t);
 
         x = localizer.getX();
@@ -129,18 +150,27 @@ public class MotionPlanner {
                 theta = Math.toDegrees(Math.atan2(x_rotated, -y_rotated));
                 driveTurn = headingControl.calculate(currentHeading, heading);
 
+                if(!Double.isNaN(y1)&&!Double.isNaN(y2) && magnitude != 0){
+                    radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
+                    ac = Math.pow(velocity, 2)/radius;
+                    theta -= Math.toDegrees(Math.atan2( ac*THE_HOLY_CONSTANT, magnitude));
+                    magnitude = Math.hypot(magnitude, ac*THE_HOLY_CONSTANT);
+
+                }else{
+                    ac = 0;
+                }
+
 
                 drive.drive(magnitude, theta, driveTurn, movementPower);
 
-                //sets powers scaled to desired speed
 
             } else {
 
                 magnitude = 1;
                 theta = Math.toDegrees(Math.atan2(derivative.getY(), derivative.getX()));
 
-                x_power = magnitude * Math.cos(Math.toRadians(theta)) + translationalControl.calculate(x, pointWhereItShouldBe.getX());
-                y_power = magnitude * Math.sin(Math.toRadians(theta)) + translationalControl.calculate(y, pointWhereItShouldBe.getY());
+                x_power = magnitude * Math.cos(Math.toRadians(theta)) + translationalControl.calculate(x, target.getX());
+                y_power = magnitude * Math.sin(Math.toRadians(theta)) + translationalControl.calculate(y, target.getY());
 
                 x_rotated = x_power * Math.cos(Math.toRadians(heading)) + y_power * Math.sin(Math.toRadians(heading));
                 y_rotated = -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
@@ -153,6 +183,36 @@ public class MotionPlanner {
             }
 
         }
+    }
+
+    public void updateACValues(){
+        currentX = localizer.getY();
+        currentY = localizer.getRawX();
+
+        if((currentX-lastx) == 0){
+            y1 = Double.NaN;
+            y2 = Double.NaN;
+        }else{
+            y1 = (currentY-lasty)/(currentX-lastx);
+            y2 = (y1-lasty1)/(currentX-lastx);
+        }
+
+
+        double ACtime = ACtimer.seconds();
+
+        velocity = Math.sqrt(
+                Math.pow(((currentX-lastx)/ACtime), 2) + Math.pow(((currentY-lasty)/ACtime), 2)
+        );
+
+        lasty1 = y1;
+        lastx = currentX;
+        lasty = currentY;
+
+
+
+        ACtimer.reset();
+
+
     }
 
     private boolean isFinished() {

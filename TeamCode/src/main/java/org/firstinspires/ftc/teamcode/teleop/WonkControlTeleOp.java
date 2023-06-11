@@ -47,7 +47,7 @@ public class WonkControlTeleOp extends LinearOpMode {
 //                Tom.initIMU();
 //            }
 
-            wonk.drive(gamepad2, 1);
+            wonk.drive(gamepad2, power);
 
 
 

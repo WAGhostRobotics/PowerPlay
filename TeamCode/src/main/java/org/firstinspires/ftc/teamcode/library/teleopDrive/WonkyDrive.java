@@ -32,16 +32,6 @@ public class WonkyDrive {
     double gamepadTheta;
     double robotTheta;
     double theta;
-    double gamepadXControl;
-    double gamepadYControl;
-
-    double sin;
-    double cos;
-    double maxMovement;
-    double frontLeftPower;
-    double frontRightPower;
-    double backLeftPower;
-    double backRightPower;
 
     double y1;
     double y2;
@@ -66,15 +56,15 @@ public class WonkyDrive {
     public String stuff = "";
 
 
-    public final double THE_HOLY_CONSTANT = 0.0003; //0.01
+    public final double THE_HOLY_CONSTANT = 0.001; //0.01
 
     double ac;
 
     public Localizer localizer;
     public MecanumDrive drive;
 
-//    PIDController headingController = new PIDController(-1.0/90.0, 0, -1.0/45.0);
-    PIDController headingController = new PIDController(0, 0, 0);
+    PIDController headingController = new PIDController(-5.0/90.0, -0.005, 0);
+//    PIDController headingController = new PIDController(0, 0, 0);
 
 
     public WonkyDrive(HardwareMap hardwareMap, Localizer localizer, MecanumDrive drive){
@@ -152,10 +142,13 @@ public class WonkyDrive {
             headingError += 360;
         }
 
-        if(driveTurn != 0 || Math.abs(headingError) < 2 || driveX == 0 || driveY == 0){
+        if(driveTurn != 0 || (driveX == 0 && driveY == 0)){
             updateHeading();
-        }else{
+            headingController.reset();
+        }else if (Math.abs(headingError) > 0.5 ){
             driveTurn = headingController.calculate(headingError, 0);
+        }else{
+            headingController.reset();
         }
 
         gamepadMagnitude = Range.clip(Math.hypot(driveX, driveY), 0, 1);
