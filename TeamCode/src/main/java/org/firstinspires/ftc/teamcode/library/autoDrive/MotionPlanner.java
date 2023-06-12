@@ -16,11 +16,13 @@ public class MotionPlanner {
     private Drivetrain drive;
     private Localizer localizer;
 
-    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    private PIDController headingControl = new PIDController(0.3,0,0.05);
+//    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
+    private PIDController translationalControl = new PIDController(0.0,0.00,0.0);
+    private PIDController headingControl = new PIDController(5.0/90.0, 0.01, 0.005);
 
-    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    private PIDController headingControlEnd = new PIDController(0.3,0,0.05);
+//    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
+    private PIDController translationalControlEnd = new PIDController(0.0,0.00,0.0);
+    private PIDController headingControlEnd = new PIDController(5.0/90.0, 0.01, 0.005);
 
 
     private double t1, t2, t3, time;
@@ -62,14 +64,17 @@ public class MotionPlanner {
     public static final double TICKS_PER_REV = 537.6;
 
     public static final int MAX_RPM = 349;
-    public static double MAX_VEL = (MAX_RPM/60.0) * (GEAR_RATIO) * (WHEEL_RADIUS) * (2* Math.PI) * 1.5; // was * 0.9
+//    public static double MAX_VEL = (MAX_RPM/60.0) * (GEAR_RATIO) * (WHEEL_RADIUS) * (2* Math.PI) * 1.5; // was * 0.9
+public static double MAX_VEL = 49.22; // was * 0.9
     public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = 4.5601312058986245;
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
-    private final double movementPower = 0.6;
+    private final double movementPower = 0.7;
     private final double translational_error = 1;
     private final double heading_error = 8;
+
+    double phase = 0;
 
     private ElapsedTime timer;
     private ElapsedTime ACtimer;
@@ -111,6 +116,7 @@ public class MotionPlanner {
         return "Time: " + time +
                 "\n Theta: " + theta +
                 "\n Magnitude: " + magnitude +
+                "\n Phase: " + phase +
                 "\n " + drive.getTelemetry();
     }
 
@@ -135,6 +141,7 @@ public class MotionPlanner {
             if((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y) <
                     Math.hypot(localizer.getX(), localizer.getY())/(2*MAX_ACCEL))||t>=1){
 
+                phase = 1;
 
                 translationalControlEnd.reset();
                 headingControlEnd.reset();
@@ -165,6 +172,8 @@ public class MotionPlanner {
 
 
             } else {
+
+                phase = 0;
 
                 magnitude = 1;
                 theta = Math.toDegrees(Math.atan2(derivative.getY(), derivative.getX()));

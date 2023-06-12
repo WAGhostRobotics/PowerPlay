@@ -64,7 +64,7 @@ public class WonkyDrive {
     public Localizer localizer;
     public Drivetrain drive;
 
-    PIDController headingController = new PIDController(5.0/90.0, 0.005, 0);
+    PIDController headingController = new PIDController(5.0/90.0, 0.01, 0.005);
 //    PIDController headingController = new PIDController(0, 0, 0);
 
 
@@ -133,7 +133,7 @@ public class WonkyDrive {
 
         //gamepad input (range -1 to 1)
         driveTurn = power * Math.pow(gamepad2.right_stick_x, 3);
-        driveY = power * Math.pow(gamepad2.left_stick_x, 3);
+        driveY = power * Math.pow(-gamepad2.left_stick_x, 3);
         driveX = power * Math.pow(-gamepad2.left_stick_y, 3);
 
         //gamepad and robot angles

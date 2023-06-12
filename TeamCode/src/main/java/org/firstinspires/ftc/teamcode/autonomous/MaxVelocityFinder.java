@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 
 
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -37,6 +38,8 @@ public class MaxVelocityFinder extends LinearOpMode {
         double lastTime = 0;
         double t;
 
+        PhotonCore.enable();
+
         waitForStart();
 
         ElapsedTime time = new ElapsedTime();
@@ -44,8 +47,8 @@ public class MaxVelocityFinder extends LinearOpMode {
 
         while (!isStopRequested()) {
 
-            if(time.seconds()<6){
-                drive.driveMax(1, 90, 0, 1);
+            if(time.seconds()<3){
+                drive.driveMax(1, 0, 0, 0.7);
 
                 currentX = getX();
                 currentY = getY();

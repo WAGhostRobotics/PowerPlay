@@ -35,7 +35,7 @@ public class Bruh extends LinearOpMode {
 
         waitForStart();
 
-        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(10, 40), new Point(20, 0)), 0);
+        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(40, 0)), 0);
 
         while (!isStopRequested()) {
 
