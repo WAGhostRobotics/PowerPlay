@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 
@@ -61,13 +62,13 @@ public class WonkyDrive {
     double ac;
 
     public Localizer localizer;
-    public MecanumDrive drive;
+    public Drivetrain drive;
 
-    PIDController headingController = new PIDController(-5.0/90.0, -0.005, 0);
+    PIDController headingController = new PIDController(5.0/90.0, 0.005, 0);
 //    PIDController headingController = new PIDController(0, 0, 0);
 
 
-    public WonkyDrive(HardwareMap hardwareMap, Localizer localizer, MecanumDrive drive){
+    public WonkyDrive(HardwareMap hardwareMap, Localizer localizer, Drivetrain drive){
 
 
 
@@ -112,6 +113,7 @@ public class WonkyDrive {
         lastx = 0;
 
         time = new ElapsedTime();
+
     }
 
 
@@ -120,12 +122,19 @@ public class WonkyDrive {
 
         updateValues();
 
+        double power;
+
+        if(gamepad2.right_trigger >= 0.01){
+            power = 0.9;
+        }else{
+            power = movementPower;
+        }
 
 
         //gamepad input (range -1 to 1)
-        driveTurn = gamepad2.right_stick_x;
-        driveX = gamepad2.left_stick_x;
-        driveY = -gamepad2.left_stick_y;
+        driveTurn = power * Math.pow(gamepad2.right_stick_x, 3);
+        driveY = power * Math.pow(gamepad2.left_stick_x, 3);
+        driveX = power * Math.pow(-gamepad2.left_stick_y, 3);
 
         //gamepad and robot angles
         gamepadTheta = Math.toDegrees(Math.atan2(driveY, driveX));
@@ -146,7 +155,7 @@ public class WonkyDrive {
             updateHeading();
             headingController.reset();
         }else if (Math.abs(headingError) > 0.5 ){
-            driveTurn = headingController.calculate(headingError, 0);
+            driveTurn = headingController.calculate(0, headingError);
         }else{
             headingController.reset();
         }
@@ -163,7 +172,7 @@ public class WonkyDrive {
             ac = 0;
         }
 
-        drive.drive(gamepadMagnitude, theta, driveTurn, movementPower);
+        drive.drive(gamepadMagnitude, theta, driveTurn, 1);
 
     }
 

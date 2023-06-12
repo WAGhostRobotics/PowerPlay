@@ -176,7 +176,7 @@ public class MotionPlanner {
                 y_rotated = -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
-                theta = Math.toDegrees(Math.atan2(x_rotated, -y_rotated));
+                theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
                 driveTurn = headingControl.calculate(currentHeading, heading);
 
                 drive.driveMax(magnitude, theta, driveTurn, movementPower);
@@ -186,7 +186,7 @@ public class MotionPlanner {
     }
 
     public void updateACValues(){
-        currentX = localizer.getY();
+        currentX = localizer.getRawY();
         currentY = localizer.getRawX();
 
         if((currentX-lastx) == 0){

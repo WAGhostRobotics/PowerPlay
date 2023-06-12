@@ -86,7 +86,7 @@ public class MecanumDrive implements Drivetrain {
     @Override
     public void drive(double magnitude, double theta, double driveTurn, double movementPower){
 
-        theta -= 45;
+        theta += 45;
 
         //sin and cos of robot movement
         sin = Math.sin(Math.toRadians(theta));
