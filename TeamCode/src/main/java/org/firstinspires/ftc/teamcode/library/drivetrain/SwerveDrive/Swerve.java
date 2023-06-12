@@ -6,16 +6,16 @@ import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
 
 public class Swerve implements Drivetrain {
 
-    private Module frontLeft, frontRight, backRight, backLeft;
+    private ModuleV2 frontLeft, frontRight, backRight, backLeft;
 
     private final double TRACK_WIDTH = 10;
     private final double WHEEL_BASE = 10;
 
     public Swerve(HardwareMap hwMap, boolean reset){
-        frontLeft = new Module(hwMap, "lf", "lfPivot", reset);
-        frontRight = new Module(hwMap, "rf", "rfPivot", reset);
-        backRight = new Module(hwMap, "rr", "rrPivot", reset);
-        backLeft = new Module(hwMap, "lr", "lrPivot", reset);
+        frontLeft = new ModuleV2(hwMap, "lf", "lfPivot", "lfEnc", reset);
+        frontRight = new ModuleV2(hwMap, "rf", "rfPivot", "rfEnc", reset);
+        backRight = new ModuleV2(hwMap, "rr", "rrPivot", "rrEnc", reset);
+        backLeft = new ModuleV2(hwMap, "lr", "lrPivot", "lrEnc", reset);
     }
 
 
