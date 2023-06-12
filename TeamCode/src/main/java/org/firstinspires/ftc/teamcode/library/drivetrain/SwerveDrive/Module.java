@@ -53,11 +53,11 @@ public class Module {
     }
 
     public double getTargetAngle(){
-        return normalizeDegrees(targetAngle - 180.0);
+        return normalizeDegrees(targetAngle);
     }
 
     public double getModuleAngle(){
-        return normalizeDegrees(Math.toDegrees(((double)(encoder.getCurrentPosition()%TICKS_PER_REV)/(double)TICKS_PER_REV)*2*Math.PI)-180);
+        return normalizeDegrees(Math.toDegrees(((double)(encoder.getCurrentPosition()%TICKS_PER_REV)/(double)TICKS_PER_REV)*2*Math.PI));
     }
 
 
