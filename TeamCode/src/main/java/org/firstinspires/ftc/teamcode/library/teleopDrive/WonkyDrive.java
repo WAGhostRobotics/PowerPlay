@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.library.teleopDrive;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -222,7 +224,7 @@ public class WonkyDrive {
 
         double omega = imu.getAngularVelocity().zRotationRate;
 
-        lastHeading = getCurrentHeading() + Math.signum(omega) * 0.5 * Math.pow(omega, 2) * rotationalDriftConstant;
+        lastHeading = normalizeDegrees(getCurrentHeading() + Math.signum(omega) * 0.5 * Math.pow(omega, 2) * rotationalDriftConstant);
     }
 
     public double getX(){
