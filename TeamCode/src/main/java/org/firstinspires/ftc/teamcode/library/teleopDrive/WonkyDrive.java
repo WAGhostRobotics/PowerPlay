@@ -58,6 +58,7 @@ public class WonkyDrive {
 
 
     public final double THE_HOLY_CONSTANT = 0.001; //0.01
+    public final double rotationalDriftConstant = 0.002;
 
     double ac;
 
@@ -218,7 +219,10 @@ public class WonkyDrive {
     }
 
     public void updateHeading(){
-        lastHeading = getCurrentHeading();
+
+        double omega = imu.getAngularVelocity().zRotationRate;
+
+        lastHeading = getCurrentHeading() + Math.signum(omega) * 0.5 * Math.pow(omega, 2) * rotationalDriftConstant;
     }
 
     public double getX(){
