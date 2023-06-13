@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.library.autoDrive;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,8 +19,8 @@ public class MotionPlanner {
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControl = new PIDController(0.4,0,0.095);
-    private PIDController headingControl = new PIDController(0.04, 0.02, 0.005);
+    private PIDController translationalControl = new PIDController(1.2,0.08,0.15);
+    private PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
     private PIDController translationalControlEnd = new PIDController(0.4,0.01,0.03);
@@ -68,7 +70,7 @@ public class MotionPlanner {
 
     public static final int MAX_RPM = 349;
 //    public static double MAX_VEL = (MAX_RPM/60.0) * (GEAR_RATIO) * (WHEEL_RADIUS) * (2* Math.PI) * 1.5; // was * 0.9
-public static double MAX_VEL = 49.22; // was * 0.9
+public static double MAX_VEL = 42.22; // was * 0.9
     public static double MAX_ACCEL = 85;
     public static double MAX_ANG_VEL = 4.5601312058986245;
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
@@ -89,6 +91,8 @@ public static double MAX_VEL = 49.22; // was * 0.9
 
     Point target;
     Point derivative;
+
+    double perpendicularError;
 
 
     public MotionPlanner(MecanumDrive drive, Localizer localizer){
@@ -135,8 +139,7 @@ public static double MAX_VEL = 49.22; // was * 0.9
                 "\n Distance left: " + distanceLeft +
 //                "\n Distance left (x): " + (spline.getEndPoint().getX()-x) +
 //                "\n Distance left (y): " + (spline.getEndPoint().getY()-y) +
-                "\n X-error: " + (target.getX()-x) +
-                "\n Y-error: " + (target.getY()-y) +
+                "\n Perpendicular error: " + (perpendicularError) +
                 "\n Heading: " + (heading - currentHeading) +
                 "\n Estimated Stopping " + estimatedStopping +
                 "\n " + drive.getTelemetry() +
@@ -199,10 +202,53 @@ public static double MAX_VEL = 49.22; // was * 0.9
                 end = false;
 
                 magnitude = 1;
-                theta = Math.toDegrees(Math.atan2(derivative.getY(), derivative.getX()));
 
-                x_power = magnitude * Math.cos(Math.toRadians(theta)) + translationalControl.calculate(0, target.getX()-x);
-                y_power = magnitude * Math.sin(Math.toRadians(theta)) + translationalControl.calculate(0, target.getY()-y);
+                double vy = derivative.getY();
+                double vx = derivative.getX();
+
+                theta = Math.toDegrees(Math.atan2(vy, vx));
+
+
+                /********DUMB*********/
+
+                double correction;
+                if(vx == 0){
+                    perpendicularError = target.getX() - x;
+
+                    correction = translationalControl.calculate(0, perpendicularError);
+                    theta -= Math.toDegrees(Math.atan2(correction, magnitude));
+
+                }else{
+                    double slope = vy/vx;
+                    double yIntTarget = (target.getY() - (slope)*(target.getX()));
+                    double yIntReal = (y - (slope)*x);
+
+                    perpendicularError = Math.abs(yIntTarget-yIntReal)/Math.sqrt(1 + Math.pow(slope, 2));
+                    correction = translationalControl.calculate(0, perpendicularError);
+
+                    double multiplier = 1;
+
+                    if(normalizeDegrees(theta-90)>0){
+                        multiplier = -1;
+                    }
+
+                    if(yIntTarget <= yIntReal){
+                        theta -= multiplier * Math.toDegrees(Math.atan2(correction, magnitude));
+                    }else{
+                        theta += multiplier * Math.toDegrees(Math.atan2(correction, magnitude));
+                    }
+
+                }
+                magnitude = Math.hypot(magnitude, correction);
+
+
+                theta += Math.toDegrees(Math.atan2(correction, magnitude));
+                magnitude = Math.hypot(magnitude, correction);
+
+                x_power = magnitude * Math.cos(Math.toRadians(theta));
+                y_power = magnitude * Math.sin(Math.toRadians(theta));
+
+
 
                 x_rotated = x_power * Math.cos(Math.toRadians(currentHeading)) + y_power * Math.sin(Math.toRadians(currentHeading));
                 y_rotated = -x_power * Math.sin(Math.toRadians(currentHeading)) + y_power * Math.cos(Math.toRadians(currentHeading));
