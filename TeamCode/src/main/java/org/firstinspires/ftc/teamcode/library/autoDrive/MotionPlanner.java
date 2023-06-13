@@ -212,11 +212,20 @@ public static double MAX_VEL = 42.22; // was * 0.9
                 /********DUMB*********/
 
                 double correction;
-                if(vx == 0){
-                    perpendicularError = target.getX() - x;
+                double multiplier = 1;
 
+                if(vx == 0){
+
+
+                    perpendicularError = target.getX() - x;
                     correction = translationalControl.calculate(0, perpendicularError);
-                    theta -= Math.toDegrees(Math.atan2(correction, magnitude));
+
+                    if(vy<0){
+                        multiplier = -1;
+                    }
+
+                    theta -= -1 * Math.toDegrees(Math.atan2(correction, magnitude));
+
 
                 }else{
                     double slope = vy/vx;
@@ -226,7 +235,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
                     perpendicularError = Math.abs(yIntTarget-yIntReal)/Math.sqrt(1 + Math.pow(slope, 2));
                     correction = translationalControl.calculate(0, perpendicularError);
 
-                    double multiplier = 1;
+
 
                     if(normalizeDegrees(theta-90)>0){
                         multiplier = -1;
