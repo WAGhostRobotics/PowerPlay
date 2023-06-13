@@ -17,12 +17,12 @@ public class MotionPlanner {
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControl = new PIDController(0.0,0.00,0.0);
-    private PIDController headingControl = new PIDController(5.0/90.0, 0.01, 0.005);
+    private PIDController translationalControl = new PIDController(0.4,0,0.095);
+    private PIDController headingControl = new PIDController(0.04, 0.02, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControlEnd = new PIDController(0.0,0.00,0.0);
-    private PIDController headingControlEnd = new PIDController(5.0/90.0, 0.01, 0.005);
+    private PIDController translationalControlEnd = new PIDController(0.4,0.01,0.03);
+    private PIDController headingControlEnd = new PIDController(0.04, 0.02, 0.005);
 
 
     private double t1, t2, t3, time;
@@ -54,9 +54,12 @@ public class MotionPlanner {
     double currentX;
 
     double radius;
-    public final double THE_HOLY_CONSTANT = 0.0006; //0.01
+    public final double THE_HOLY_CONSTANT = 0.001; //0.01
 
     double ac;
+
+    double numLoops;
+    ElapsedTime loopTime;
 
 
     public static double WHEEL_RADIUS = 96.0/2/25.4 ; // in
@@ -66,18 +69,27 @@ public class MotionPlanner {
     public static final int MAX_RPM = 349;
 //    public static double MAX_VEL = (MAX_RPM/60.0) * (GEAR_RATIO) * (WHEEL_RADIUS) * (2* Math.PI) * 1.5; // was * 0.9
 public static double MAX_VEL = 49.22; // was * 0.9
-    public static double MAX_ACCEL = 30;
+    public static double MAX_ACCEL = 85;
     public static double MAX_ANG_VEL = 4.5601312058986245;
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
     private final double movementPower = 0.7;
-    private final double translational_error = 1;
-    private final double heading_error = 8;
+    private final double translational_error = 0.5;
+    private final double heading_error = 1;
 
-    double phase = 0;
+    private final double endTrajThreshhold = 6;
+
+    boolean end = false;
 
     private ElapsedTime timer;
     private ElapsedTime ACtimer;
+
+    private double distanceLeft;
+    private double estimatedStopping;
+
+    Point target;
+    Point derivative;
+
 
     public MotionPlanner(MecanumDrive drive, Localizer localizer){
 
@@ -97,7 +109,7 @@ public static double MAX_VEL = 49.22; // was * 0.9
         t1 = MAX_VEL/MAX_ACCEL; // time to accelerate
         t3 = MAX_VEL/MAX_ACCEL; // time to decelerate
 
-        t2 = (spline.approximateLength() - 2 * (0.5 * MAX_ACCEL * Math.pow(t1, 2)))/MAX_VEL - t1 - t3; // time in da middle
+        t2 = (spline.approximateLength() - 2 * (0.5 * MAX_ACCEL * Math.pow(t1, 2)))/MAX_VEL; // time in da middle
 
 
         if(t2<0){
@@ -109,6 +121,8 @@ public static double MAX_VEL = 49.22; // was * 0.9
         translationalControl.reset();
         headingControl.reset();
 
+        numLoops = 0;
+        loopTime = new ElapsedTime();
 
     }
 
@@ -116,8 +130,18 @@ public static double MAX_VEL = 49.22; // was * 0.9
         return "Time: " + time +
                 "\n Theta: " + theta +
                 "\n Magnitude: " + magnitude +
-                "\n Phase: " + phase +
-                "\n " + drive.getTelemetry();
+                "\n Phase: " + end +
+                "\n Stop " + (distanceLeft < estimatedStopping) +
+                "\n Distance left: " + distanceLeft +
+//                "\n Distance left (x): " + (spline.getEndPoint().getX()-x) +
+//                "\n Distance left (y): " + (spline.getEndPoint().getY()-y) +
+                "\n X-error: " + (target.getX()-x) +
+                "\n Y-error: " + (target.getY()-y) +
+                "\n Heading: " + (heading - currentHeading) +
+                "\n Estimated Stopping " + estimatedStopping +
+                "\n " + drive.getTelemetry() +
+                "\n Finished " + isFinished()+
+                "\n Loop Rate " + numLoops/loopTime.seconds();
     }
 
 
@@ -125,11 +149,12 @@ public static double MAX_VEL = 49.22; // was * 0.9
     public void update() {
 
         localizer.update();
+        updateACValues();
 
         t = timer.seconds()/time;
 
-        Point target = spline.getPoint(t);
-        Point derivative = spline.getDerivative(t);
+        target = spline.getPoint(t);
+        derivative = spline.getDerivative(t);
 
         x = localizer.getX();
         y = localizer.getY();
@@ -138,24 +163,53 @@ public static double MAX_VEL = 49.22; // was * 0.9
 
         if(!isFinished()){
 
-            if((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y) <
-                    Math.hypot(localizer.getX(), localizer.getY())/(2*MAX_ACCEL))||t>=1){
+            distanceLeft = Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y);
+            estimatedStopping = Math.abs(velocity)/(2*MAX_ACCEL);
+            //distanceLeft < estimatedStopping
 
-                phase = 1;
+            if(distanceLeft <= endTrajThreshhold||t>=1){
 
-                translationalControlEnd.reset();
-                headingControlEnd.reset();
+
+
+                if(!end){
+                    translationalControlEnd.reset();
+                    headingControlEnd.reset();
+                }
+
+                end = true;
 
 
                 x_power = translationalControlEnd.calculate(0, spline.getEndPoint().getX()-x);
                 y_power = translationalControlEnd.calculate(0, spline.getEndPoint().getY()-y);
 
-                x_rotated = x_power * Math.cos(Math.toRadians(heading)) + y_power * Math.sin(Math.toRadians(heading));
-                y_rotated =  -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
+                x_rotated = x_power * Math.cos(Math.toRadians(currentHeading)) + y_power * Math.sin(Math.toRadians(currentHeading));
+                y_rotated =  -x_power * Math.sin(Math.toRadians(currentHeading)) + y_power * Math.cos(Math.toRadians(currentHeading));
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
-                theta = Math.toDegrees(Math.atan2(x_rotated, -y_rotated));
-                driveTurn = headingControl.calculate(currentHeading, heading);
+                theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
+                driveTurn = headingControlEnd.calculate(0, heading - currentHeading);
+
+
+
+                drive.drive(magnitude, theta, driveTurn, movementPower);
+
+
+            } else {
+
+                end = false;
+
+                magnitude = 1;
+                theta = Math.toDegrees(Math.atan2(derivative.getY(), derivative.getX()));
+
+                x_power = magnitude * Math.cos(Math.toRadians(theta)) + translationalControl.calculate(0, target.getX()-x);
+                y_power = magnitude * Math.sin(Math.toRadians(theta)) + translationalControl.calculate(0, target.getY()-y);
+
+                x_rotated = x_power * Math.cos(Math.toRadians(currentHeading)) + y_power * Math.sin(Math.toRadians(currentHeading));
+                y_rotated = -x_power * Math.sin(Math.toRadians(currentHeading)) + y_power * Math.cos(Math.toRadians(currentHeading));
+
+                magnitude = Math.hypot(x_rotated, y_rotated);
+                theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
+                driveTurn = headingControl.calculate(0, heading - currentHeading);
 
                 if(!Double.isNaN(y1)&&!Double.isNaN(y2) && magnitude != 0){
                     radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
@@ -167,31 +221,14 @@ public static double MAX_VEL = 49.22; // was * 0.9
                     ac = 0;
                 }
 
-
-                drive.drive(magnitude, theta, driveTurn, movementPower);
-
-
-            } else {
-
-                phase = 0;
-
-                magnitude = 1;
-                theta = Math.toDegrees(Math.atan2(derivative.getY(), derivative.getX()));
-
-                x_power = magnitude * Math.cos(Math.toRadians(theta)) + translationalControl.calculate(x, target.getX());
-                y_power = magnitude * Math.sin(Math.toRadians(theta)) + translationalControl.calculate(y, target.getY());
-
-                x_rotated = x_power * Math.cos(Math.toRadians(heading)) + y_power * Math.sin(Math.toRadians(heading));
-                y_rotated = -x_power * Math.sin(Math.toRadians(heading)) + y_power * Math.cos(Math.toRadians(heading));
-
-                magnitude = Math.hypot(x_rotated, y_rotated);
-                theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
-                driveTurn = headingControl.calculate(currentHeading, heading);
-
                 drive.driveMax(magnitude, theta, driveTurn, movementPower);
             }
 
+        }else{
+            drive.drive(0, 0, 0, 0);
         }
+
+        numLoops++;
     }
 
     public void updateACValues(){
@@ -224,8 +261,8 @@ public static double MAX_VEL = 49.22; // was * 0.9
 
     }
 
-    private boolean isFinished() {
-        return ((Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y)< translational_error)
+    public boolean isFinished() {
+        return ((spline.getEndPoint().getX()-x< translational_error && spline.getEndPoint().getY()-y< translational_error)
                 &&(Math.abs(heading-currentHeading)<= heading_error));
     }
 }

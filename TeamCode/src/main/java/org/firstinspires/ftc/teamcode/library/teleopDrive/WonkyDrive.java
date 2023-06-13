@@ -132,7 +132,7 @@ public class WonkyDrive {
 
 
         //gamepad input (range -1 to 1)
-        driveTurn = power * Math.pow(gamepad2.right_stick_x, 3);
+        driveTurn = power * Math.pow(-gamepad2.right_stick_x, 3);
         driveY = power * Math.pow(-gamepad2.left_stick_x, 3);
         driveX = power * Math.pow(-gamepad2.left_stick_y, 3);
 
@@ -143,7 +143,7 @@ public class WonkyDrive {
         currentHeading = getCurrentHeading();
 
 
-        double headingError = currentHeading - lastHeading;
+        double headingError = lastHeading - currentHeading;
 
         if(headingError > 180){
             headingError -= 360;

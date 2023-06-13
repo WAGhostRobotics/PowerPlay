@@ -104,9 +104,9 @@ public class Localizer {
 
     public double getHeading(Angle angle){
         if(angle == Angle.RADIANS){
-            return (encoderTicksToInches(rightEncoder.getCurrentPosition()) - encoderTicksToInches(leftEncoder.getCurrentPosition()))/(LATERAL_DISTANCE);
+            return getHeading();
         }else{
-            return (180/Math.PI)*(encoderTicksToInches(rightEncoder.getCurrentPosition()) - encoderTicksToInches(leftEncoder.getCurrentPosition()))/(LATERAL_DISTANCE);
+            return Math.toDegrees(getHeading());
 
         }
     }

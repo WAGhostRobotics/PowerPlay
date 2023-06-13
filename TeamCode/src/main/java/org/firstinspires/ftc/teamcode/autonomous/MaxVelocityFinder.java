@@ -31,6 +31,11 @@ public class MaxVelocityFinder extends LinearOpMode {
 
         double maxVelocity = 0;
         double velocity;
+        double lastVelocity = 0;
+
+        double accel;
+        double maxAccel = 0;
+
         double lastx = 0;
         double lasty = 0;
         double currentX;
@@ -47,7 +52,7 @@ public class MaxVelocityFinder extends LinearOpMode {
 
         while (!isStopRequested()) {
 
-            if(time.seconds()<3){
+            if(time.seconds()<1){
                 drive.driveMax(1, 0, 0, 0.7);
 
                 currentX = getX();
@@ -59,15 +64,49 @@ public class MaxVelocityFinder extends LinearOpMode {
                         Math.pow(((currentX-lastx)/t), 2) + Math.pow(((currentY-lasty)/t), 2)
                 );
 
+                accel = Math.abs(velocity - lastVelocity)/t;
+
+                lastVelocity = velocity;
+
 
                 lastx = currentX;
                 lasty = currentY;
                 lastTime = time.seconds();
 
                 maxVelocity = Math.max(maxVelocity, velocity);
+                maxAccel = Math.max(maxAccel, accel);
                 telemetry.addLine("Velocity" + maxVelocity);
+                telemetry.addLine("Accel" + maxAccel);
                 telemetry.update();
             }
+//            else{
+//
+//                drive.driveMax(0, 0, 0, 0.7);
+//
+//                currentX = getX();
+//                currentY = getY();
+//
+//                t = time.seconds() - lastTime;
+//
+//                velocity = Math.sqrt(
+//                        Math.pow(((currentX-lastx)/t), 2) + Math.pow(((currentY-lasty)/t), 2)
+//                );
+//
+//                accel = Math.abs(velocity - lastVelocity)/t;
+//
+//                lastVelocity = velocity;
+//
+//
+//                lastx = currentX;
+//                lasty = currentY;
+//                lastTime = time.seconds();
+//
+//                maxVelocity = Math.max(maxVelocity, velocity);
+//                maxAccel = Math.min(maxAccel, accel);
+//                telemetry.addLine("Velocity" + maxVelocity);
+//                telemetry.addLine("Accel" + maxAccel);
+//                telemetry.update();
+//            }
 
         }
     }
