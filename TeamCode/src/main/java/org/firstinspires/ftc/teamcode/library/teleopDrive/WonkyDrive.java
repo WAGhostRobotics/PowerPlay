@@ -184,7 +184,7 @@ public class WonkyDrive {
     }
 
     public String getTelemetry(){
-        return "" + getCurrentHeading() + "\n" +  lastHeading;
+        return "Angular velocity: " + imu.getAngularVelocity().zRotationRate ;
     }
 
 
