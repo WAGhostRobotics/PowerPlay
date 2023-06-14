@@ -20,6 +20,8 @@ public class MecanumDrive implements Drivetrain {
     private double backLeftPower;
     private double backRightPower;
 
+    private final double strafeConstant = 1.3;
+
     String telemetry = "";
 
 
@@ -51,7 +53,7 @@ public class MecanumDrive implements Drivetrain {
         theta += 45;
 
         //sin and cos of robot movement
-        sin = Math.sin(Math.toRadians(theta));
+        sin = Math.sin(Math.toRadians(theta)) * 1.3;
         cos = Math.cos(Math.toRadians(theta));
         maxMovement = Math.max(Math.abs(sin), Math.abs(cos));
 

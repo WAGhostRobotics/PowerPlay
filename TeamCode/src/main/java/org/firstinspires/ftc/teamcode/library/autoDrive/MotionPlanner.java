@@ -19,7 +19,7 @@ public class MotionPlanner {
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControl = new PIDController(1.45,0.1,0.17);
+    private PIDController translationalControl = new PIDController(0.4,0.05,0.07);
     private PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
@@ -163,8 +163,8 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
 //        t = timer.seconds()/time;
 
-        while(t <= 1 && distance(spline.getPoint(t + tIncrement), new Point(localizer.getX(), localizer.getY()))<
-                distance(spline.getPoint(t), new Point(localizer.getX(), localizer.getY()))){
+        while(t <= 1 && distance(spline.getPoint(t + tIncrement), new Point(x, y))<
+                distance(spline.getPoint(t), new Point(x, y))){
             t += tIncrement;
         }
 
@@ -226,13 +226,17 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
 
                     perpendicularError = target.getX() - x;
-                    correction = translationalControl.calculate(0, perpendicularError);
+
 
                     if(vy<0){
                         multiplier = -1;
                     }
 
-                    theta -= -1 * Math.toDegrees(Math.atan2(correction, magnitude));
+                    perpendicularError *= multiplier;
+
+                    correction = translationalControl.calculate(0, perpendicularError);
+
+                    theta -= Math.toDegrees(Math.atan2(correction, magnitude));
 
 
                 }else{
@@ -241,26 +245,20 @@ public static double MAX_VEL = 42.22; // was * 0.9
                     double yIntReal = (y - (slope)*x);
 
                     perpendicularError = Math.abs(yIntTarget-yIntReal)/Math.sqrt(1 + Math.pow(slope, 2));
-                    correction = translationalControl.calculate(0, perpendicularError);
+                    perpendicularError = Math.signum(normalizeDegrees(theta-90)) * perpendicularError;
 
-
-
-                    if(normalizeDegrees(theta-90)>0){
+                    if(yIntTarget <= yIntReal){
                         multiplier = -1;
                     }
 
-                    if(yIntTarget <= yIntReal){
-                        theta -= multiplier * Math.toDegrees(Math.atan2(correction, magnitude));
-                    }else{
-                        theta += multiplier * Math.toDegrees(Math.atan2(correction, magnitude));
-                    }
+                    perpendicularError *= multiplier;
 
+                    correction = translationalControl.calculate(0, perpendicularError);
+
+                    theta -= Math.toDegrees(Math.atan2(correction, magnitude));
                 }
                 magnitude = Math.hypot(magnitude, correction);
 
-
-                theta += Math.toDegrees(Math.atan2(correction, magnitude));
-                magnitude = Math.hypot(magnitude, correction);
 
                 x_power = magnitude * Math.cos(Math.toRadians(theta));
                 y_power = magnitude * Math.sin(Math.toRadians(theta));
