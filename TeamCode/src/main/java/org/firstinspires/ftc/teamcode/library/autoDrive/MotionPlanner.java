@@ -19,12 +19,12 @@ public class MotionPlanner {
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    public PIDController translationalControl = new PIDController(0.5,0.01,0.03);
-    public PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
+    public static PIDController translationalControl = new PIDController(0.5,0.01,0.03);
+    public static PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    public PIDController translationalControlEnd = new PIDController(0.2,0.01,0.03);
-    public PIDController headingControlEnd = new PIDController(0.04, 0.02, 0.005);
+    public static PIDController translationalControlEnd = new PIDController(0.2,0.01,0.03);
+    public static PIDController headingControlEnd = new PIDController(0.04, 0.02, 0.005);
 
 
     private double t1, t2, t3, time;

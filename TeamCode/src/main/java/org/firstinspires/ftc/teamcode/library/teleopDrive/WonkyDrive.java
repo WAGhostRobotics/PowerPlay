@@ -60,7 +60,7 @@ public class WonkyDrive {
 
 
     public final double THE_HOLY_CONSTANT = 0.001; //0.01
-    public final double rotationalDriftConstant = 0.002;
+    public final double rotationalDriftConstant = 0; //0.002
 
     double ac;
 
@@ -184,7 +184,9 @@ public class WonkyDrive {
     }
 
     public String getTelemetry(){
-        return "Angular velocity: " + imu.getAngularVelocity().zRotationRate ;
+        return "Angular velocity: " + imu.getAngularVelocity().zRotationRate +
+                "Drift Angle" +  Math.signum(imu.getAngularVelocity().zRotationRate) * 0.5 * Math.pow(imu.getAngularVelocity().zRotationRate, 2) * 0.002;
+
     }
 
 

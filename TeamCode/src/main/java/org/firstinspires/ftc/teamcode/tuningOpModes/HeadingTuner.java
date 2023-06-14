@@ -21,7 +21,8 @@ import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDri
 public class HeadingTuner extends LinearOpMode {
 
 
-    public static double p = 0, i = 0, d = 0;
+    public static double p = MotionPlanner.headingControl.getP(), i = MotionPlanner.headingControl.getI(), d = MotionPlanner.headingControl.getD();
+
 
 
 
