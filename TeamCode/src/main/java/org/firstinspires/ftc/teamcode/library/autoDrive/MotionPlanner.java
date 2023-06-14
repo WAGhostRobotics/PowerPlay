@@ -19,7 +19,7 @@ public class MotionPlanner {
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControl = new PIDController(1.2,0.08,0.15);
+    private PIDController translationalControl = new PIDController(1.45,0.1,0.17);
     private PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
@@ -93,6 +93,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
     Point derivative;
 
     double perpendicularError;
+    private final double tIncrement = 0.05;
 
 
     public MotionPlanner(MecanumDrive drive, Localizer localizer){
@@ -128,10 +129,12 @@ public static double MAX_VEL = 42.22; // was * 0.9
         numLoops = 0;
         loopTime = new ElapsedTime();
 
+        t = 0;
+
     }
 
     public String getTelemetry(){
-        return "Time: " + time +
+        return "T: " + t +
                 "\n Theta: " + theta +
                 "\n Magnitude: " + magnitude +
                 "\n Phase: " + end +
@@ -154,14 +157,19 @@ public static double MAX_VEL = 42.22; // was * 0.9
         localizer.update();
         updateACValues();
 
-        t = timer.seconds()/time;
-
-        target = spline.getPoint(t);
-        derivative = spline.getDerivative(t);
-
         x = localizer.getX();
         y = localizer.getY();
         currentHeading = localizer.getHeading(Localizer.Angle.DEGREES);
+
+//        t = timer.seconds()/time;
+
+        while(t <= 1 && distance(spline.getPoint(t + tIncrement), new Point(localizer.getX(), localizer.getY()))<
+                distance(spline.getPoint(t), new Point(localizer.getX(), localizer.getY()))){
+            t += tIncrement;
+        }
+
+        target = spline.getPoint(t);
+        derivative = spline.getDerivative(t);
 
 
         if(!isFinished()){
@@ -319,5 +327,9 @@ public static double MAX_VEL = 42.22; // was * 0.9
     public boolean isFinished() {
         return ((spline.getEndPoint().getX()-x< translational_error && spline.getEndPoint().getY()-y< translational_error)
                 &&(Math.abs(heading-currentHeading)<= heading_error));
+    }
+
+    private double distance(Point p1, Point p2){
+        return Math.hypot(p1.getX()-p2.getX(), p1.getY()-p2.getY());
     }
 }
