@@ -17,9 +17,18 @@ public class Bezier {
         this.heading = heading;
     }
 
+    public Bezier(Bezier b){
+        this.waypoints = b.getWaypoints();
+        this.heading = b.getHeading(0);
+    }
+
     public Bezier(Point... waypoints) {
         this.waypoints = waypoints;
         this.heading = 0;
+    }
+
+    public Point[] getWaypoints() {
+        return waypoints;
     }
 
     public double getHeading(double t){

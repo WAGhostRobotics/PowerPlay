@@ -30,7 +30,7 @@ public class Bruh extends LinearOpMode {
         Localizer localizer = new Localizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap);
 
-        MotionPlanner motionPlanner = new MotionPlanner(drive, localizer);
+        MotionPlanner motionPlanner = new MotionPlanner(drive, localizer, hardwareMap);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         PhotonCore.enable();

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tuningOpModes;
+package org.firstinspires.ftc.teamcode.library.tuningOpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,11 +17,15 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 
 @Config
-@Autonomous(name = "Move And Turn Tuner", group = "tuning")
-public class MoveAndTurnTuner extends LinearOpMode {
+@Autonomous(name = "Heading End Tuner", group = "tuning")
+public class HeadingEndTuner extends LinearOpMode {
 
 
-    public static double p = MotionPlanner.headingControl.getP(), i = MotionPlanner.headingControl.getI(), d = MotionPlanner.headingControl.getD();
+    public static double p = MotionPlanner.headingControlEnd.getP(), i = MotionPlanner.headingControlEnd.getI(), d = MotionPlanner.headingControlEnd.getD();
+
+    public static double trackWidth = Localizer.LATERAL_DISTANCE;
+
+
 
 
     @Override
@@ -29,13 +33,14 @@ public class MoveAndTurnTuner extends LinearOpMode {
 
         Tom.init(hardwareMap, false);
 
-
+        boolean stop = true;
+        ElapsedTime wait = new ElapsedTime();
 
 
         Localizer localizer = new Localizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap);
 
-        MotionPlanner motionPlanner = new MotionPlanner(drive, localizer);
+        MotionPlanner motionPlanner = new MotionPlanner(drive, localizer, hardwareMap);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         PhotonCore.enable();
@@ -46,35 +51,46 @@ public class MoveAndTurnTuner extends LinearOpMode {
         waitForStart();
 
 
-        boolean forward = true;
-        motionPlanner.startTrajectory(new Bezier(90, new Point(0, 0), new Point(40, 0)));
+        double angle = 90;
+        motionPlanner.startTrajectory(new Bezier(
+                angle,
+                new Point(0,0),
+                new Point(0, 0)
+        ));
 
 
         while (!isStopRequested()) {
 
-            motionPlanner.headingControl.setPID(p, i, d);
+            motionPlanner.headingControlEnd.setPID(p, i, d);
+            Localizer.LATERAL_DISTANCE = trackWidth;
             motionPlanner.update();
 
             if(motionPlanner.isFinished()){
 
-                ElapsedTime wait = new ElapsedTime();
-
-                while(wait.seconds()<3){
-
+                if(stop){
+                    wait.reset();
+                    stop = false;
                 }
 
-                if(forward){
-                    forward = false;
-                    motionPlanner.startTrajectory(new Bezier(0, new Point(40, 0), new Point(0, 0)));
-                }else{
-                    forward = true;
-                    motionPlanner.startTrajectory(new Bezier(90, new Point(0, 0), new Point(40, 0)));
+
+
+                if(wait.seconds()>3) {
+                    stop = true;
+
+                    motionPlanner.startTrajectory(new Bezier(
+                            angle += 90,
+                            new Point(0, 0),
+                            new Point(0, 0)
+                    ));
                 }
+            }else{
+                stop = true;
             }
 
 
-            telemetry.addData("Heading", motionPlanner.getHeadingError());
+            telemetry.addData("Heading Error", motionPlanner.getHeadingError());
             telemetry.addData("Target", 0);
+            telemetry.update();
 
 
 

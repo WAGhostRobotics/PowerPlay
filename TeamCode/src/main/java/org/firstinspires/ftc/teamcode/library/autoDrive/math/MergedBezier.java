@@ -5,18 +5,8 @@ public class MergedBezier extends Bezier{
 
     Bezier[] curves;
 
-    public MergedBezier(Bezier... curves) throws InterruptedException {
+    public MergedBezier(Bezier... curves){
         this.curves = curves;
-
-        for(int i=0;i<curves.length-1;i++){
-            if(!curves[i].getEndPoint().equals(curves[i+1].getStartPoint())){
-                throw new InterruptedException("Curves must be merged at the same point");
-            }
-
-//            if(!curves[i].getDerivative(1).equals(curves[i+1].getDerivative(0))){
-//                throw new InterruptedException("Point of merging must be smooth");
-//            }
-        }
     }
 
     @Override

@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode.library.autoDrive;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.Bezier;
+import org.firstinspires.ftc.teamcode.library.autoDrive.math.MergedBezier;
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
+
 
 public class MotionPlanner {
 
@@ -19,12 +22,12 @@ public class MotionPlanner {
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    public static PIDController translationalControl = new PIDController(0.5,0.01,0.03);
-    public static PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
+    public static PIDController translationalControl = new PIDController(0.2,.07,0.03);
+    public static PIDController headingControl = new PIDController(0.014, 0.05, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    public static PIDController translationalControlEnd = new PIDController(0.2,0.01,0.03);
-    public static PIDController headingControlEnd = new PIDController(0.04, 0.02, 0.005);
+    public static PIDController translationalControlEnd = new PIDController(0.12,0.1,0.03);
+    public static PIDController headingControlEnd = new PIDController(0.028, 0.1, 0.005);
 
 
     private double t1, t2, t3, time;
@@ -76,10 +79,10 @@ public static double MAX_VEL = 42.22; // was * 0.9
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
     private final double movementPower = 0.7;
-    private final double translational_error = 0.5;
+    private final double translational_error = 1;
     private final double heading_error = 1;
 
-    private final double endTrajThreshhold = 9;
+    private final double endTrajThreshhold = 12;
 
     boolean end = false;
 
@@ -95,18 +98,20 @@ public static double MAX_VEL = 42.22; // was * 0.9
     double perpendicularError;
     private final double tIncrement = 0.05;
 
+    HardwareMap hwMap;
 
-    public MotionPlanner(MecanumDrive drive, Localizer localizer){
+    double voltage = 0;
+
+    public MotionPlanner(MecanumDrive drive, Localizer localizer, HardwareMap hwMap){
 
         this.drive = drive;
         this.localizer = localizer;
+        this.hwMap = hwMap;
 
 
     }
 
-    public void startTrajectory(Bezier spline) {
-        this.spline = spline;
-
+    public void reset(){
         timer = new ElapsedTime();
         ACtimer = new ElapsedTime();
 
@@ -125,6 +130,8 @@ public static double MAX_VEL = 42.22; // was * 0.9
         translationalControl.reset();
         headingControl.reset();
 
+        voltage = hwMap.voltageSensor.iterator().next().getVoltage();
+
         numLoops = 0;
         loopTime = new ElapsedTime();
 
@@ -132,7 +139,22 @@ public static double MAX_VEL = 42.22; // was * 0.9
         estimatedStopping = (length - endTrajThreshhold)/length;
 
         t = 0;
+    }
 
+    public void startTrajectory(Bezier spline) {
+        this.spline = new Bezier(spline);
+
+        reset();
+    }
+
+    public void startTrajectory(Bezier... splines) {
+        this.spline = new MergedBezier(splines);
+        reset();
+
+    }
+
+    public Bezier getSpline(){
+        return spline;
     }
 
 
@@ -210,7 +232,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
 
 
-                drive.drive(magnitude, theta, driveTurn, movementPower);
+                drive.drive(magnitude, theta, driveTurn, movementPower, voltage);
 
 
             } else {
@@ -282,7 +304,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
                     ac = 0;
                 }
 
-                drive.driveMax(magnitude, theta, driveTurn, movementPower);
+                drive.driveMax(magnitude, theta, driveTurn, movementPower, voltage);
             }
 
         }else{
@@ -323,8 +345,8 @@ public static double MAX_VEL = 42.22; // was * 0.9
     }
 
     public boolean isFinished() {
-        return ((spline.getEndPoint().getX()-x< translational_error && spline.getEndPoint().getY()-y< translational_error)
-                &&(Math.abs(targetHeading -currentHeading)<= heading_error));
+        return ((Math.abs(spline.getEndPoint().getX()-x)<= translational_error && Math.abs(spline.getEndPoint().getY()-y)<= translational_error)
+                &&(Math.abs(targetHeading - currentHeading)<= heading_error));
     }
 
     private double distance(Point p1, Point p2){

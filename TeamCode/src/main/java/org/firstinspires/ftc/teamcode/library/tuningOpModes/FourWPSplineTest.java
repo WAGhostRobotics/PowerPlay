@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tuningOpModes;
+package org.firstinspires.ftc.teamcode.library.tuningOpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,11 +17,12 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 
 @Config
-@Autonomous(name = "Translational PID Tuner", group = "tuning")
-public class TranslationalPIDTuner extends LinearOpMode {
+@Autonomous(name = "4 WayPoint Spline Test", group = "tuning")
+public class FourWPSplineTest extends LinearOpMode {
 
 
     public static double p = MotionPlanner.translationalControl.getP(), i = MotionPlanner.translationalControl.getI(), d = MotionPlanner.translationalControl.getD();
+
 
 
 
@@ -32,12 +33,13 @@ public class TranslationalPIDTuner extends LinearOpMode {
         Tom.init(hardwareMap, false);
 
 
-
+        boolean stop = true;
+        ElapsedTime wait = new ElapsedTime();
 
         Localizer localizer = new Localizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap);
 
-        MotionPlanner motionPlanner = new MotionPlanner(drive, localizer);
+        MotionPlanner motionPlanner = new MotionPlanner(drive, localizer, hardwareMap);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         PhotonCore.enable();
@@ -49,7 +51,12 @@ public class TranslationalPIDTuner extends LinearOpMode {
 
 
         boolean forward = true;
-        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(40, 0)));
+        motionPlanner.startTrajectory(new Bezier(
+                new Point(0,0),
+                new Point(45, 0),
+                new Point(12, 25),
+                new Point(45, 25)
+        ));
 
 
         while (!isStopRequested()) {
@@ -59,24 +66,43 @@ public class TranslationalPIDTuner extends LinearOpMode {
 
             if(motionPlanner.isFinished()){
 
-                ElapsedTime wait = new ElapsedTime();
-
-                while(wait.seconds()<3){
-
+                if(stop){
+                    wait.reset();
+                    stop = false;
                 }
 
-                if(forward){
-                    forward = false;
-                    motionPlanner.startTrajectory(new Bezier(new Point(40, 0), new Point(0, 0)));
-                }else{
-                    forward = true;
-                    motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(40, 0)));
+
+
+                if(wait.seconds()>3) {
+                    stop = true;
+
+
+                    if (forward) {
+                        forward = false;
+                        motionPlanner.startTrajectory(new Bezier(
+                                new Point(45, 25),
+                                new Point(12, 25),
+                                new Point(45, 0),
+                                new Point(0, 20)
+                        ));
+                    } else {
+                        forward = true;
+                        motionPlanner.startTrajectory(new Bezier(
+                                new Point(0, 0),
+                                new Point(45, 0),
+                                new Point(12, 25),
+                                new Point(45, 25)
+                        ));
+                    }
                 }
+            }else{
+                stop = true;
             }
 
 
             telemetry.addData("Perpendicular Error", motionPlanner.getPerpendicularError());
             telemetry.addData("Target", 0);
+            telemetry.update();
 
 
 

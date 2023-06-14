@@ -20,6 +20,8 @@ public class MecanumDrive implements Drivetrain {
     private double backLeftPower;
     private double backRightPower;
 
+    public final double voltageConstant = 13;
+
 
     String telemetry = "";
 
@@ -49,18 +51,7 @@ public class MecanumDrive implements Drivetrain {
     @Override
     public void driveMax(double magnitude, double theta, double driveTurn, double movementPower){
 
-        theta += 45;
-
-        //sin and cos of robot movement
-        sin = Math.sin(Math.toRadians(theta));
-        cos = Math.cos(Math.toRadians(theta));
-        maxMovement = Math.max(Math.abs(sin), Math.abs(cos));
-
-        //determines powers and scales based on max movement
-        frontLeftPower = (magnitude * cos / maxMovement - driveTurn);
-        frontRightPower = (magnitude * sin / maxMovement + driveTurn);
-        backLeftPower = (magnitude * sin / maxMovement - driveTurn);
-        backRightPower = (magnitude * cos / maxMovement + driveTurn);
+        calculatePowers(magnitude, theta, driveTurn);
 
         //scales
         frontLeftPower /= magnitude + Math.abs(driveTurn);
@@ -79,25 +70,12 @@ public class MecanumDrive implements Drivetrain {
 
     }
 
-    @Override
-    public String getTelemetry(){
-        return telemetry;
-    }
+
 
     @Override
     public void drive(double magnitude, double theta, double driveTurn, double movementPower){
 
-        theta += 45;
-
-        //sin and cos of robot movement
-        sin = Math.sin(Math.toRadians(theta));
-        cos = Math.cos(Math.toRadians(theta));
-        maxMovement = Math.max(Math.abs(sin), Math.abs(cos));
-
-        frontLeftPower = (magnitude * cos / maxMovement - driveTurn);
-        frontRightPower = (magnitude * sin / maxMovement + driveTurn);
-        backLeftPower = (magnitude * sin / maxMovement - driveTurn);
-        backRightPower = (magnitude * cos / maxMovement + driveTurn);
+        calculatePowers(magnitude, theta, driveTurn);
 
         //scales if -1> powers >1
         if(magnitude + Math.abs(driveTurn)>1){
@@ -112,5 +90,82 @@ public class MecanumDrive implements Drivetrain {
         frontRight.setPower(movementPower*frontRightPower);
         backLeft.setPower(movementPower*backLeftPower);
         backRight.setPower(movementPower*backRightPower);
+    }
+
+    @Override
+    public void driveMax(double magnitude, double theta, double driveTurn, double movementPower, double voltage){
+
+        calculatePowers(magnitude, theta, driveTurn);
+
+        //scales
+        frontLeftPower /= magnitude + Math.abs(driveTurn);
+        frontRightPower /= magnitude + Math.abs(driveTurn);
+        backLeftPower /= magnitude + Math.abs(driveTurn);
+        backRightPower /= magnitude + Math.abs(driveTurn);
+
+
+        frontLeft.setPower(movementPower*frontLeftPower);
+        frontRight.setPower(movementPower*frontRightPower);
+        backLeft.setPower(movementPower*backLeftPower);
+        backRight.setPower(movementPower*backRightPower);
+
+
+        telemetry = "" + frontLeftPower + " \n" + frontRightPower + " \n" + backLeftPower + " \n" + backRightPower;
+
+    }
+
+
+
+    @Override
+    public void drive(double magnitude, double theta, double driveTurn, double movementPower, double voltage){
+
+        calculatePowers(magnitude, theta, driveTurn);
+
+        //scales if -1> powers >1
+        if(magnitude + Math.abs(driveTurn)>1){
+            frontLeftPower /= magnitude + Math.abs(driveTurn);
+            frontRightPower /= magnitude + Math.abs(driveTurn);
+            backLeftPower /= magnitude + Math.abs(driveTurn);
+            backRightPower /= magnitude + Math.abs(driveTurn);
+        }
+
+
+        frontLeft.setPower(movementPower*frontLeftPower);
+        frontRight.setPower(movementPower*frontRightPower);
+        backLeft.setPower(movementPower*backLeftPower);
+        backRight.setPower(movementPower*backRightPower);
+    }
+
+
+    @Override
+    public String getTelemetry(){
+        return telemetry;
+    }
+
+    public void scaleByVoltage(double voltage){
+        frontLeftPower /= voltage;
+        frontRightPower /= voltage;
+        backLeftPower /= voltage;
+        backRightPower /= voltage;
+
+        frontLeftPower *= voltageConstant;
+        frontRightPower *= voltageConstant;
+        backLeftPower *= voltageConstant;
+        backRightPower *= voltageConstant;
+
+    }
+
+    public void calculatePowers(double magnitude, double theta, double driveTurn){
+        theta += 45;
+
+        //sin and cos of robot movement
+        sin = Math.sin(Math.toRadians(theta));
+        cos = Math.cos(Math.toRadians(theta));
+        maxMovement = Math.max(Math.abs(sin), Math.abs(cos));
+
+        frontLeftPower = (magnitude * cos / maxMovement - driveTurn);
+        frontRightPower = (magnitude * sin / maxMovement + driveTurn);
+        backLeftPower = (magnitude * sin / maxMovement - driveTurn);
+        backRightPower = (magnitude * cos / maxMovement + driveTurn);
     }
 }
