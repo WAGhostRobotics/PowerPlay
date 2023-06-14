@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
+import org.firstinspires.ftc.teamcode.library.autoDrive.math.MergedBezier;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 import org.firstinspires.ftc.teamcode.library.autoDrive.MotionPlanner;
@@ -46,7 +47,14 @@ public class Bruh extends LinearOpMode {
 
         }
 
-        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(0, -40)), 90);
+//        motionPlanner.startTrajectory(new Bezier(90, new Point(0, 0), new Point(40, 0)));
+
+            motionPlanner.startTrajectory(new Bezier(
+                    new Point(0,0),
+                    new Point(45, 0),
+                    new Point(12, 25),
+                    new Point(45, 25)
+            ));
 
         while (!isStopRequested()) {
 

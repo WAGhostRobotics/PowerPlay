@@ -13,9 +13,9 @@ public class MergedBezier extends Bezier{
                 throw new InterruptedException("Curves must be merged at the same point");
             }
 
-            if(!curves[i].getDerivative(1).equals(curves[i+1].getDerivative(0))){
-                throw new InterruptedException("Point of merging must be smooth");
-            }
+//            if(!curves[i].getDerivative(1).equals(curves[i+1].getDerivative(0))){
+//                throw new InterruptedException("Point of merging must be smooth");
+//            }
         }
     }
 
@@ -26,6 +26,11 @@ public class MergedBezier extends Bezier{
         }else {
             return curves[(int)(curves.length*t)].getPoint((curves.length*t)-((int)(curves.length*t)));
         }
+    }
+
+    @Override
+    public double getHeading(double t){
+        return curves[(int)(curves.length*t)].getHeading(0);
     }
 
     @Override

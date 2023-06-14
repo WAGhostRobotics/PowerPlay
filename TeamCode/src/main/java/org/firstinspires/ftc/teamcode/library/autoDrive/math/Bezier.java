@@ -9,9 +9,21 @@ public class Bezier {
     double pow3;
     double pow4;
 
+    double heading;
+
+
+    public Bezier(double heading, Point... waypoints) {
+        this.waypoints = waypoints;
+        this.heading = heading;
+    }
 
     public Bezier(Point... waypoints) {
         this.waypoints = waypoints;
+        this.heading = 0;
+    }
+
+    public double getHeading(double t){
+        return heading;
     }
 
     public Point getPoint(double t){

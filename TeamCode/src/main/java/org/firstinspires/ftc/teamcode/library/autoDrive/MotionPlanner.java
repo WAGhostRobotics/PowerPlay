@@ -13,17 +13,17 @@ import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDri
 public class MotionPlanner {
 
     private Bezier spline;
-    private double heading;
+    private double targetHeading;
 
     private Drivetrain drive;
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControl = new PIDController(0.4,0.05,0.07);
+    private PIDController translationalControl = new PIDController(0.5,0.01,0.03);
     private PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControlEnd = new PIDController(0.4,0.01,0.03);
+    private PIDController translationalControlEnd = new PIDController(0.2,0.01,0.03);
     private PIDController headingControlEnd = new PIDController(0.04, 0.02, 0.005);
 
 
@@ -56,7 +56,7 @@ public class MotionPlanner {
     double currentX;
 
     double radius;
-    public final double THE_HOLY_CONSTANT = 0.001; //0.01
+    public final double THE_HOLY_CONSTANT = 0.002; //0.001
 
     double ac;
 
@@ -79,7 +79,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
     private final double translational_error = 0.5;
     private final double heading_error = 1;
 
-    private final double endTrajThreshhold = 6;
+    private final double endTrajThreshhold = 9;
 
     boolean end = false;
 
@@ -104,23 +104,22 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
     }
 
-    public void startTrajectory(Bezier spline, double heading) {
+    public void startTrajectory(Bezier spline) {
         this.spline = spline;
-        this.heading = heading;
 
         timer = new ElapsedTime();
         ACtimer = new ElapsedTime();
 
-        t1 = MAX_VEL/MAX_ACCEL; // time to accelerate
-        t3 = MAX_VEL/MAX_ACCEL; // time to decelerate
-
-        t2 = (spline.approximateLength() - 2 * (0.5 * MAX_ACCEL * Math.pow(t1, 2)))/MAX_VEL; // time in da middle
-
-
-        if(t2<0){
-            t2 = 0;
-        }
-        time = t1 + t2 + t3;
+//        t1 = MAX_VEL/MAX_ACCEL; // time to accelerate
+//        t3 = MAX_VEL/MAX_ACCEL; // time to decelerate
+//
+//        t2 = (spline.approximateLength() - 2 * (0.5 * MAX_ACCEL * Math.pow(t1, 2)))/MAX_VEL; // time in da middle
+//
+//
+//        if(t2<0){
+//            t2 = 0;
+//        }
+//        time = t1 + t2 + t3;
 
 
         translationalControl.reset();
@@ -129,23 +128,26 @@ public static double MAX_VEL = 42.22; // was * 0.9
         numLoops = 0;
         loopTime = new ElapsedTime();
 
+        double length = spline.approximateLength();
+        estimatedStopping = (length - endTrajThreshhold)/length;
+
         t = 0;
 
     }
 
     public String getTelemetry(){
         return "T: " + t +
-                "\n Theta: " + theta +
-                "\n Magnitude: " + magnitude +
-                "\n Phase: " + end +
-                "\n Stop " + (distanceLeft < estimatedStopping) +
-                "\n Distance left: " + distanceLeft +
+//                "\n Theta: " + theta +
+//                "\n Magnitude: " + magnitude +
+//                "\n Phase: " + end +
+//                "\n Stop " + (distanceLeft < estimatedStopping) +
+//                "\n Distance left: " + distanceLeft +
 //                "\n Distance left (x): " + (spline.getEndPoint().getX()-x) +
 //                "\n Distance left (y): " + (spline.getEndPoint().getY()-y) +
                 "\n Perpendicular error: " + (perpendicularError) +
-                "\n Heading: " + (heading - currentHeading) +
+//                "\n Heading: " + (heading - currentHeading) +
                 "\n Estimated Stopping " + estimatedStopping +
-                "\n " + drive.getTelemetry() +
+//                "\n " + drive.getTelemetry() +
                 "\n Finished " + isFinished()+
                 "\n Loop Rate " + numLoops/loopTime.seconds();
     }
@@ -163,22 +165,21 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
 //        t = timer.seconds()/time;
 
-        while(t <= 1 && distance(spline.getPoint(t + tIncrement), new Point(x, y))<
+        while(t <= estimatedStopping && distance(spline.getPoint(t + tIncrement), new Point(x, y))<
                 distance(spline.getPoint(t), new Point(x, y))){
             t += tIncrement;
         }
 
         target = spline.getPoint(t);
+        targetHeading = spline.getHeading(t);
         derivative = spline.getDerivative(t);
 
 
         if(!isFinished()){
 
-            distanceLeft = Math.hypot(spline.getEndPoint().getX()-x, spline.getEndPoint().getY()-y);
-            estimatedStopping = Math.abs(velocity)/(2*MAX_ACCEL);
-            //distanceLeft < estimatedStopping
+            distanceLeft = distance(spline.getEndPoint(), new Point(x, y));
 
-            if(distanceLeft <= endTrajThreshhold||t>=1){
+            if(distanceLeft <= endTrajThreshhold||t>=estimatedStopping){
 
 
 
@@ -198,7 +199,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
                 theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
-                driveTurn = headingControlEnd.calculate(0, heading - currentHeading);
+                driveTurn = headingControlEnd.calculate(0, targetHeading - currentHeading);
 
 
 
@@ -262,7 +263,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
                 theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
-                driveTurn = headingControl.calculate(0, heading - currentHeading);
+                driveTurn = headingControl.calculate(0, targetHeading - currentHeading);
 
                 if(!Double.isNaN(y1)&&!Double.isNaN(y2) && magnitude != 0){
                     radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
@@ -316,7 +317,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
     public boolean isFinished() {
         return ((spline.getEndPoint().getX()-x< translational_error && spline.getEndPoint().getY()-y< translational_error)
-                &&(Math.abs(heading-currentHeading)<= heading_error));
+                &&(Math.abs(targetHeading -currentHeading)<= heading_error));
     }
 
     private double distance(Point p1, Point p2){
