@@ -19,12 +19,12 @@ public class MotionPlanner {
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControl = new PIDController(0.5,0.01,0.03);
-    private PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
+    public PIDController translationalControl = new PIDController(0.5,0.01,0.03);
+    public PIDController headingControl = new PIDController(0.01, 0.008, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    private PIDController translationalControlEnd = new PIDController(0.2,0.01,0.03);
-    private PIDController headingControlEnd = new PIDController(0.04, 0.02, 0.005);
+    public PIDController translationalControlEnd = new PIDController(0.2,0.01,0.03);
+    public PIDController headingControlEnd = new PIDController(0.04, 0.02, 0.005);
 
 
     private double t1, t2, t3, time;
@@ -135,6 +135,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
     }
 
+
     public String getTelemetry(){
         return "T: " + t +
 //                "\n Theta: " + theta +
@@ -152,7 +153,13 @@ public static double MAX_VEL = 42.22; // was * 0.9
                 "\n Loop Rate " + numLoops/loopTime.seconds();
     }
 
+    public double getPerpendicularError(){
+        return perpendicularError;
+    }
 
+    public double getHeadingError(){
+        return targetHeading - currentHeading;
+    }
 
     public void update() {
 
