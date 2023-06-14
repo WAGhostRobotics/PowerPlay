@@ -232,12 +232,6 @@ public static double MAX_VEL = 42.22; // was * 0.9
                         multiplier = -1;
                     }
 
-                    perpendicularError *= multiplier;
-
-                    correction = translationalControl.calculate(0, perpendicularError);
-
-                    theta -= Math.toDegrees(Math.atan2(correction, magnitude));
-
 
                 }else{
                     double slope = vy/vx;
@@ -251,12 +245,10 @@ public static double MAX_VEL = 42.22; // was * 0.9
                         multiplier = -1;
                     }
 
-                    perpendicularError *= multiplier;
-
-                    correction = translationalControl.calculate(0, perpendicularError);
-
-                    theta -= Math.toDegrees(Math.atan2(correction, magnitude));
                 }
+                perpendicularError *= multiplier;
+                correction = translationalControl.calculate(0, perpendicularError);
+                theta -= Math.toDegrees(Math.atan2(correction, magnitude));
                 magnitude = Math.hypot(magnitude, correction);
 
 
