@@ -38,18 +38,18 @@ public class Bruh extends LinearOpMode {
 
         waitForStart();
 
-        ElapsedTime wait = new ElapsedTime();
+//        ElapsedTime wait = new ElapsedTime();
 
-        while(wait.seconds()<7){
-//            telemetry.addLine("" + motionPlanner.getTelemetry());
-//            telemetry.update();
-
-
-        }
+//        while(wait.seconds()<7){
+////            telemetry.addLine("" + motionPlanner.getTelemetry());
+////            telemetry.update();
+//
+//
+//        }
 
 //        motionPlanner.startTrajectory(new Bezier(90, new Point(0, 0), new Point(40, 0)));
 
-            motionPlanner.startTrajectory(new Bezier(
+            motionPlanner.startTrajectory(new Bezier(90,
                     new Point(0,0),
                     new Point(45, 0),
                     new Point(12, 25),

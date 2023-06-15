@@ -67,7 +67,7 @@ public class WonkyDrive {
     public Localizer localizer;
     public Drivetrain drive;
 
-    PIDController headingController = new PIDController(5.0/90.0, 0.01, 0.005);
+    PIDController headingController = new PIDController(0.04, 0.12, 0.05);
 //    PIDController headingController = new PIDController(0, 0, 0);
 
 
@@ -185,7 +185,7 @@ public class WonkyDrive {
 
     public String getTelemetry(){
         return "Angular velocity: " + imu.getAngularVelocity().zRotationRate +
-                "Drift Angle" +  Math.signum(imu.getAngularVelocity().zRotationRate) * 0.5 * Math.pow(imu.getAngularVelocity().zRotationRate, 2) * 0.002;
+                "\nDrift Angle: " +  Math.signum(imu.getAngularVelocity().zRotationRate) * 0.5 * Math.pow(imu.getAngularVelocity().zRotationRate, 2) * 0.002;
 
     }
 
