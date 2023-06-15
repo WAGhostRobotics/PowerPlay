@@ -6,6 +6,9 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,6 +21,7 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 import org.firstinspires.ftc.teamcode.library.teleopDrive.WonkyDrive;
 
 
+@Config
 @TeleOp(name = "Wonk TeleOp", group = "competition")
 public class WonkControlTeleOp extends LinearOpMode {
 
@@ -35,6 +39,8 @@ public class WonkControlTeleOp extends LinearOpMode {
         Localizer localizer = new Localizer(hardwareMap);
         Drivetrain drive = new MecanumDrive(hardwareMap);
 
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         WonkyDrive wonk = new WonkyDrive(hardwareMap, localizer, drive);
 
@@ -57,11 +63,8 @@ public class WonkControlTeleOp extends LinearOpMode {
 
 
 
-            telemetry.addData("X", wonk.getX());
-            telemetry.addData("Y", wonk.getY());
-            telemetry.addData("Angle", wonk.getCurrentHeading());
-            telemetry.addData("Ac", wonk.getAc());
-            telemetry.addLine(wonk.getTelemetry());
+            telemetry.addData("Target", 0);
+            telemetry.addData("Angle Error", wonk.getHeadingError());
             telemetry.update();
 
             PhotonCore.CONTROL_HUB.clearBulkCache();

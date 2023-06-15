@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.library.teleopDrive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,16 +14,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 
+@Config
 public class WonkyDrive {
-
-    private DcMotorEx frontLeft;
-    private DcMotorEx frontRight;
-    private DcMotorEx backRight;
-    private DcMotorEx backLeft;
-
 
     public BNO055IMU imu;
 
@@ -59,15 +53,19 @@ public class WonkyDrive {
     public String stuff = "";
 
 
-    public final double THE_HOLY_CONSTANT = 0.001; //0.01
-    public final double rotationalDriftConstant = 0; //0.002
+    public static double theHolyConstant = 0.001; //0.01
+    public static double rotationalDriftConstant = 0.0027; //0.002
 
     double ac;
 
     public Localizer localizer;
     public Drivetrain drive;
 
-    PIDController headingController = new PIDController(0.04, 0.12, 0.05);
+
+
+    public static PIDController headingController = new PIDController(0.017, 0.0, 0.0);
+
+    public static double p = headingController.getP(), i = headingController.getI(), d = headingController.getD();
 //    PIDController headingController = new PIDController(0, 0, 0);
 
 
@@ -76,29 +74,6 @@ public class WonkyDrive {
 
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        frontLeft = hardwareMap.get(DcMotorEx.class, "lf");
-        frontRight = hardwareMap.get(DcMotorEx.class, "rf");
-        backLeft = hardwareMap.get(DcMotorEx.class, "lr");
-        backRight = hardwareMap.get(DcMotorEx.class, "rr");
-
-//            frontLeft.setInverted(true);
-//            frontRight.setInverted(true);
-//            backLeft.setInverted(true);
-//            backRight.setInverted(true);
-
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
-
-        frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -116,6 +91,8 @@ public class WonkyDrive {
         lastx = 0;
 
         time = new ElapsedTime();
+
+
 
     }
 
@@ -146,15 +123,10 @@ public class WonkyDrive {
         currentHeading = getCurrentHeading();
 
 
-        double headingError = lastHeading - currentHeading;
+        double headingError = getHeadingError();
 
-        if(headingError > 180){
-            headingError -= 360;
-        }else if(headingError<-180){
-            headingError += 360;
-        }
-
-        if(driveTurn != 0 || (driveX == 0 && driveY == 0)){
+//        if(driveTurn != 0 || (driveX == 0 && driveY == 0)){
+        if(driveTurn != 0){
             updateHeading();
             headingController.reset();
         }else if (Math.abs(headingError) > 0.5 ){
@@ -168,8 +140,8 @@ public class WonkyDrive {
         if(!Double.isNaN(y1)&&!Double.isNaN(y2)&& gamepadMagnitude != 0){
             radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
             ac = Math.pow(velocity, 2)/radius;
-            theta -= Math.toDegrees(Math.atan2( ac*THE_HOLY_CONSTANT, gamepadMagnitude));
-            gamepadMagnitude = Math.hypot(gamepadMagnitude, ac*THE_HOLY_CONSTANT);
+            theta -= Math.toDegrees(Math.atan2( ac* theHolyConstant, gamepadMagnitude));
+            gamepadMagnitude = Math.hypot(gamepadMagnitude, ac* theHolyConstant);
 
         }else{
             ac = 0;
@@ -179,13 +151,25 @@ public class WonkyDrive {
 
     }
 
+    public double getHeadingError() {
+        double headingError = lastHeading - currentHeading;
+
+        if(headingError > 180){
+            headingError -= 360;
+        }else if(headingError<-180){
+            headingError += 360;
+        }
+
+        return headingError;
+    }
+
     public double getAc(){
         return ac;
     }
 
     public String getTelemetry(){
-        return "Angular velocity: " + imu.getAngularVelocity().zRotationRate +
-                "\nDrift Angle: " +  Math.signum(imu.getAngularVelocity().zRotationRate) * 0.5 * Math.pow(imu.getAngularVelocity().zRotationRate, 2) * 0.002;
+        return "Angular velocity: " + imu.getAngularVelocity().xRotationRate +
+                "\nDrift Angle: " +  Math.signum(imu.getAngularVelocity().xRotationRate) * 0.5 * Math.pow(imu.getAngularVelocity().xRotationRate, 2) * 0.002;
 
     }
 
@@ -224,7 +208,7 @@ public class WonkyDrive {
 
     public void updateHeading(){
 
-        double omega = imu.getAngularVelocity().zRotationRate;
+        double omega = imu.getAngularVelocity().xRotationRate;
 
         lastHeading = normalizeDegrees(getCurrentHeading() + Math.signum(omega) * 0.5 * Math.pow(omega, 2) * rotationalDriftConstant);
     }

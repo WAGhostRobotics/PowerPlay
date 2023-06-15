@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.norm
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.Bezier;
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.MergedBezier;
@@ -23,11 +24,11 @@ public class MotionPlanner {
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
     public static PIDController translationalControl = new PIDController(0.21,.05,0.064);
-    public static PIDController headingControl = new PIDController(0.01, 0.04, 0.005);
+    public static PIDController headingControl = new PIDController(0.01, 0.042, 0.005);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
     public static PIDController translationalControlEnd = new PIDController(0.12,0.1,0.03);
-    public static PIDController headingControlEnd = new PIDController(0.028, 0.1, 0.005);
+    public static PIDController headingControlEnd = new PIDController(0.028, 0.12, 0.005);
 
 
     private double t1, t2, t3, time;
@@ -59,7 +60,7 @@ public class MotionPlanner {
     double currentX;
 
     double radius;
-    public final double THE_HOLY_CONSTANT = 0.002; //0.001
+    public final double THE_HOLY_CONSTANT = 0.001; //0.001
 
     double ac;
 
@@ -293,6 +294,8 @@ public static double MAX_VEL = 42.22; // was * 0.9
                 magnitude = Math.hypot(x_rotated, y_rotated);
                 theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
                 driveTurn = headingControl.calculate(0, targetHeading - currentHeading);
+
+                magnitude = Range.clip(magnitude, 0, 1);
 
                 if(!Double.isNaN(y1)&&!Double.isNaN(y2) && magnitude != 0){
                     radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
