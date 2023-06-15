@@ -63,7 +63,7 @@ public class WonkyDrive {
 
 
 
-    public static PIDController headingController = new PIDController(0.017, 0.0, 0.0);
+    public static PIDController headingController = new PIDController(0.017, 0.001, 0.01);
 
     public static double p = headingController.getP(), i = headingController.getI(), d = headingController.getD();
 //    PIDController headingController = new PIDController(0, 0, 0);
@@ -123,6 +123,7 @@ public class WonkyDrive {
         currentHeading = getCurrentHeading();
 
 
+        headingController.setPID(p, i, d);
         double headingError = getHeadingError();
 
 //        if(driveTurn != 0 || (driveX == 0 && driveY == 0)){
