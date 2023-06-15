@@ -56,7 +56,7 @@ public class Bruh extends LinearOpMode {
                     new Point(45, 25)
             ));
 
-        while (!isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested()) {
 
 
 

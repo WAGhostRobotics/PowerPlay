@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.norm
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -63,6 +64,7 @@ public class WonkyDrive {
 
 
 
+
     public static PIDController headingController = new PIDController(0.017, 0.001, 0.01);
 
     public static double p = headingController.getP(), i = headingController.getI(), d = headingController.getD();
@@ -74,7 +76,7 @@ public class WonkyDrive {
 
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-
+        initIMU(hardwareMap);
 
 
         this.localizer = localizer;
@@ -227,6 +229,23 @@ public class WonkyDrive {
     //gets angle from imu
     public double getCurrentHeading() {
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+    }
+
+
+    public void initIMU(HardwareMap hardwareMap){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
     }
 
 }

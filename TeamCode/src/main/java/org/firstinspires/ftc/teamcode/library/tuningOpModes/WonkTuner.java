@@ -4,7 +4,7 @@
  So, feel free to add onto this and make it better
  */
 
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.library.tuningOpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.library.teleopDrive.WonkyDrive;
 
 
 @Config
-@TeleOp(name = "Wonk TeleOp", group = "competition")
-public class WonkControlTeleOp extends LinearOpMode {
+@TeleOp(name = "Wonk Tuner", group = "competition")
+public class WonkTuner extends LinearOpMode {
 
     public double power = 0.8;
 
@@ -39,6 +39,9 @@ public class WonkControlTeleOp extends LinearOpMode {
         Localizer localizer = new Localizer(hardwareMap);
         Drivetrain drive = new MecanumDrive(hardwareMap);
 
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         WonkyDrive wonk = new WonkyDrive(hardwareMap, localizer, drive);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -46,17 +49,24 @@ public class WonkControlTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive()) {
 
             //DRIVETRAIN STUFF
 
 
 //            // re-initializes imu to correct heading if teleop starts at the wrong heading
-            if (gamepad2.left_stick_button){
-                wonk.initIMU(hardwareMap);
-            }
+//            if (gamepad2.left_stick_button){
+//                Tom.initIMU();
+//            }
 
             wonk.drive(gamepad2, power);
+
+
+
+            telemetry.addData("Target", 0);
+            telemetry.addData("Angle Error", wonk.getHeadingError());
+            telemetry.update();
+
             PhotonCore.CONTROL_HUB.clearBulkCache();
 
         }
