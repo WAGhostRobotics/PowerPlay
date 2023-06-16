@@ -49,28 +49,28 @@ public class Swerve implements Drivetrain {
         double v = driveTurn * (WHEEL_BASE / Math.hypot(WHEEL_BASE, TRACK_WIDTH));
 
 
-        double front = x - v;
-        double back = x + v;
+        double frontY = y + v;
+        double backY = y - v;
 
         double v1 = driveTurn * (TRACK_WIDTH / Math.hypot(WHEEL_BASE, TRACK_WIDTH));
 
-        double left = y + v1;
-        double right = y - v1;
+        double leftX = x - v1;
+        double rightX = x + v1;
 
-        frontLeft.setTargetAngle(Math.toDegrees(Math.atan2(left, front)));
-        frontRight.setTargetAngle(Math.toDegrees(Math.atan2(right, front)));
-        backLeft.setTargetAngle(Math.toDegrees(Math.atan2(left, back)));
-        backRight.setTargetAngle(Math.toDegrees(Math.atan2(right, back)));
+        frontLeft.setTargetAngle(Math.toDegrees(Math.atan2(frontY, leftX)));
+        frontRight.setTargetAngle(Math.toDegrees(Math.atan2(frontY, rightX)));
+        backLeft.setTargetAngle(Math.toDegrees(Math.atan2(backY, leftX)));
+        backRight.setTargetAngle(Math.toDegrees(Math.atan2(backY, rightX)));
 
         frontLeft.update();
         frontRight.update();
         backLeft.update();
         backRight.update();
 
-        frontLeftPower = Math.hypot(left, front);
-        frontRightPower = Math.hypot(right, front);
-        backRightPower = Math.hypot(right, back);
-        backLeftPower = Math.hypot(left, back);
+        frontLeftPower = Math.hypot(leftX, frontY);
+        frontRightPower = Math.hypot(rightX, frontY);
+        backRightPower = Math.hypot(rightX, backY);
+        backLeftPower = Math.hypot(leftX, backY);
     }
 
 
