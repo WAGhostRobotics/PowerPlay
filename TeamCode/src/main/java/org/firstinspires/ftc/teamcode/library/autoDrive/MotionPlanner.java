@@ -180,8 +180,17 @@ public static double MAX_VEL = 42.22; // was * 0.9
         return perpendicularError;
     }
 
+
     public double getHeadingError(){
-        return targetHeading - currentHeading;
+        double headingError = targetHeading - currentHeading;
+
+        if(headingError > 180){
+            headingError -= 360;
+        }else if(headingError<-180){
+            headingError += 360;
+        }
+
+        return headingError;
     }
 
     public void update() {
@@ -191,7 +200,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
         x = localizer.getX();
         y = localizer.getY();
-        currentHeading = localizer.getHeading(Localizer.Angle.DEGREES);
+        currentHeading = normalizeDegrees(localizer.getHeading(Localizer.Angle.DEGREES));
 
 //        t = timer.seconds()/time;
 
@@ -229,7 +238,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
                 theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
-                driveTurn = headingControlEnd.calculate(0, targetHeading - currentHeading);
+                driveTurn = headingControlEnd.calculate(0, getHeadingError());
 
 
 
@@ -293,7 +302,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
                 theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
-                driveTurn = headingControl.calculate(0, targetHeading - currentHeading);
+                driveTurn = headingControl.calculate(0, getHeadingError());
 
 
                 if(!Double.isNaN(y1)&&!Double.isNaN(y2) && magnitude != 0){

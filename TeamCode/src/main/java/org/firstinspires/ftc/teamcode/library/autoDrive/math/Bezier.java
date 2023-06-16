@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.library.autoDrive.math;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
+
 public class Bezier {
 
     Point[] waypoints;
@@ -14,7 +16,7 @@ public class Bezier {
 
     public Bezier(double heading, Point... waypoints) {
         this.waypoints = waypoints;
-        this.heading = heading;
+        this.heading = normalizeDegrees(heading);
     }
 
     public Bezier(Bezier b){
