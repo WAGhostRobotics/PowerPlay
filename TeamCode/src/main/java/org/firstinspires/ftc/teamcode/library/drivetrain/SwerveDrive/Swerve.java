@@ -16,6 +16,8 @@ public class Swerve implements Drivetrain {
     private double backLeftPower;
     private double backRightPower;
 
+    public final double voltageConstant = 13.27;
+
     public Swerve(HardwareMap hwMap, boolean reset){
         frontLeft = new ModuleV2(hwMap, "lf", "lfPivot", "lfEnc", reset);
         frontRight = new ModuleV2(hwMap, "rf", "rfPivot", "rfEnc", reset);
@@ -28,8 +30,7 @@ public class Swerve implements Drivetrain {
     public void driveMax(double magnitude, double theta, double driveTurn, double movementPower) {
         driveCommon(magnitude, theta, driveTurn);
 
-        double max = Math.max(frontLeftPower, Math.max(frontRightPower, Math.max(backLeftPower, backRightPower)));
-
+        double max = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
         frontLeftPower /= max;
         frontRightPower /= max;
         backLeftPower /= max;
@@ -80,7 +81,7 @@ public class Swerve implements Drivetrain {
 
         driveCommon(magnitude, theta, driveTurn);
 
-        double max = Math.max(frontLeftPower, Math.max(frontRightPower, Math.max(backLeftPower, backRightPower)));
+        double max = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
 
         if(max>1){
             frontLeftPower /= max;
@@ -94,6 +95,84 @@ public class Swerve implements Drivetrain {
         backLeft.setPower(movementPower * backLeftPower);
         backRight.setPower(movementPower * backRightPower);
 
+
+    }
+
+    @Override
+    public void drive(double magnitude, double theta, double driveTurn, double movementPower, double voltage) {
+
+        driveCommon(magnitude, theta, driveTurn);
+
+        double max = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+        if(max>1){
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            backLeftPower /= max;
+            backRightPower /= max;
+        }
+
+        frontLeftPower *= movementPower;
+        frontRightPower *= movementPower;
+        backLeftPower *= movementPower;
+        backRightPower *= movementPower;
+
+        scaleByVoltage(voltage);
+
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
+        backLeft.setPower(backLeftPower);
+        backRight.setPower(backRightPower);
+
+
+    }
+
+    @Override
+    public void driveMax(double magnitude, double theta, double driveTurn, double movementPower, double voltage) {
+
+        driveCommon(magnitude, theta, driveTurn);
+
+        double max = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+        if(max>1){
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            backLeftPower /= max;
+            backRightPower /= max;
+        }
+
+        frontLeftPower *= movementPower;
+        frontRightPower *= movementPower;
+        backLeftPower *= movementPower;
+        backRightPower *= movementPower;
+
+        scaleByVoltage(voltage);
+
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
+        backLeft.setPower(backLeftPower);
+        backRight.setPower(backRightPower);
+
+
+    }
+
+    public void scaleByVoltage(double voltage){
+        frontLeftPower /= voltage;
+        frontRightPower /= voltage;
+        backLeftPower /= voltage;
+        backRightPower /= voltage;
+
+
+        frontLeftPower *= voltageConstant;
+        frontRightPower *= voltageConstant;
+        backLeftPower *= voltageConstant;
+        backRightPower *= voltageConstant;
+
+        double max = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+        if(max>1){
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            backLeftPower /= max;
+            backRightPower /= max;
+        }
 
     }
 

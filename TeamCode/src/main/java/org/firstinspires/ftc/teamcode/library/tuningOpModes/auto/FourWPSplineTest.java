@@ -42,6 +42,8 @@ public class FourWPSplineTest extends LinearOpMode {
         MotionPlanner motionPlanner = new MotionPlanner(drive, localizer, hardwareMap);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.EXPANSION_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.experimental.setMaximumParallelCommands(8);
         PhotonCore.enable();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -83,7 +85,7 @@ public class FourWPSplineTest extends LinearOpMode {
                                 new Point(45, 25),
                                 new Point(12, 25),
                                 new Point(45, 0),
-                                new Point(0, 20)
+                                new Point(0, 0)
                         ));
                     } else {
                         forward = true;
@@ -100,7 +102,8 @@ public class FourWPSplineTest extends LinearOpMode {
             }
 
 
-            telemetry.addData("Perpendicular Error", motionPlanner.getPerpendicularError());
+            telemetry.addData("X Error", motionPlanner.getSpline().getEndPoint().getX() - localizer.getX());
+            telemetry.addData("Y Error", motionPlanner.getSpline().getEndPoint().getY() - localizer.getY());
             telemetry.addData("Target", 0);
             telemetry.update();
 
@@ -108,6 +111,7 @@ public class FourWPSplineTest extends LinearOpMode {
 
 
             PhotonCore.CONTROL_HUB.clearBulkCache();
+            PhotonCore.EXPANSION_HUB.clearBulkCache();
         }
 
     }

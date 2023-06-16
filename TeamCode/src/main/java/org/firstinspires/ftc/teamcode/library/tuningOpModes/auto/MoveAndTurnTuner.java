@@ -39,6 +39,8 @@ public class MoveAndTurnTuner extends LinearOpMode {
         MotionPlanner motionPlanner = new MotionPlanner(drive, localizer, hardwareMap);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.EXPANSION_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.experimental.setMaximumParallelCommands(8);
         PhotonCore.enable();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -91,6 +93,7 @@ public class MoveAndTurnTuner extends LinearOpMode {
 
 
             PhotonCore.CONTROL_HUB.clearBulkCache();
+            PhotonCore.EXPANSION_HUB.clearBulkCache();
         }
 
     }

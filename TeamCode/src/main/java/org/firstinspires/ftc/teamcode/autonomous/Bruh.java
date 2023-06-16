@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.MergedBezier;
+import org.firstinspires.ftc.teamcode.library.drivetrain.SwerveDrive.Swerve;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 import org.firstinspires.ftc.teamcode.library.autoDrive.MotionPlanner;
@@ -29,10 +30,13 @@ public class Bruh extends LinearOpMode {
 
         Localizer localizer = new Localizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap);
+//        Swerve drive = new Swerve(hardwareMap, true);
 
         MotionPlanner motionPlanner = new MotionPlanner(drive, localizer, hardwareMap);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.EXPANSION_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.experimental.setMaximumParallelCommands(8);
         PhotonCore.enable();
 
 
@@ -51,9 +55,10 @@ public class Bruh extends LinearOpMode {
 
             motionPlanner.startTrajectory(new Bezier(
                     new Point(0,0),
-                    new Point(45, 0),
-                    new Point(12, 25),
-                    new Point(45, 25)
+                    new Point(24, 14),
+                    new Point(40, 10),
+                    new Point(46, 90),
+                    new Point(0, 12)
             ));
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -78,6 +83,7 @@ public class Bruh extends LinearOpMode {
 
 
             PhotonCore.CONTROL_HUB.clearBulkCache();
+            PhotonCore.EXPANSION_HUB.clearBulkCache();
         }
 
     }

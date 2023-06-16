@@ -20,7 +20,7 @@ public class MecanumDrive implements Drivetrain {
     private double backLeftPower;
     private double backRightPower;
 
-    public final double voltageConstant = 13;
+    public final double voltageConstant = 13.6;
 
 
     String telemetry = "";
@@ -104,10 +104,17 @@ public class MecanumDrive implements Drivetrain {
         backRightPower /= magnitude + Math.abs(driveTurn);
 
 
-        frontLeft.setPower(movementPower*frontLeftPower);
-        frontRight.setPower(movementPower*frontRightPower);
-        backLeft.setPower(movementPower*backLeftPower);
-        backRight.setPower(movementPower*backRightPower);
+        frontLeftPower *= movementPower;
+        frontRightPower *= movementPower;
+        backLeftPower *= movementPower;
+        backRightPower *= movementPower;
+
+        scaleByVoltage(voltage);
+
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
+        backLeft.setPower(backLeftPower);
+        backRight.setPower(backRightPower);
 
 
         telemetry = "" + frontLeftPower + " \n" + frontRightPower + " \n" + backLeftPower + " \n" + backRightPower;
@@ -130,10 +137,18 @@ public class MecanumDrive implements Drivetrain {
         }
 
 
-        frontLeft.setPower(movementPower*frontLeftPower);
-        frontRight.setPower(movementPower*frontRightPower);
-        backLeft.setPower(movementPower*backLeftPower);
-        backRight.setPower(movementPower*backRightPower);
+        frontLeftPower *= movementPower;
+        frontRightPower *= movementPower;
+        backLeftPower *= movementPower;
+        backRightPower *= movementPower;
+
+        scaleByVoltage(voltage);
+
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
+        backLeft.setPower(backLeftPower);
+        backRight.setPower(backRightPower);
+
     }
 
 
@@ -152,6 +167,14 @@ public class MecanumDrive implements Drivetrain {
         frontRightPower *= voltageConstant;
         backLeftPower *= voltageConstant;
         backRightPower *= voltageConstant;
+
+        double max = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+        if(max>1){
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            backLeftPower /= max;
+            backRightPower /= max;
+        }
 
     }
 

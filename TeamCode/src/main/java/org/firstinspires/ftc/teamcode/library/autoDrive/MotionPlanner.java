@@ -79,7 +79,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
     public static double MAX_ANG_VEL = 4.5601312058986245;
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
-    private final double movementPower = 0.7;
+    private final double movementPower = 0.85;
     private final double translational_error = 1;
     private final double heading_error = 1;
 
@@ -218,8 +218,8 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
             distanceLeft = distance(spline.getEndPoint(), new Point(x, y));
 
-            if(distanceLeft <= endTrajThreshhold||t>=estimatedStopping){
-
+//            if(distanceLeft <= endTrajThreshhold||t>=estimatedStopping){
+            if(t>=estimatedStopping){
 
 
                 if(!end){

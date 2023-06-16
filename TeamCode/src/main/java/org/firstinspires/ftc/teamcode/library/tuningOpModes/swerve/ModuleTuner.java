@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDri
 import org.firstinspires.ftc.teamcode.library.teleopDrive.WonkyDrive;
 
 @Config
-@TeleOp(name = "Wonk Tuner", group = "competition")
+@TeleOp(name = "Module Tuner", group = "competition")
 public class ModuleTuner extends LinearOpMode {
 
 
