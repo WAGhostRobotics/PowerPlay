@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.library.tuningOpModes;
+package org.firstinspires.ftc.teamcode.library.tuningOpModes.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,11 +17,12 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 
 @Config
-@Autonomous(name = "Translational PID Tuner", group = "tuning")
-public class TranslationalPIDTuner extends LinearOpMode {
+@Autonomous(name = "End Tuner", group = "tuning")
+public class EndTuner extends LinearOpMode {
 
 
-    public static double p = MotionPlanner.translationalControl.getP(), i = MotionPlanner.translationalControl.getI(), d = MotionPlanner.translationalControl.getD();
+    public static double p = MotionPlanner.translationalControlEnd.getP(), i = MotionPlanner.translationalControlEnd.getI(), d = MotionPlanner.translationalControlEnd.getD();
+
 
 
 
@@ -33,8 +34,6 @@ public class TranslationalPIDTuner extends LinearOpMode {
 
         boolean stop = true;
         ElapsedTime wait = new ElapsedTime();
-
-
 
         Localizer localizer = new Localizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap);
@@ -50,12 +49,12 @@ public class TranslationalPIDTuner extends LinearOpMode {
 
 
         boolean forward = true;
-        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(40, 0)));
+        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(12, 0)));
 
 
         while (!isStopRequested()) {
 
-            motionPlanner.translationalControl.setPID(p, i, d);
+            motionPlanner.translationalControlEnd.setPID(p, i, d);
             motionPlanner.update();
 
             if(motionPlanner.isFinished()){
@@ -67,15 +66,14 @@ public class TranslationalPIDTuner extends LinearOpMode {
 
 
 
-                if(wait.seconds()>3) {
+                if(wait.seconds()>3){
                     stop = true;
-
-                    if (forward) {
+                    if(forward){
                         forward = false;
-                        motionPlanner.startTrajectory(new Bezier(new Point(40, 0), new Point(0, 0)));
-                    } else {
+                        motionPlanner.startTrajectory(new Bezier(new Point(12, 0), new Point(0, 0)));
+                    }else{
                         forward = true;
-                        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(40, 0)));
+                        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(12, 0)));
                     }
                 }
             }else{
@@ -83,8 +81,8 @@ public class TranslationalPIDTuner extends LinearOpMode {
             }
 
 
-            telemetry.addData("Perpendicular Error", motionPlanner.getPerpendicularError());
-            telemetry.addData("Target", 0);
+            telemetry.addData("X - error", motionPlanner.getSpline().getEndPoint().getX() - localizer.getX());
+            telemetry.addData("Y - error", motionPlanner.getSpline().getEndPoint().getY() - localizer.getY());
             telemetry.addData("LowerBound", -1);
             telemetry.addData("UpperBound", 1);
             telemetry.addData("End", motionPlanner.getSpline().getEndPoint().getX() + " " + motionPlanner.getSpline().getEndPoint().getY());

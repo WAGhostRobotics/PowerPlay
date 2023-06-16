@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.library.tuningOpModes;
+package org.firstinspires.ftc.teamcode.library.tuningOpModes.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,11 +17,14 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 
 @Config
-@Autonomous(name = "Move And Turn Tuner", group = "tuning")
-public class MoveAndTurnTuner extends LinearOpMode {
+@Autonomous(name = "4 WayPoint Spline Test", group = "tuning")
+public class FourWPSplineTest extends LinearOpMode {
 
 
-    public static double p = MotionPlanner.headingControl.getP(), i = MotionPlanner.headingControl.getI(), d = MotionPlanner.headingControl.getD();
+    public static double p = MotionPlanner.translationalControl.getP(), i = MotionPlanner.translationalControl.getI(), d = MotionPlanner.translationalControl.getD();
+
+
+
 
 
     @Override
@@ -29,9 +32,9 @@ public class MoveAndTurnTuner extends LinearOpMode {
 
         Tom.init(hardwareMap, false);
 
+
         boolean stop = true;
         ElapsedTime wait = new ElapsedTime();
-
 
         Localizer localizer = new Localizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap);
@@ -48,12 +51,17 @@ public class MoveAndTurnTuner extends LinearOpMode {
 
 
         boolean forward = true;
-        motionPlanner.startTrajectory(new Bezier(90, new Point(0, 0), new Point(40, 0)));
+        motionPlanner.startTrajectory(new Bezier(
+                new Point(0,0),
+                new Point(45, 0),
+                new Point(12, 25),
+                new Point(45, 25)
+        ));
 
 
         while (!isStopRequested()) {
 
-            motionPlanner.headingControl.setPID(p, i, d);
+            motionPlanner.translationalControl.setPID(p, i, d);
             motionPlanner.update();
 
             if(motionPlanner.isFinished()){
@@ -67,12 +75,24 @@ public class MoveAndTurnTuner extends LinearOpMode {
 
                 if(wait.seconds()>3) {
                     stop = true;
+
+
                     if (forward) {
                         forward = false;
-                        motionPlanner.startTrajectory(new Bezier(0, new Point(40, 0), new Point(0, 0)));
+                        motionPlanner.startTrajectory(new Bezier(
+                                new Point(45, 25),
+                                new Point(12, 25),
+                                new Point(45, 0),
+                                new Point(0, 20)
+                        ));
                     } else {
                         forward = true;
-                        motionPlanner.startTrajectory(new Bezier(90, new Point(0, 0), new Point(40, 0)));
+                        motionPlanner.startTrajectory(new Bezier(
+                                new Point(0, 0),
+                                new Point(45, 0),
+                                new Point(12, 25),
+                                new Point(45, 25)
+                        ));
                     }
                 }
             }else{
@@ -80,11 +100,8 @@ public class MoveAndTurnTuner extends LinearOpMode {
             }
 
 
-            telemetry.addData("Heading Error", motionPlanner.getHeadingError());
+            telemetry.addData("Perpendicular Error", motionPlanner.getPerpendicularError());
             telemetry.addData("Target", 0);
-            telemetry.addData("Finished", motionPlanner.isFinished());
-            telemetry.addData("X - error", motionPlanner.getSpline().getEndPoint().getX() - localizer.getX());
-            telemetry.addData("Y - error", motionPlanner.getSpline().getEndPoint().getY() - localizer.getY());
             telemetry.update();
 
 

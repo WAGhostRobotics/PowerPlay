@@ -4,7 +4,7 @@
  So, feel free to add onto this and make it better
  */
 
-package org.firstinspires.ftc.teamcode.library.tuningOpModes;
+package org.firstinspires.ftc.teamcode.library.tuningOpModes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

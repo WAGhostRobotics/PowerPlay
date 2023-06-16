@@ -65,11 +65,12 @@ public class WonkyDrive {
 
 
 
-    public static PIDController headingController = new PIDController(0.017, 0.001, 0.01);
 
-    public static double p = headingController.getP(), i = headingController.getI(), d = headingController.getD();
+
+    public static double p = 0.017, i = 0.001, d = 0.01;
 //    PIDController headingController = new PIDController(0, 0, 0);
 
+    public PIDController headingController = new PIDController(p, i, d);
 
     public WonkyDrive(HardwareMap hardwareMap, Localizer localizer, Drivetrain drive){
 

@@ -74,9 +74,6 @@ public class Swerve implements Drivetrain {
         double x = magnitude * Math.sin(Math.toRadians(theta));
         double y = magnitude * Math.cos(Math.toRadians(theta));
 
-        x = x/Math.hypot(x, y) * movementPower;
-        y = y/Math.hypot(x, y) * movementPower;
-
         double v = driveTurn * (WHEEL_BASE / Math.hypot(WHEEL_BASE, TRACK_WIDTH));
 
 
@@ -102,10 +99,10 @@ public class Swerve implements Drivetrain {
             backRightPower /= max;
         }
 
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
+        frontLeft.setPower(movementPower * frontLeftPower);
+        frontRight.setPower(movementPower * frontRightPower);
+        backLeft.setPower(movementPower * backLeftPower);
+        backRight.setPower(movementPower * backRightPower);
 
         frontLeft.setTargetAngle(Math.toDegrees(Math.atan2(left, front)));
         frontRight.setTargetAngle(Math.toDegrees(Math.atan2(right, front)));

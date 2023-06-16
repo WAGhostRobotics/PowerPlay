@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.library.drivetrain.SwerveDrive;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.util.AnalogEncoder;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
+@Config
 public class ModuleV2 {
 
     private DcMotor motor;
@@ -24,9 +26,9 @@ public class ModuleV2 {
 
     private double targetAngle;
 
-    private final int TICKS_PER_REV = 8192;
+    public static double p = 0, i = 0, d = 0;
 
-    private PIDController headingController;
+    public PIDController headingController = new PIDController(p, i, d);
 
 
 
@@ -42,8 +44,6 @@ public class ModuleV2 {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        headingController = new PIDController(0,0,0);
-
     }
 
     public void setPower(double power){
@@ -52,6 +52,7 @@ public class ModuleV2 {
 
     public void setTargetAngle(double angle){
         targetAngle = normalizeDegrees(angle);
+        headingController.reset();
     }
 
     public double getTargetAngle(){
@@ -64,7 +65,11 @@ public class ModuleV2 {
 
 
 
+
     public void update(){
+
+        headingController.setPID(p, i, d);
+
         double target = getTargetAngle();
         double angle = getModuleAngle();
         double error = normalizeDegrees(target - angle);

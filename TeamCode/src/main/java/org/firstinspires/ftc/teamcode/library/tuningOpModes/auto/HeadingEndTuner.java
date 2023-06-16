@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.library.tuningOpModes;
+package org.firstinspires.ftc.teamcode.library.tuningOpModes.auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,12 +17,13 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 
 @Config
-@Autonomous(name = "End Tuner", group = "tuning")
-public class EndTuner extends LinearOpMode {
+@Autonomous(name = "Heading End Tuner", group = "tuning")
+public class HeadingEndTuner extends LinearOpMode {
 
 
-    public static double p = MotionPlanner.translationalControlEnd.getP(), i = MotionPlanner.translationalControlEnd.getI(), d = MotionPlanner.translationalControlEnd.getD();
+    public static double p = MotionPlanner.headingControlEnd.getP(), i = MotionPlanner.headingControlEnd.getI(), d = MotionPlanner.headingControlEnd.getD();
 
+    public static double trackWidth = Localizer.LATERAL_DISTANCE;
 
 
 
@@ -35,11 +36,13 @@ public class EndTuner extends LinearOpMode {
         boolean stop = true;
         ElapsedTime wait = new ElapsedTime();
 
+
         Localizer localizer = new Localizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap);
 
         MotionPlanner motionPlanner = new MotionPlanner(drive, localizer, hardwareMap);
 
+        PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         PhotonCore.enable();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -48,13 +51,18 @@ public class EndTuner extends LinearOpMode {
         waitForStart();
 
 
-        boolean forward = true;
-        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(12, 0)));
+        double angle = 90;
+        motionPlanner.startTrajectory(new Bezier(
+                angle,
+                new Point(0,0),
+                new Point(0, 0)
+        ));
 
 
         while (!isStopRequested()) {
 
-            motionPlanner.translationalControlEnd.setPID(p, i, d);
+            motionPlanner.headingControlEnd.setPID(p, i, d);
+            Localizer.LATERAL_DISTANCE = trackWidth;
             motionPlanner.update();
 
             if(motionPlanner.isFinished()){
@@ -66,27 +74,28 @@ public class EndTuner extends LinearOpMode {
 
 
 
-                if(wait.seconds()>3){
+                if(wait.seconds()>3) {
                     stop = true;
-                    if(forward){
-                        forward = false;
-                        motionPlanner.startTrajectory(new Bezier(new Point(12, 0), new Point(0, 0)));
-                    }else{
-                        forward = true;
-                        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(12, 0)));
-                    }
+
+                    motionPlanner.startTrajectory(new Bezier(
+                            angle += 90,
+                            new Point(0, 0),
+                            new Point(0, 0)
+                    ));
                 }
             }else{
                 stop = true;
             }
 
 
-            telemetry.addData("X - error", motionPlanner.getSpline().getEndPoint().getX() - localizer.getX());
-            telemetry.addData("Y - error", motionPlanner.getSpline().getEndPoint().getY() - localizer.getY());
-            telemetry.addData("LowerBound", -1);
-            telemetry.addData("UpperBound", 1);
-            telemetry.addData("End", motionPlanner.getSpline().getEndPoint().getX() + " " + motionPlanner.getSpline().getEndPoint().getY());
+            telemetry.addData("Heading Error", motionPlanner.getHeadingError());
+            telemetry.addData("Target", 0);
             telemetry.update();
+
+
+
+
+            PhotonCore.CONTROL_HUB.clearBulkCache();
         }
 
     }
