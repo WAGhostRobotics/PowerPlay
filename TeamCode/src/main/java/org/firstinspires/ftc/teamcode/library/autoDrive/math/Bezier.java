@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.library.autoDrive.math;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
 
+import org.firstinspires.ftc.teamcode.library.autoDrive.MotionPlanner;
+
 public class Bezier {
 
     Point[] waypoints;
@@ -13,25 +15,51 @@ public class Bezier {
 
     double heading;
 
+    private Point[] curvePoints;
+    private Point[] curveDerivatives;
+    private double[] curveHeadings;
+
+    static double tIncrement = MotionPlanner.tIncrement;
+
 
     public Bezier(double heading, Point... waypoints) {
         this.waypoints = waypoints;
         this.heading = normalizeDegrees(heading);
+        generateCurve();
     }
 
-    public Bezier(Bezier b){
-        this.waypoints = b.getWaypoints();
-        this.heading = b.getHeading(0);
-    }
+
 
     public Bezier(Point... waypoints) {
-        this.waypoints = waypoints;
-        this.heading = 0;
+        this(0, waypoints);
     }
 
     public Point[] getWaypoints() {
         return waypoints;
     }
+
+    private void generateCurve(){
+
+        curvePoints = new Point[(int)(1.0/tIncrement)];
+        curveDerivatives = new Point[(int)(1.0/tIncrement)];
+        curveHeadings = new double[(int)(1.0/tIncrement)];
+
+        double currentT = 0;
+
+        for(int i=0;i<curvePoints.length;i++){
+            curvePoints[i] = getPoint(currentT);
+            curveDerivatives[i] = getDerivative(currentT);
+            curveHeadings[i] = getHeading(currentT);
+
+            currentT += tIncrement;
+        }
+    }
+
+    public Point[] getCurvePoints(){return curvePoints;}
+    public Point[] getCurveDerivatives(){return curveDerivatives;}
+    public double[] getCurveHeadings(){return curveHeadings;}
+
+
 
     public double getHeading(double t){
         return heading;

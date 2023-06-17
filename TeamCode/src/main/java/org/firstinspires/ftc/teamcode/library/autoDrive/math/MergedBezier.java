@@ -4,9 +4,35 @@ package org.firstinspires.ftc.teamcode.library.autoDrive.math;
 public class MergedBezier extends Bezier{
 
     Bezier[] curves;
+    private Point[] curvePoints;
+    private Point[] curveDerivatives;
+    private double[] curveHeadings;
+
+    public Point[] getCurvePoints(){return curvePoints;}
+    public Point[] getCurveDerivatives(){return curveDerivatives;}
+    public double[] getCurveHeadings(){return curveHeadings;}
 
     public MergedBezier(Bezier... curves){
         this.curves = curves;
+
+        generateCurve();
+    }
+
+    private void generateCurve(){
+
+        curvePoints = new Point[(int)(1.0/tIncrement)];
+        curveDerivatives = new Point[(int)(1.0/tIncrement)];
+        curveHeadings = new double[(int)(1.0/tIncrement)];
+
+        double currentT = 0;
+
+        for(int i=0;i<curvePoints.length;i++){
+            curvePoints[i] = getPoint(currentT);
+            curveDerivatives[i] = getDerivative(currentT);
+            curveHeadings[i] = getHeading(currentT);
+
+            currentT += tIncrement;
+        }
     }
 
     @Override
@@ -19,7 +45,8 @@ public class MergedBezier extends Bezier{
     }
 
     @Override
-    public double getHeading(double t){
+    public double getHeading(double index){
+        double t = index * tIncrement;
         return curves[(int)(curves.length*t)].getHeading(0);
     }
 

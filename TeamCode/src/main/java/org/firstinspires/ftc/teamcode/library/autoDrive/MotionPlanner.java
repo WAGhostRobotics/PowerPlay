@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.norm
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.Bezier;
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.MergedBezier;
@@ -31,10 +30,7 @@ public class MotionPlanner {
     public static PIDController headingControlEnd = new PIDController(0.028, 0.12, 0.005);
 
 
-    private double t1, t2, t3, time;
-
-
-    private double t;
+    private int index;
     private double x;
     private double y;
     private double theta;
@@ -90,14 +86,13 @@ public static double MAX_VEL = 42.22; // was * 0.9
     private ElapsedTime timer;
     private ElapsedTime ACtimer;
 
-    private double distanceLeft;
-    private double estimatedStopping;
+    private int estimatedStopping;
 
     Point target;
     Point derivative;
 
     double perpendicularError;
-    private final double tIncrement = 0.05;
+    public static final double tIncrement = 0.05;
 
     HardwareMap hwMap;
 
@@ -116,18 +111,6 @@ public static double MAX_VEL = 42.22; // was * 0.9
         timer = new ElapsedTime();
         ACtimer = new ElapsedTime();
 
-//        t1 = MAX_VEL/MAX_ACCEL; // time to accelerate
-//        t3 = MAX_VEL/MAX_ACCEL; // time to decelerate
-//
-//        t2 = (spline.approximateLength() - 2 * (0.5 * MAX_ACCEL * Math.pow(t1, 2)))/MAX_VEL; // time in da middle
-//
-//
-//        if(t2<0){
-//            t2 = 0;
-//        }
-//        time = t1 + t2 + t3;
-
-
         translationalControl.reset();
         headingControl.reset();
 
@@ -137,21 +120,19 @@ public static double MAX_VEL = 42.22; // was * 0.9
         loopTime = new ElapsedTime();
 
         double length = spline.approximateLength();
-        estimatedStopping = (length - endTrajThreshhold)/length;
+        estimatedStopping = (int)(((length - endTrajThreshhold)/length)/tIncrement);
 
-        t = 0;
+        index = 0;
     }
 
     public void startTrajectory(Bezier spline) {
-        this.spline = new Bezier(spline);
-
+        this.spline = spline;
         reset();
     }
 
     public void startTrajectory(Bezier... splines) {
         this.spline = new MergedBezier(splines);
         reset();
-
     }
 
     public Bezier getSpline(){
@@ -160,7 +141,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
 
     public String getTelemetry(){
-        return "T: " + t +
+        return "Index: " + index +
 //                "\n Theta: " + theta +
 //                "\n Magnitude: " + magnitude +
 //                "\n Phase: " + end +
@@ -204,22 +185,21 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
 //        t = timer.seconds()/time;
 
-        while(t <= estimatedStopping && distance(spline.getPoint(t + tIncrement), new Point(x, y))<
-                distance(spline.getPoint(t), new Point(x, y))){
-            t += tIncrement;
+        while(index <= estimatedStopping && distance(spline.getCurvePoints()[index+1], new Point(x, y))<
+                distance(spline.getCurvePoints()[index], new Point(x, y))){
+            index ++;
         }
 
-        target = spline.getPoint(t);
-        targetHeading = spline.getHeading(t);
-        derivative = spline.getDerivative(t);
+        target = spline.getCurvePoints()[index];
+        targetHeading = spline.getCurveHeadings()[index];
+        derivative = spline.getCurveDerivatives()[index];
 
 
         if(!isFinished()){
 
-            distanceLeft = distance(spline.getEndPoint(), new Point(x, y));
 
 //            if(distanceLeft <= endTrajThreshhold||t>=estimatedStopping){
-            if(t>=estimatedStopping){
+            if(index >=estimatedStopping){
 
 
                 if(!end){

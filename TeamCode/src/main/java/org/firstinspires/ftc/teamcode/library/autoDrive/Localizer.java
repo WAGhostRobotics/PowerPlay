@@ -15,8 +15,9 @@ public class Localizer {
     public static double WHEEL_RADIUS = 1   ; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 14.125; // in; distance between the left and right wheels 4.125
+    public static double LATERAL_DISTANCE = 14.1732; // in; distance between the left and right wheels 4.125
     public static double FORWARD_OFFSET = -3.72; // in; offset of the lateral wheel
+//public static double FORWARD_OFFSET = -1.1811; // in; offset of the lateral wheel
 
     double x;
     double y;
@@ -26,9 +27,9 @@ public class Localizer {
     double lastX;
     double lastY;
 
-    double currentX;
-    double currentY;
-    double currentHeading;
+    double rawX;
+    double rawY;
+    double heading;
 
     double r0;
     double r1;
@@ -45,12 +46,12 @@ public class Localizer {
     public Localizer(HardwareMap hardwareMap){
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rf"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rr"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "lf"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
 
-        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+//        rightEncoder.setDirection(Encoder.Direction.REVERSE);
 
         rightEncoder.reset();
         frontEncoder.reset();
@@ -58,6 +59,7 @@ public class Localizer {
 
         x = 0;
         y = 0;
+
 
 
         lastHeading = 0;
@@ -77,27 +79,27 @@ public class Localizer {
 
     public void update(){
 
-        currentX = getRawX();
-        currentY = getRawY();
-        currentHeading = getHeading();
+        rawX = (getRightEncoderPosition() + getLeftEncoderPosition())/2.0;
+        rawY = getFwdEncoderPosition() - (FORWARD_OFFSET * getHeading());
+        heading = (getRightEncoderPosition() - getLeftEncoderPosition())/(LATERAL_DISTANCE);
 
-        if(currentHeading-lastHeading == 0){
-            relX = (currentX-lastX);
-            relY = (currentY-lastY);
+        if(heading -lastHeading == 0){
+            relX = (rawX -lastX);
+            relY = (rawY -lastY);
         }else{
-            r0 = (currentX-lastX) / (currentHeading - lastHeading);
-            r1 = (currentY-lastY) / (currentHeading - lastHeading);
+            r0 = (rawX -lastX) / (heading - lastHeading);
+            r1 = (rawY -lastY) / (heading - lastHeading);
 
-            relX = r0 * Math.sin(currentHeading-lastHeading) - r1 * (1 - Math.cos(currentHeading-lastHeading));
-            relY = r1 * Math.sin(currentHeading-lastHeading) + r0 * (1 - Math.cos(currentHeading-lastHeading));
+            relX = r0 * Math.sin(heading -lastHeading) - r1 * (1 - Math.cos(heading -lastHeading));
+            relY = r1 * Math.sin(heading -lastHeading) + r0 * (1 - Math.cos(heading -lastHeading));
         }
 
-        x += relX * Math.cos(currentHeading) - relY * Math.sin(currentHeading);
-        y += relY * Math.cos(currentHeading) + relX * Math.sin(currentHeading);
+        x += relX * Math.cos(heading) - relY * Math.sin(heading);
+        y += relY * Math.cos(heading) + relX * Math.sin(heading);
 
-        lastX = currentX;
-        lastY = currentY;
-        lastHeading = currentHeading;
+        lastX = rawX;
+        lastY = rawY;
+        lastHeading = heading;
 
     }
 
@@ -113,15 +115,15 @@ public class Localizer {
     }
 
     public double getHeading(){
-        return (getRightEncoderPosition() - getLeftEncoderPosition())/(LATERAL_DISTANCE);
+        return heading;
     }
 
     public double getRawX(){
-        return (getRightEncoderPosition() + getLeftEncoderPosition())/2.0;
+        return rawX;
     }
 
     public double getRawY(){
-        return getFwdEncoderPosition() - (FORWARD_OFFSET * getHeading());
+        return rawY;
     }
 
     public String getRawEncoders(){

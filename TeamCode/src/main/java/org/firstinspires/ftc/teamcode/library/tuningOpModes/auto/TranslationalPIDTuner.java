@@ -42,7 +42,6 @@ public class TranslationalPIDTuner extends LinearOpMode {
         MotionPlanner motionPlanner = new MotionPlanner(drive, localizer, hardwareMap);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        PhotonCore.EXPANSION_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         PhotonCore.experimental.setMaximumParallelCommands(8);
         PhotonCore.enable();
 
@@ -56,8 +55,9 @@ public class TranslationalPIDTuner extends LinearOpMode {
         motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(40, 0)));
 
 
+        ElapsedTime timer = new ElapsedTime();
         while (!isStopRequested()) {
-
+            timer.reset();
             motionPlanner.translationalControl.setPID(p, i, d);
             motionPlanner.update();
 
@@ -91,10 +91,10 @@ public class TranslationalPIDTuner extends LinearOpMode {
             telemetry.addData("LowerBound", -1);
             telemetry.addData("UpperBound", 1);
             telemetry.addData("End", motionPlanner.getSpline().getEndPoint().getX() + " " + motionPlanner.getSpline().getEndPoint().getY());
+            telemetry.addLine(motionPlanner.getTelemetry());
             telemetry.update();
 
             PhotonCore.CONTROL_HUB.clearBulkCache();
-            PhotonCore.EXPANSION_HUB.clearBulkCache();
         }
 
     }

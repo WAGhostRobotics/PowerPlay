@@ -5,6 +5,7 @@ import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
@@ -30,7 +31,10 @@ public class CustomLocalizerTest extends LinearOpMode {
 
         waitForStart();
 
+        ElapsedTime timer = new ElapsedTime();
+
         while (!isStopRequested()) {
+            timer.reset();
             drive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
@@ -47,6 +51,7 @@ public class CustomLocalizerTest extends LinearOpMode {
             telemetry.addData("x", localizer.getX());
             telemetry.addData("y", localizer.getY());
             telemetry.addData("heading", localizer.getHeading(Localizer.Angle.DEGREES));
+            telemetry.addData("hz", 1.0/timer.seconds());
             telemetry.update();
         }
     }
