@@ -16,7 +16,7 @@ public class Localizer {
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double LATERAL_DISTANCE = 14.125; // in; distance between the left and right wheels 4.125
-    public static double FORWARD_OFFSET = -3.8; // in; offset of the lateral wheel
+    public static double FORWARD_OFFSET = -3.72; // in; offset of the lateral wheel
 
     double x;
     double y;
@@ -37,6 +37,9 @@ public class Localizer {
 
     double relX;
     double relY;
+
+    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
 
 
     public Localizer(HardwareMap hardwareMap){
@@ -98,9 +101,7 @@ public class Localizer {
 
     }
 
-    public double getHeading(){
-        return (encoderTicksToInches(rightEncoder.getCurrentPosition()) - encoderTicksToInches(leftEncoder.getCurrentPosition()))/(LATERAL_DISTANCE);
-    }
+
 
     public double getHeading(Angle angle){
         if(angle == Angle.RADIANS){
@@ -111,13 +112,16 @@ public class Localizer {
         }
     }
 
+    public double getHeading(){
+        return (getRightEncoderPosition() - getLeftEncoderPosition())/(LATERAL_DISTANCE);
+    }
 
     public double getRawX(){
-        return (encoderTicksToInches(rightEncoder.getCurrentPosition()) + encoderTicksToInches(leftEncoder.getCurrentPosition()))/2.0;
+        return (getRightEncoderPosition() + getLeftEncoderPosition())/2.0;
     }
 
     public double getRawY(){
-        return encoderTicksToInches(frontEncoder.getCurrentPosition()) - (FORWARD_OFFSET * getHeading());
+        return getFwdEncoderPosition() - (FORWARD_OFFSET * getHeading());
     }
 
     public String getRawEncoders(){
@@ -126,6 +130,18 @@ public class Localizer {
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+    }
+
+    public double getRightEncoderPosition(){
+        return encoderTicksToInches(rightEncoder.getCurrentPosition()) * X_MULTIPLIER;
+    }
+
+    public double getLeftEncoderPosition(){
+        return encoderTicksToInches(leftEncoder.getCurrentPosition()) * X_MULTIPLIER;
+    }
+
+    public double getFwdEncoderPosition(){
+        return encoderTicksToInches(frontEncoder.getCurrentPosition()) * Y_MULTIPLIER;
     }
 
 
