@@ -31,7 +31,7 @@ public class ModuleTuner extends LinearOpMode {
 
 
 
-        ModuleV2 module = new ModuleV2(hardwareMap, "lf", "lfPivot", "lfEnc", true);
+        ModuleV2 module = new ModuleV2(hardwareMap, "lf", "lfPivot", "lfEnc", 0);
 
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

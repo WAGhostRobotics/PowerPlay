@@ -28,6 +28,12 @@ public class AnalogEncoder {
     public void zero(){
         zero = getCurrentPosition();
     }
+    public double getZero(){
+        return zero;
+    }
+    public void setZero(double zero){
+        this.zero = zero;
+    }
     public void reverse(boolean reverse){
         this.reverse = reverse;
     }

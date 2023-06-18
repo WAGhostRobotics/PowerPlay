@@ -32,14 +32,12 @@ public class ModuleV2 {
 
 
 
-    public ModuleV2(HardwareMap hwMap, String motorName, String servoName, String encoderName, boolean reset){
+    public ModuleV2(HardwareMap hwMap, String motorName, String servoName, String encoderName, double zero){
         motor = hwMap.get(DcMotor.class, motorName);
         pivot = hwMap.get(CRServo.class, servoName);
         encoder = new AnalogEncoder(hwMap.get(AnalogInput.class, encoderName));
 
-        if(reset){
-            encoder.zero();
-        }
+        encoder.setZero(zero);
 
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -53,6 +51,10 @@ public class ModuleV2 {
     public void setTargetAngle(double angle){
         targetAngle = normalizeDegrees(angle);
         headingController.reset();
+    }
+
+    public AnalogEncoder getEncoder(){
+        return encoder;
     }
 
     public double getTargetAngle(){

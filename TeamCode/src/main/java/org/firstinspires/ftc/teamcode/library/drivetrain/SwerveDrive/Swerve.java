@@ -19,10 +19,10 @@ public class Swerve implements Drivetrain {
     public final double voltageConstant = 13.27;
 
     public Swerve(HardwareMap hwMap, boolean reset){
-        frontLeft = new ModuleV2(hwMap, "lf", "lfPivot", "lfEnc", reset);
-        frontRight = new ModuleV2(hwMap, "rf", "rfPivot", "rfEnc", reset);
-        backRight = new ModuleV2(hwMap, "rr", "rrPivot", "rrEnc", reset);
-        backLeft = new ModuleV2(hwMap, "lr", "lrPivot", "lrEnc", reset);
+        frontLeft = new ModuleV2(hwMap, "lf", "lfPivot", "lfEnc", 0);
+        frontRight = new ModuleV2(hwMap, "rf", "rfPivot", "rfEnc", 0);
+        backRight = new ModuleV2(hwMap, "rr", "rrPivot", "rrEnc", 0);
+        backLeft = new ModuleV2(hwMap, "lr", "lrPivot", "lrEnc", 0);
     }
 
 
@@ -178,6 +178,9 @@ public class Swerve implements Drivetrain {
 
     @Override
     public String getTelemetry() {
-        return "";
+        return "Front Left: " + frontLeft.getModuleAngle() + "\n"
+            + "Front Right: " + frontRight.getModuleAngle() + "\n"
+                + "Back Left: " + backLeft.getModuleAngle() + "\n"
+                + "Back Right: " + backRight.getModuleAngle() ;
     }
 }
