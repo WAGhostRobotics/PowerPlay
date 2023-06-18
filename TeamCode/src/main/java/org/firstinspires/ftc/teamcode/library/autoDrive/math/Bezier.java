@@ -28,7 +28,7 @@ public class Bezier {
         generateCurve();
     }
 
-
+    public Bezier(){}
 
     public Bezier(Point... waypoints) {
         this(0, waypoints);
@@ -38,11 +38,13 @@ public class Bezier {
         return waypoints;
     }
 
-    private void generateCurve(){
+    public void generateCurve(){
 
-        curvePoints = new Point[(int)(1.0/tIncrement)];
-        curveDerivatives = new Point[(int)(1.0/tIncrement)];
-        curveHeadings = new double[(int)(1.0/tIncrement)];
+        int len = (int)(1.0/tIncrement) + 1;
+
+        curvePoints = new Point[len];
+        curveDerivatives = new Point[len];
+        curveHeadings = new double[len];
 
         double currentT = 0;
 
