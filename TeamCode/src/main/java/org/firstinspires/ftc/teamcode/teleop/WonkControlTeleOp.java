@@ -53,7 +53,7 @@ public class WonkControlTeleOp extends LinearOpMode {
 
 //            // re-initializes imu to correct heading if teleop starts at the wrong heading
             if (gamepad2.left_stick_button){
-                wonk.initIMU(hardwareMap);
+                wonk.initIMU();
             }
 
             wonk.drive(gamepad2, power);

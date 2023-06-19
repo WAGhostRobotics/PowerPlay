@@ -14,13 +14,14 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.component.Imu;
 import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 
 @Config
 public class WonkyDrive {
 
-    public BNO055IMU imu;
+    public Imu imu;
 
 
     double driveTurn;
@@ -28,7 +29,6 @@ public class WonkyDrive {
     double driveY;
     double gamepadMagnitude;
     double gamepadTheta;
-    double robotTheta;
     double theta;
 
     double y1;
@@ -75,17 +75,13 @@ public class WonkyDrive {
     public WonkyDrive(HardwareMap hardwareMap, Localizer localizer, Drivetrain drive){
 
 
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        initIMU(hardwareMap);
-
+        imu = new Imu(hardwareMap);
+        imu.initImuThread();
 
         this.localizer = localizer;
         this.drive = drive;
 
 
-//        xEncoder.setDirection(Encoder.Direction.REVERSE);
-//        yEncoder.setDirection(Encoder.Direction.REVERSE);
 
         y1 = 0;
         y2 = 0;
@@ -121,7 +117,6 @@ public class WonkyDrive {
 
         //gamepad and robot angles
         gamepadTheta = Math.toDegrees(Math.atan2(driveY, driveX));
-        robotTheta = getCurrentHeading();
 
         currentHeading = getCurrentHeading();
 
@@ -140,7 +135,7 @@ public class WonkyDrive {
         }
 
         gamepadMagnitude = Range.clip(Math.hypot(driveX, driveY), 0, 1);
-        theta = gamepadTheta - robotTheta;
+        theta = gamepadTheta - currentHeading;
         if(!Double.isNaN(y1)&&!Double.isNaN(y2)&& gamepadMagnitude != 0){
             radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
             ac = Math.pow(velocity, 2)/radius;
@@ -172,8 +167,7 @@ public class WonkyDrive {
     }
 
     public String getTelemetry(){
-        return "Angular velocity: " + imu.getAngularVelocity().xRotationRate +
-                "\nDrift Angle: " +  Math.signum(imu.getAngularVelocity().xRotationRate) * 0.5 * Math.pow(imu.getAngularVelocity().xRotationRate, 2) * 0.002;
+        return "Angle: " + imu.getCurrentHeading() + "\nAngular velocity: " + imu.getAngularVelocity() ;
 
     }
 
@@ -212,7 +206,7 @@ public class WonkyDrive {
 
     public void updateHeading(){
 
-        double omega = imu.getAngularVelocity().xRotationRate;
+        double omega = imu.getAngularVelocity();
 
         lastHeading = normalizeDegrees(getCurrentHeading() + Math.signum(omega) * 0.5 * Math.pow(omega, 2) * rotationalDriftConstant);
     }
@@ -229,24 +223,12 @@ public class WonkyDrive {
 
     //gets angle from imu
     public double getCurrentHeading() {
-        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        return imu.getCurrentHeading();
     }
 
 
-    public void initIMU(HardwareMap hardwareMap){
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+    public void initIMU(){
 
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
     }
 
 }
