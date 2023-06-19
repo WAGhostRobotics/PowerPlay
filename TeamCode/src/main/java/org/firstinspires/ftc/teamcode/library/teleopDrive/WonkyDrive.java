@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -72,11 +73,11 @@ public class WonkyDrive {
 
     public PIDController headingController = new PIDController(p, i, d);
 
-    public WonkyDrive(HardwareMap hardwareMap, Localizer localizer, Drivetrain drive){
+    public WonkyDrive(LinearOpMode opMode, HardwareMap hardwareMap, Localizer localizer, Drivetrain drive){
 
 
         imu = new Imu(hardwareMap);
-        imu.initImuThread();
+        imu.initImuThread(opMode);
 
         this.localizer = localizer;
         this.drive = drive;

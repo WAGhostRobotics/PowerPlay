@@ -42,12 +42,13 @@ public class WonkTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        WonkyDrive wonk = new WonkyDrive(hardwareMap, localizer, drive);
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         PhotonCore.enable();
 
         waitForStart();
+
+        WonkyDrive wonk = new WonkyDrive(this, hardwareMap, localizer, drive);
 
         while (opModeIsActive()) {
 
