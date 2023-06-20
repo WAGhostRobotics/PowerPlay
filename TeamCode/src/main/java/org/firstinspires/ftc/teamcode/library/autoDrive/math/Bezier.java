@@ -30,6 +30,7 @@ public class Bezier {
 
     public Bezier(){}
 
+
     public Bezier(Point... waypoints) {
         this(0, waypoints);
     }
