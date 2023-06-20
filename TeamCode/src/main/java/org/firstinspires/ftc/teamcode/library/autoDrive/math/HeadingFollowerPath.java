@@ -6,9 +6,8 @@ public class HeadingFollowerPath extends Bezier{
 
     public static boolean followForward = true;
 
-    public HeadingFollowerPath(boolean followForward, Point... waypoints){
+    public HeadingFollowerPath(Point... waypoints){
         super(waypoints);
-        this.followForward = followForward;
     }
 
     @Override
