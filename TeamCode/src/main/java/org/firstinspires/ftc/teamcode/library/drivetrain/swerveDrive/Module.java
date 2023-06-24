@@ -1,46 +1,45 @@
-package org.firstinspires.ftc.teamcode.library.drivetrain.SwerveDrive;
+package org.firstinspires.ftc.teamcode.library.drivetrain.swerveDrive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.util.AnalogEncoder;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
-@Config
-public class ModuleV2 {
+public class Module {
 
     private DcMotor motor;
     private CRServo pivot;
-    private AnalogEncoder encoder;
+    private Encoder encoder;
 
     private int motorMultiplier = 1;
 
     private double targetAngle;
 
-    public static double p = 0, i = 0, d = 0;
+    private final int TICKS_PER_REV = 8192;
 
-    public PIDController headingController = new PIDController(p, i, d);
+    private PIDController headingController;
 
 
 
-    public ModuleV2(HardwareMap hwMap, String motorName, String servoName, String encoderName, double zero){
+    public Module(HardwareMap hwMap, String motorName, String servoName, boolean reset){
         motor = hwMap.get(DcMotor.class, motorName);
         pivot = hwMap.get(CRServo.class, servoName);
-        encoder = new AnalogEncoder(hwMap.get(AnalogInput.class, encoderName));
+        encoder = hwMap.get(Encoder.class, motorName);
 
-        encoder.setZero(zero);
+        if(reset){
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
 
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        headingController = new PIDController(0,0,0);
 
     }
 
@@ -50,28 +49,19 @@ public class ModuleV2 {
 
     public void setTargetAngle(double angle){
         targetAngle = normalizeDegrees(angle);
-        headingController.reset();
-    }
-
-    public AnalogEncoder getEncoder(){
-        return encoder;
     }
 
     public double getTargetAngle(){
-        return normalizeDegrees(targetAngle - 180.0);
+        return normalizeDegrees(targetAngle);
     }
 
     public double getModuleAngle(){
-        return normalizeDegrees(Math.toDegrees(encoder.getCurrentPosition())-180);
+        return normalizeDegrees(Math.toDegrees(((double)(encoder.getCurrentPosition()%TICKS_PER_REV)/(double)TICKS_PER_REV)*2*Math.PI));
     }
-
 
 
 
     public void update(){
-
-        headingController.setPID(p, i, d);
-
         double target = getTargetAngle();
         double angle = getModuleAngle();
         double error = normalizeDegrees(target - angle);

@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 import org.firstinspires.ftc.teamcode.library.autoDrive.MotionPlanner;
 import org.firstinspires.ftc.teamcode.library.autoDrive.math.Bezier;
@@ -29,7 +28,7 @@ public class TranslationalPIDTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Tom.init(hardwareMap, false);
+
 
         boolean stop = true;
         ElapsedTime wait = new ElapsedTime();

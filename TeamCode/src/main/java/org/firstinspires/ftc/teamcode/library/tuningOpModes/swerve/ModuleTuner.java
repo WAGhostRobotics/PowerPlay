@@ -10,14 +10,8 @@ import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
-import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.library.drivetrain.SwerveDrive.ModuleV2;
-import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.library.teleopDrive.WonkyDrive;
+import org.firstinspires.ftc.teamcode.library.drivetrain.swerveDrive.ModuleV2;
 
 @Config
 @TeleOp(name = "Module Tuner", group = "competition")

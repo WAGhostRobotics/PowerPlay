@@ -55,8 +55,7 @@ public class WonkyDrive {
     public String stuff = "";
 
 
-    public static double theHolyConstant = 0.001; //0.01
-    public static double rotationalDriftConstant = 0.0027; //0.002
+
 
     double ac;
 
@@ -67,8 +66,9 @@ public class WonkyDrive {
 
 
 
-
-    public static double p = 0.017, i = 0.001, d = 0.01;
+    public static double theHolyConstant = 0; //0.01
+    public static double rotationalDriftConstant = 0; //0.002
+    public static double p = 0, i = 0, d = 0;
 //    PIDController headingController = new PIDController(0, 0, 0);
 
     public PIDController headingController = new PIDController(p, i, d);

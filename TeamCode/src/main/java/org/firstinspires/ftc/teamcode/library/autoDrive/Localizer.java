@@ -15,8 +15,8 @@ public class Localizer {
     public static double WHEEL_RADIUS = 1   ; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 14.1732; // in; distance between the left and right wheels 4.125
-    public static double FORWARD_OFFSET = -3.72; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 0; // in; distance between the left and right wheels 4.125
+    public static double FORWARD_OFFSET = 0; // in; offset of the lateral wheel
 //public static double FORWARD_OFFSET = -1.1811; // in; offset of the lateral wheel
 
     double x;

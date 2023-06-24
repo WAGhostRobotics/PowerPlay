@@ -14,7 +14,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.core.Tom;
 import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
@@ -33,7 +32,7 @@ public class WonkTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Tom.init(hardwareMap, true);
+
 
 
         Localizer localizer = new Localizer(hardwareMap);

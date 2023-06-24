@@ -22,12 +22,12 @@ public class MotionPlanner {
     private Localizer localizer;
 
 //    private PIDController translationalControl = new PIDController(0.022,0.001,0.03);
-    public static PIDController translationalControl = new PIDController(0.21,.05,0.064);
-    public static PIDController headingControl = new PIDController(0.01, 0.042, 0.005);
+    public static PIDController translationalControl = new PIDController(0,0,0);
+    public static PIDController headingControl = new PIDController(0, 0, 0);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    public static PIDController translationalControlEnd = new PIDController(0.12,0.1,0.03);
-    public static PIDController headingControlEnd = new PIDController(0.028, 0.12, 0.005);
+    public static PIDController translationalControlEnd = new PIDController(0,0,0);
+    public static PIDController headingControlEnd = new PIDController(0, 0, 0);
 
 
     private int index;
