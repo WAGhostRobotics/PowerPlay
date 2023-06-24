@@ -33,7 +33,6 @@ public class WonkTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Tom.init(hardwareMap, true);
 
 
         Localizer localizer = new Localizer(hardwareMap);

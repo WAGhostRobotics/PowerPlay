@@ -6,11 +6,8 @@ import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.Tom;
-import org.firstinspires.ftc.teamcode.library.autoDrive.math.MergedBezier;
-import org.firstinspires.ftc.teamcode.library.drivetrain.SwerveDrive.Swerve;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 import org.firstinspires.ftc.teamcode.library.autoDrive.MotionPlanner;

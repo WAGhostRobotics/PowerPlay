@@ -31,7 +31,6 @@ public class HeadingEndTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Tom.init(hardwareMap, false);
 
         boolean stop = true;
         ElapsedTime wait = new ElapsedTime();
