@@ -15,8 +15,8 @@ public class Localizer {
     public static double WHEEL_RADIUS = 1   ; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 14.1732; // in; distance between the left and right wheels 4.125
-    public static double FORWARD_OFFSET = -3.72; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 0; // in; distance between the left and right wheels 4.125
+    public static double FORWARD_OFFSET = 0; // in; offset of the lateral wheel
 //public static double FORWARD_OFFSET = -1.1811; // in; offset of the lateral wheel
 
     double x;
@@ -34,7 +34,6 @@ public class Localizer {
     double r0;
     double r1;
 
-    double dtheta;
 
     double relX;
     double relY;
@@ -42,6 +41,10 @@ public class Localizer {
     public static double X_MULTIPLIER = 1; // Multiplier in the X direction
     public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
 
+
+    public Localizer(){
+        reset();
+    }
 
     public Localizer(HardwareMap hardwareMap){
 
@@ -57,17 +60,18 @@ public class Localizer {
         frontEncoder.reset();
         leftEncoder.reset();
 
+        reset();
+
+    }
+
+    public void reset(){
         x = 0;
         y = 0;
-
-
 
         lastHeading = 0;
         lastX = 0;
         lastY = 0;
-
     }
-
 
     public double getX(){
         return x;
@@ -79,9 +83,7 @@ public class Localizer {
 
     public void update(){
 
-        rawX = (getRightEncoderPosition() + getLeftEncoderPosition())/2.0;
-        rawY = getFwdEncoderPosition() - (FORWARD_OFFSET * getHeading());
-        heading = (getRightEncoderPosition() - getLeftEncoderPosition())/(LATERAL_DISTANCE);
+        calculateRawValues();
 
         if(heading -lastHeading == 0){
             relX = (rawX -lastX);
@@ -103,6 +105,23 @@ public class Localizer {
 
     }
 
+    public void calculateRawValues(){
+        double rawX = (getRightEncoderPosition() + getLeftEncoderPosition())/2.0;
+        double heading = (getRightEncoderPosition() - getLeftEncoderPosition())/(LATERAL_DISTANCE);
+        double rawY = getFwdEncoderPosition() - (FORWARD_OFFSET * heading);
+
+        setRawValues(rawX, rawY, heading);
+    }
+
+    public double getLastHeading(){
+        return lastHeading;
+    }
+
+    public void setRawValues(double x, double y, double head){
+        rawX = x;
+        rawY = y;
+        heading = head;
+    }
 
 
     public double getHeading(Angle angle){
@@ -126,23 +145,19 @@ public class Localizer {
         return rawY;
     }
 
-    public String getRawEncoders(){
-        return "" + rightEncoder.getCurrentPosition() + " " + leftEncoder.getCurrentPosition() + " " + frontEncoder.getCurrentPosition();
-    }
-
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
-    public double getRightEncoderPosition(){
+    private double getRightEncoderPosition(){
         return encoderTicksToInches(rightEncoder.getCurrentPosition()) * X_MULTIPLIER;
     }
 
-    public double getLeftEncoderPosition(){
+    private double getLeftEncoderPosition(){
         return encoderTicksToInches(leftEncoder.getCurrentPosition()) * X_MULTIPLIER;
     }
 
-    public double getFwdEncoderPosition(){
+    private double getFwdEncoderPosition(){
         return encoderTicksToInches(frontEncoder.getCurrentPosition()) * Y_MULTIPLIER;
     }
 

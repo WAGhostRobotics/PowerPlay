@@ -38,6 +38,9 @@ public class Imu {
     public void initImuThread(LinearOpMode opMode){
         imuThread = new Thread(() -> {
             synchronized (imuSync){
+                while (!opMode.isStarted() && !opMode.isStopRequested()) {
+
+                }
                 while(opMode.opModeIsActive() && !opMode.isStopRequested()){
                     heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
                     angularVelocity = imu.getAngularVelocity().xRotationRate;
