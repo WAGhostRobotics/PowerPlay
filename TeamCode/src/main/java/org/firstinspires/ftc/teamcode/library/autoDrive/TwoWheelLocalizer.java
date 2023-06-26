@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.library.autoDrive;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,14 +16,15 @@ public class TwoWheelLocalizer extends Localizer {
     private Imu imu;
 
 
-    public static double PERPENDICULAR_X = 0;
-    public static double PARALLEL_Y = 0;
+    public static double PERPENDICULAR_X = 5.937;
+    public static double PARALLEL_Y = 7.576;
 
 
     public TwoWheelLocalizer(LinearOpMode opMode, HardwareMap hardwareMap){
+        super();
 
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rf"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rr"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "lf"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rf"));
         imu = new Imu(hardwareMap);
         imu.initImuThread(opMode);
 
@@ -35,11 +38,11 @@ public class TwoWheelLocalizer extends Localizer {
 
     @Override
     public void calculateRawValues(){
-        double headingChange = Math.toRadians(imu.getCurrentHeading()) - getLastHeading();
-        if(headingChange > 180){
-            headingChange -= 360;
-        }else if(headingChange<-180){
-            headingChange += 360;
+        double headingChange = Math.toRadians(imu.getCurrentHeading()) - normalizeRadians(lastHeading);
+        if(headingChange > Math.PI){
+            headingChange -= 2 * Math.PI;
+        }else if(headingChange<-Math.PI){
+            headingChange += 2 * Math.PI;
         }
 
         double heading = getLastHeading() + headingChange;

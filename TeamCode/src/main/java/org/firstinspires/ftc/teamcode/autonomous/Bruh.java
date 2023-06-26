@@ -19,7 +19,6 @@ public class Bruh extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Tom.init(hardwareMap, false);
 
 
 

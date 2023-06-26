@@ -32,8 +32,8 @@ public class MecanumDrive implements Drivetrain {
         backLeft = hardwareMap.get(DcMotorEx.class, "lr");
         backRight = hardwareMap.get(DcMotorEx.class, "rr");
 
-        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
-        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
 
         frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -51,7 +51,7 @@ public class MecanumDrive implements Drivetrain {
     @Override
     public void driveMax(double magnitude, double theta, double driveTurn, double movementPower){
 
-        calculatePowers(magnitude, theta, driveTurn);
+        driveCommon(magnitude, theta, driveTurn);
 
         //scales
         frontLeftPower /= magnitude + Math.abs(driveTurn);
@@ -75,7 +75,7 @@ public class MecanumDrive implements Drivetrain {
     @Override
     public void drive(double magnitude, double theta, double driveTurn, double movementPower){
 
-        calculatePowers(magnitude, theta, driveTurn);
+        driveCommon(magnitude, theta, driveTurn);
 
         //scales if -1> powers >1
         if(magnitude + Math.abs(driveTurn)>1){
@@ -95,7 +95,7 @@ public class MecanumDrive implements Drivetrain {
     @Override
     public void driveMax(double magnitude, double theta, double driveTurn, double movementPower, double voltage){
 
-        calculatePowers(magnitude, theta, driveTurn);
+        driveCommon(magnitude, theta, driveTurn);
 
         //scales
         frontLeftPower /= magnitude + Math.abs(driveTurn);
@@ -126,7 +126,7 @@ public class MecanumDrive implements Drivetrain {
     @Override
     public void drive(double magnitude, double theta, double driveTurn, double movementPower, double voltage){
 
-        calculatePowers(magnitude, theta, driveTurn);
+        driveCommon(magnitude, theta, driveTurn);
 
         //scales if -1> powers >1
         if(magnitude + Math.abs(driveTurn)>1){
@@ -178,7 +178,7 @@ public class MecanumDrive implements Drivetrain {
 
     }
 
-    public void calculatePowers(double magnitude, double theta, double driveTurn){
+    public void driveCommon(double magnitude, double theta, double driveTurn){
         theta += 45;
 
         //sin and cos of robot movement
@@ -190,5 +190,10 @@ public class MecanumDrive implements Drivetrain {
         frontRightPower = (magnitude * sin / maxMovement + driveTurn);
         backLeftPower = (magnitude * sin / maxMovement - driveTurn);
         backRightPower = (magnitude * cos / maxMovement + driveTurn);
+
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 }

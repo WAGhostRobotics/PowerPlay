@@ -30,8 +30,6 @@ public class WonkControlTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Tom.init(hardwareMap, true);
-
 
         Localizer localizer = new Localizer(hardwareMap);
         Drivetrain drive = new MecanumDrive(hardwareMap);

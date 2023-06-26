@@ -72,6 +72,8 @@ public class Swerve implements Drivetrain {
         frontRightPower = Math.hypot(rightX, frontY);
         backRightPower = Math.hypot(rightX, backY);
         backLeftPower = Math.hypot(leftX, backY);
+
+
     }
 
 

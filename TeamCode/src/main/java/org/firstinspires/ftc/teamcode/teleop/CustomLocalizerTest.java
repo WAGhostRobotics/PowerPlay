@@ -23,10 +23,10 @@ import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDri
 public class CustomLocalizerTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(hardwareMap);
+
 
         Localizer localizer = new TwoWheelLocalizer(this, hardwareMap);
-
+        MecanumDrive drive = new MecanumDrive(hardwareMap);
 
         PhotonCore.enable();
 

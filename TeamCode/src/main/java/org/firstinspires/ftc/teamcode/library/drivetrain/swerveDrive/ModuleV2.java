@@ -43,6 +43,7 @@ public class ModuleV2 {
     }
 
     public void setPower(double power){
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setPower(motorMultiplier * Math.abs(power));
     }
 
