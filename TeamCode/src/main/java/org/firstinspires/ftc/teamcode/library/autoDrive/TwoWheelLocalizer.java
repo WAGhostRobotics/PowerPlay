@@ -46,7 +46,7 @@ public class TwoWheelLocalizer extends Localizer {
         }
 
         double heading = getLastHeading() + headingChange;
-        double rawX = getParallelEncoderPosition() - (PARALLEL_Y * heading);
+        double rawX = getParallelEncoderPosition() + (PARALLEL_Y * heading);
         double rawY = getPerpendicularEncoderPosition() - (PERPENDICULAR_X * heading);
 
         setRawValues(rawX, rawY, heading);
