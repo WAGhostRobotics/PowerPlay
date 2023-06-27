@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
+import org.firstinspires.ftc.teamcode.library.autoDrive.TwoWheelLocalizer;
+import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -21,11 +23,10 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 public class CustomLocalizerTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Localizer localizer = new Localizer(hardwareMap);
 
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Localizer localizer = new TwoWheelLocalizer(this, hardwareMap);
+        MecanumDrive drive = new MecanumDrive(hardwareMap);
 
         PhotonCore.enable();
 
@@ -35,19 +36,15 @@ public class CustomLocalizerTest extends LinearOpMode {
 
         while (!isStopRequested()) {
             timer.reset();
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
-                    )
-            );
 
-            drive.update();
+            double driveTurn = Math.pow(-gamepad2.right_stick_x, 3);
+            double driveY = Math.pow(-gamepad2.left_stick_x, 3);
+            double driveX = Math.pow(-gamepad2.left_stick_y, 3);
+            drive.drive(Math.hypot(driveX, driveY), Math.toDegrees(Math.atan2(driveY, driveX)), driveTurn, 1);
 
 
             localizer.update();
-            
+
             telemetry.addData("x", localizer.getX());
             telemetry.addData("y", localizer.getY());
             telemetry.addData("heading", localizer.getHeading(Localizer.Angle.DEGREES));
