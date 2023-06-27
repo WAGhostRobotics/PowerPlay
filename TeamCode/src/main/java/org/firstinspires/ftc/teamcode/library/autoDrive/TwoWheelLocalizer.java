@@ -16,8 +16,8 @@ public class TwoWheelLocalizer extends Localizer {
     private Imu imu;
 
 
-    public static double PERPENDICULAR_X = 5.937;
-    public static double PARALLEL_Y = 7.576;
+    public static double PERPENDICULAR_X = -6.076;
+    public static double PARALLEL_Y = -3.498;
 
 
     public TwoWheelLocalizer(LinearOpMode opMode, HardwareMap hardwareMap){
