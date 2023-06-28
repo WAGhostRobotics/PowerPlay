@@ -15,8 +15,8 @@ public class Localizer {
     public static double WHEEL_RADIUS = 1   ; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 0; // in; distance between the left and right wheels 4.125
-    public static double FORWARD_OFFSET = 0; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 4.840; // in; distance between the left and right wheels 4.125
+    public static double FORWARD_OFFSET = -1.516; // in; offset of the lateral wheel
 //public static double FORWARD_OFFSET = -1.1811; // in; offset of the lateral wheel
 
     double x;
@@ -48,13 +48,13 @@ public class Localizer {
 
     public Localizer(HardwareMap hardwareMap){
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rf"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rr"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "lf"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rr"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "lf"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rf"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
 
-//        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
 
         rightEncoder.reset();
         frontEncoder.reset();

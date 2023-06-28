@@ -16,8 +16,11 @@ public class TwoWheelLocalizer extends Localizer {
     private Imu imu;
 
 
-    public static double PERPENDICULAR_X = -6.076;
-    public static double PARALLEL_Y = -3.498;
+    public static double PERPENDICULAR_X = -5.088;
+    public static double PARALLEL_Y = -6.696;
+
+    //-3.088
+    //-8.696
 
 
     public TwoWheelLocalizer(LinearOpMode opMode, HardwareMap hardwareMap){
@@ -38,7 +41,7 @@ public class TwoWheelLocalizer extends Localizer {
 
     @Override
     public void calculateRawValues(){
-        double headingChange = Math.toRadians(imu.getCurrentHeading()) - normalizeRadians(lastHeading);
+        double headingChange = Math.toRadians(imu.getCurrentHeading()) - normalizeRadians(getLastHeading());
         if(headingChange > Math.PI){
             headingChange -= 2 * Math.PI;
         }else if(headingChange<-Math.PI){
@@ -46,8 +49,10 @@ public class TwoWheelLocalizer extends Localizer {
         }
 
         double heading = getLastHeading() + headingChange;
-        double rawX = getParallelEncoderPosition() + (PARALLEL_Y * heading);
-        double rawY = getPerpendicularEncoderPosition() - (PERPENDICULAR_X * heading);
+//        double rawX = getParallelEncoderPosition() + (PARALLEL_Y * heading);
+        double rawX = 0;
+        double rawY = 0;
+//        double rawY = getPerpendicularEncoderPosition() - (PERPENDICULAR_X * heading);
 
         setRawValues(rawX, rawY, heading);
     }

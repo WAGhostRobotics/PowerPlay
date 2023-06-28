@@ -25,7 +25,7 @@ public class CustomLocalizerTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Localizer localizer = new TwoWheelLocalizer(this, hardwareMap);
+        Localizer localizer = new Localizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap);
 
         PhotonCore.enable();
@@ -40,7 +40,7 @@ public class CustomLocalizerTest extends LinearOpMode {
             double driveTurn = Math.pow(-gamepad2.right_stick_x, 3);
             double driveY = Math.pow(-gamepad2.left_stick_x, 3);
             double driveX = Math.pow(-gamepad2.left_stick_y, 3);
-            drive.drive(Math.hypot(driveX, driveY), Math.toDegrees(Math.atan2(driveY, driveX)), driveTurn, 1);
+            drive.drive(0.5 * Math.hypot(driveX, driveY), Math.toDegrees(Math.atan2(driveY, driveX)), 0.5 * driveTurn, 1);
 
 
             localizer.update();

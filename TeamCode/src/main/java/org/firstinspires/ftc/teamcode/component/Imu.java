@@ -43,7 +43,7 @@ public class Imu {
                 }
                 while(opMode.opModeIsActive() && !opMode.isStopRequested()){
                     heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-                    angularVelocity = imu.getAngularVelocity().xRotationRate;
+                    angularVelocity = imu.getAngularVelocity().zRotationRate;
                 }
 
             }

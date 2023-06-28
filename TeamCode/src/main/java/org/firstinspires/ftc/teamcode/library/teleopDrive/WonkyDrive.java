@@ -4,17 +4,12 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.norm
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.component.Imu;
 import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
@@ -38,8 +33,11 @@ public class WonkyDrive {
     double lasty;
     double lasty1;
     double lastx;
-    double lastHeading = 0;
-    double currentHeading = 0;
+    double lastHeading;
+    double currentHeading;
+    double lastStrafeVelocity;
+    double strafeVelocity;
+    double strafeAccel;
 
     double currentY;
     double currentX;
@@ -66,9 +64,11 @@ public class WonkyDrive {
 
 
 
-    public static double theHolyConstant = 0; //0.01
-    public static double rotationalDriftConstant = 0; //0.002
-    public static double p = 0, i = 0, d = 0;
+    public static double theHolyConstant = 0.01; //0.01
+    public static double rotationalDriftConstant = 0.001; //0.002
+    public static double p = 0.01, i = 0.0017, d = 0.025;
+    public static double turnff = 0;
+
 //    PIDController headingController = new PIDController(0, 0, 0);
 
     public PIDController headingController = new PIDController(p, i, d);
@@ -89,6 +89,11 @@ public class WonkyDrive {
         lasty = 0;
         lasty1 = 0;
         lastx = 0;
+        lastHeading = 0;
+        currentHeading = 0;
+        lastStrafeVelocity = 0;
+        strafeVelocity = 0;
+        strafeAccel = 0;
 
         time = new ElapsedTime();
 
@@ -121,20 +126,6 @@ public class WonkyDrive {
 
         currentHeading = getCurrentHeading();
 
-
-        headingController.setPID(p, i, d);
-        double headingError = getHeadingError();
-
-//        if(driveTurn != 0 || (driveX == 0 && driveY == 0)){
-        if(driveTurn != 0){
-            updateHeading();
-            headingController.reset();
-        }else if (Math.abs(headingError) > 0.5 ){
-            driveTurn = headingController.calculate(0, headingError);
-        }else{
-            headingController.reset();
-        }
-
         gamepadMagnitude = Range.clip(Math.hypot(driveX, driveY), 0, 1);
         theta = gamepadTheta - currentHeading;
         if(!Double.isNaN(y1)&&!Double.isNaN(y2)&& gamepadMagnitude != 0){
@@ -146,6 +137,21 @@ public class WonkyDrive {
         }else{
             ac = 0;
         }
+
+
+        headingController.setPID(p, i, d);
+        double headingError = getHeadingError();
+
+//        if(driveTurn != 0 || (driveX == 0 && driveY == 0)){
+        if(driveTurn != 0){
+            updateHeading();
+            headingController.reset();
+        }else if (Math.abs(headingError) > 0.5 ){
+            driveTurn = headingController.calculate(0, headingError) + turnff * (strafeAccel);
+        }else{
+            headingController.reset();
+        }
+
 
         drive.drive(gamepadMagnitude, theta, driveTurn, 1);
 
@@ -201,6 +207,10 @@ public class WonkyDrive {
         lasty = currentY;
 
 
+        strafeVelocity = (currentX-lastx)/t;
+        strafeAccel = (strafeVelocity - lastStrafeVelocity)/t;
+
+        lastStrafeVelocity = strafeVelocity;
 
         time.reset();
     }
