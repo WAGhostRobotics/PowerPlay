@@ -288,7 +288,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
                 if(!Double.isNaN(y1)&&!Double.isNaN(y2) && magnitude != 0){
                     radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
                     ac = Math.pow(velocity, 2)/radius;
-                    theta -= Math.toDegrees(Math.atan2( ac*THE_HOLY_CONSTANT, 1));
+                    theta += Math.toDegrees(Math.atan2( ac*THE_HOLY_CONSTANT, 1));
                     magnitude *= Math.hypot(1, ac*THE_HOLY_CONSTANT);
 
                 }else{
@@ -306,7 +306,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
     }
 
     public void updateACValues(){
-        currentX = localizer.getRawY();
+        currentX = -localizer.getRawY();
         currentY = localizer.getRawX();
 
         if((currentX-lastx) == 0){

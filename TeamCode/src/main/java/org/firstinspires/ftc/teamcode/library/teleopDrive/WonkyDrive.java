@@ -50,10 +50,6 @@ public class WonkyDrive {
 
     double radius;
 
-    public String stuff = "";
-
-
-
 
     double ac;
 
@@ -131,7 +127,7 @@ public class WonkyDrive {
         if(!Double.isNaN(y1)&&!Double.isNaN(y2)&& gamepadMagnitude != 0){
             radius = Math.pow((1+Math.pow(y1,2)), 1.5)/y2;
             ac = Math.pow(velocity, 2)/radius;
-            theta -= Math.toDegrees(Math.atan2( ac* theHolyConstant, gamepadMagnitude));
+            theta += Math.toDegrees(Math.atan2( ac* theHolyConstant, gamepadMagnitude));
             gamepadMagnitude = Math.hypot(gamepadMagnitude, ac* theHolyConstant);
 
         }else{
@@ -223,7 +219,7 @@ public class WonkyDrive {
     }
 
     public double getX(){
-        return localizer.getRawY();
+        return -localizer.getRawY();
     }
 
     public double getY(){
