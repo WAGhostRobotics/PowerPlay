@@ -19,24 +19,24 @@ public class Localizer {
     public static double FORWARD_OFFSET = -1.516; // in; offset of the lateral wheel
 //public static double FORWARD_OFFSET = -1.1811; // in; offset of the lateral wheel
 
-    double x;
-    double y;
+    private double x;
+    private double y;
 
 
-    double lastHeading;
-    double lastX;
-    double lastY;
+    private double lastHeading;
+    private double lastX;
+    private double lastY;
 
-    double rawX;
-    double rawY;
-    double heading;
+    private double rawX;
+    private double rawY;
+    private double heading;
 
-    double r0;
-    double r1;
+    private double r0;
+    private double r1;
 
 
-    double relX;
-    double relY;
+    private double relX;
+    private double relY;
 
     public static double X_MULTIPLIER = 1; // Multiplier in the X direction
     public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction

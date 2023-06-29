@@ -85,6 +85,7 @@ public class EndTuner extends LinearOpMode {
             telemetry.addData("Y - error", motionPlanner.getSpline().getEndPoint().getY() - localizer.getY());
             telemetry.addData("LowerBound", -1);
             telemetry.addData("UpperBound", 1);
+            telemetry.addData("Heading Error", motionPlanner.getHeadingError());
             telemetry.addData("End", motionPlanner.getSpline().getEndPoint().getX() + " " + motionPlanner.getSpline().getEndPoint().getY());
             telemetry.update();
 

@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.library.teleopDrive.WonkyDrive;
 @TeleOp(name = "Wonk Tuner", group = "competition")
 public class WonkTuner extends LinearOpMode {
 
-    public double power = 0.8;
+    public double power = 0.9;
 
 
 
@@ -65,6 +65,7 @@ public class WonkTuner extends LinearOpMode {
 
             telemetry.addData("Target", 0);
             telemetry.addData("Angle Error", wonk.getHeadingError());
+            telemetry.addData("Strafe Accel", wonk.getStrafeVelo());
             telemetry.update();
 
             PhotonCore.CONTROL_HUB.clearBulkCache();

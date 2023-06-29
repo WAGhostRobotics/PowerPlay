@@ -51,7 +51,7 @@ public class TranslationalPIDTuner extends LinearOpMode {
 
 
         boolean forward = true;
-        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(40, 0)));
+        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(60, 0)));
 
 
         ElapsedTime timer = new ElapsedTime();
@@ -89,6 +89,9 @@ public class TranslationalPIDTuner extends LinearOpMode {
             telemetry.addData("Target", 0);
             telemetry.addData("LowerBound", -1);
             telemetry.addData("UpperBound", 1);
+            telemetry.addData("Heading Error", motionPlanner.getHeadingError());
+            telemetry.addData("X - error", motionPlanner.getSpline().getEndPoint().getX() - localizer.getX());
+            telemetry.addData("Y - error", motionPlanner.getSpline().getEndPoint().getY() - localizer.getY());
             telemetry.addData("End", motionPlanner.getSpline().getEndPoint().getX() + " " + motionPlanner.getSpline().getEndPoint().getY());
             telemetry.addLine(motionPlanner.getTelemetry());
             telemetry.update();

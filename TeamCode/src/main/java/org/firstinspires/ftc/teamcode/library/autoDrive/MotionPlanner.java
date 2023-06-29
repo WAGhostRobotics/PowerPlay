@@ -26,8 +26,8 @@ public class MotionPlanner {
     public static PIDController headingControl = new PIDController(0, 0, 0);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    public static PIDController translationalControlEnd = new PIDController(0,0,0);
-    public static PIDController headingControlEnd = new PIDController(0, 0, 0);
+    public static PIDController translationalControlEnd = new PIDController(0.085,0.1,0.1);
+    public static PIDController headingControlEnd = new PIDController(0.015, 0.03, 0.095); //i=0.0226
 
 
     private int index;
@@ -56,7 +56,7 @@ public class MotionPlanner {
     double currentX;
 
     double radius;
-    public final double THE_HOLY_CONSTANT = 0.001; //0.001
+    public final double THE_HOLY_CONSTANT = 0.00006; //0.001
 
     double ac;
 
@@ -75,11 +75,11 @@ public static double MAX_VEL = 42.22; // was * 0.9
     public static double MAX_ANG_VEL = 4.5601312058986245;
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
-    private final double movementPower = 0.85;
+    private final double movementPower = 0.92;
     private final double translational_error = 1;
-    private final double heading_error = 1;
+    private final double heading_error = 3;
 
-    private final double endTrajThreshhold = 12;
+    private final double endTrajThreshhold = 14;
 
     boolean end = false;
 
@@ -222,7 +222,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
 
 
-                drive.drive(magnitude, theta, driveTurn, movementPower, voltage);
+                drive.drive(magnitude, theta, driveTurn, 1, voltage);
 
 
             } else {

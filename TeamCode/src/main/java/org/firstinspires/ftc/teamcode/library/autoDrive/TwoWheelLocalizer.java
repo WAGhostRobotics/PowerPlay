@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.component.Imu;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
+
 public class TwoWheelLocalizer extends Localizer {
 
     private Encoder parallelEncoder;
@@ -49,10 +50,8 @@ public class TwoWheelLocalizer extends Localizer {
         }
 
         double heading = getLastHeading() + headingChange;
-//        double rawX = getParallelEncoderPosition() + (PARALLEL_Y * heading);
-        double rawX = 0;
-        double rawY = 0;
-//        double rawY = getPerpendicularEncoderPosition() - (PERPENDICULAR_X * heading);
+        double rawX = getParallelEncoderPosition() + (PARALLEL_Y * heading);
+        double rawY = getPerpendicularEncoderPosition() - (PERPENDICULAR_X * heading);
 
         setRawValues(rawX, rawY, heading);
     }

@@ -76,8 +76,9 @@ public class HeadingEndTuner extends LinearOpMode {
                 if(wait.seconds()>3) {
                     stop = true;
 
+                    angle += 90;
                     motionPlanner.startTrajectory(new Bezier(
-                            angle += 90,
+                            angle,
                             new Point(0, 0),
                             new Point(0, 0)
                     ));

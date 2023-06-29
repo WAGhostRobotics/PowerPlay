@@ -35,14 +35,11 @@ public class WonkyDrive {
     double lastx;
     double lastHeading;
     double currentHeading;
-    double lastStrafeVelocity;
-    double strafeVelocity;
-    double strafeAccel;
 
     double currentY;
     double currentX;
 
-
+    double strafeVelocity;
 
     double velocity;
 
@@ -60,10 +57,11 @@ public class WonkyDrive {
 
 
 
-    public static double theHolyConstant = 0.01; //0.01
+    public static double theHolyConstant = 0.0001; //0.01
     public static double rotationalDriftConstant = 0.001; //0.002
-    public static double p = 0.01, i = 0.0017, d = 0.025;
-    public static double turnff = 0;
+    public static double p = 0.011, i = 0.001, d = 0.0011;
+    public static double turnff = -0.11;
+
 
 //    PIDController headingController = new PIDController(0, 0, 0);
 
@@ -87,9 +85,7 @@ public class WonkyDrive {
         lastx = 0;
         lastHeading = 0;
         currentHeading = 0;
-        lastStrafeVelocity = 0;
         strafeVelocity = 0;
-        strafeAccel = 0;
 
         time = new ElapsedTime();
 
@@ -138,12 +134,14 @@ public class WonkyDrive {
         headingController.setPID(p, i, d);
         double headingError = getHeadingError();
 
+        strafeVelocity = (gamepadMagnitude * Math.sin(Math.toRadians(theta)));
+
 //        if(driveTurn != 0 || (driveX == 0 && driveY == 0)){
         if(driveTurn != 0){
             updateHeading();
             headingController.reset();
         }else if (Math.abs(headingError) > 0.5 ){
-            driveTurn = headingController.calculate(0, headingError) + turnff * (strafeAccel);
+            driveTurn = headingController.calculate(0, headingError) + turnff * (gamepadMagnitude * Math.sin(Math.toRadians(theta)));
         }else{
             headingController.reset();
         }
@@ -198,15 +196,10 @@ public class WonkyDrive {
                 Math.pow(((currentX-lastx)/t), 2) + Math.pow(((currentY-lasty)/t), 2)
         );   //pythagorean theorme :)
 
+
         lasty1 = y1;
         lastx = currentX;
         lasty = currentY;
-
-
-        strafeVelocity = (currentX-lastx)/t;
-        strafeAccel = (strafeVelocity - lastStrafeVelocity)/t;
-
-        lastStrafeVelocity = strafeVelocity;
 
         time.reset();
     }
@@ -236,6 +229,10 @@ public class WonkyDrive {
 
     public void initIMU(){
 
+    }
+
+    public double getStrafeVelo(){
+        return strafeVelocity;
     }
 
 }
