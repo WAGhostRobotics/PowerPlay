@@ -51,16 +51,16 @@ public class TranslationalPIDTuner extends LinearOpMode {
 
 
         boolean forward = true;
-        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(60, 0)));
+        double distance = 40;
+        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(distance, 0)));
 
-
+        double timeout = 7;
         ElapsedTime timer = new ElapsedTime();
         while (!isStopRequested()) {
-            timer.reset();
             motionPlanner.translationalControl.setPID(p, i, d);
             motionPlanner.update();
 
-            if(motionPlanner.isFinished()){
+            if(motionPlanner.isFinished()||timer.seconds()>timeout){
 
                 if(stop){
                     wait.reset();
@@ -71,13 +71,13 @@ public class TranslationalPIDTuner extends LinearOpMode {
 
                 if(wait.seconds()>3) {
                     stop = true;
-
+                    timer.reset();
                     if (forward) {
                         forward = false;
-                        motionPlanner.startTrajectory(new Bezier(new Point(40, 0), new Point(0, 0)));
+                        motionPlanner.startTrajectory(new Bezier(new Point(distance, 0), new Point(0, 0)));
                     } else {
                         forward = true;
-                        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(40, 0)));
+                        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(distance, 0)));
                     }
                 }
             }else{

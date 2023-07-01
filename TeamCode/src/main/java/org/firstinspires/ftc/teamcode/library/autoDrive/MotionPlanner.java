@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.library.autoDrive;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.library.autoDrive.math.Point;
 import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
 
-
+@Config
 public class MotionPlanner {
 
     private Bezier spline;
@@ -26,8 +27,10 @@ public class MotionPlanner {
     public static PIDController headingControl = new PIDController(0, 0, 0);
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
-    public static PIDController translationalControlEnd = new PIDController(0.085,0.1,0.1);
-    public static PIDController headingControlEnd = new PIDController(0.015, 0.03, 0.095); //i=0.0226
+//    public static PIDController translationalControlEnd = new PIDController(0.025,0.02,0.1);
+    public static PIDController translationalControlEndX = new PIDController(0.025,0.002,0.5);
+    public static PIDController translationalControlEndY = new PIDController(translationalControlEndX.getP(), translationalControlEndX.getI(), translationalControlEndX.getD());
+    public static PIDController headingControlEnd = new PIDController(0.003, 0.02, 0.1); //i=0.0226
 
 
     private int index;
@@ -64,26 +67,16 @@ public class MotionPlanner {
     ElapsedTime loopTime;
 
 
-    public static double WHEEL_RADIUS = 96.0/2/25.4 ; // in
-    public static double GEAR_RATIO = 1 ; // output (wheel) speed / input (motor) speed
-    public static final double TICKS_PER_REV = 537.6;
-
-    public static final int MAX_RPM = 349;
-//    public static double MAX_VEL = (MAX_RPM/60.0) * (GEAR_RATIO) * (WHEEL_RADIUS) * (2* Math.PI) * 1.5; // was * 0.9
-public static double MAX_VEL = 42.22; // was * 0.9
-    public static double MAX_ACCEL = 85;
-    public static double MAX_ANG_VEL = 4.5601312058986245;
-    public static double MAX_ANG_ACCEL = Math.toRadians(180);
-
-    private final double movementPower = 0.92;
+    private final double movementPower = 0.85;
+    public static double kStatic = 0.31; //.19
     private final double translational_error = 1;
     private final double heading_error = 3;
-
     private final double endTrajThreshhold = 14;
+    public static final double tIncrement = 0.05;
+
 
     boolean end = false;
 
-    private ElapsedTime timer;
     private ElapsedTime ACtimer;
 
     private int estimatedStopping;
@@ -92,7 +85,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
     Point derivative;
 
     double perpendicularError;
-    public static final double tIncrement = 0.05;
+
 
     HardwareMap hwMap;
 
@@ -108,7 +101,6 @@ public static double MAX_VEL = 42.22; // was * 0.9
     }
 
     public void reset(){
-        timer = new ElapsedTime();
         ACtimer = new ElapsedTime();
 
         translationalControl.reset();
@@ -143,13 +135,14 @@ public static double MAX_VEL = 42.22; // was * 0.9
     public String getTelemetry(){
         return "Index: " + index +
 //                "\n Theta: " + theta +
-//                "\n Magnitude: " + magnitude +
+                "\n Magnitude: " + magnitude +
+                "\n Driveturn: " + driveTurn +
 //                "\n Phase: " + end +
 //                "\n Stop " + (distanceLeft < estimatedStopping) +
 //                "\n Distance left: " + distanceLeft +
 //                "\n Distance left (x): " + (spline.getEndPoint().getX()-x) +
 //                "\n Distance left (y): " + (spline.getEndPoint().getY()-y) +
-                "\n Perpendicular error: " + (perpendicularError) +
+//                "\n Perpendicular error: " + (perpendicularError) +
 //                "\n Heading: " + (heading - currentHeading) +
                 "\n Estimated Stopping " + estimatedStopping +
 //                "\n " + drive.getTelemetry() +
@@ -183,7 +176,7 @@ public static double MAX_VEL = 42.22; // was * 0.9
         y = localizer.getY();
         currentHeading = normalizeDegrees(localizer.getHeading(Localizer.Angle.DEGREES));
 
-//        t = timer.seconds()/time;
+
 
         while(index <= estimatedStopping && distance(spline.getCurvePoints()[index+1], new Point(x, y))<
                 distance(spline.getCurvePoints()[index], new Point(x, y))){
@@ -198,31 +191,37 @@ public static double MAX_VEL = 42.22; // was * 0.9
         if(!isFinished()){
 
 
-//            if(distanceLeft <= endTrajThreshhold||t>=estimatedStopping){
             if(index >=estimatedStopping){
 
 
                 if(!end){
-                    translationalControlEnd.reset();
+                    translationalControlEndX.reset();
+                    translationalControlEndY.reset();
                     headingControlEnd.reset();
                 }
 
                 end = true;
 
 
-                x_power = translationalControlEnd.calculate(0, spline.getEndPoint().getX()-x);
-                y_power = translationalControlEnd.calculate(0, spline.getEndPoint().getY()-y);
+                x_power = translationalControlEndX.calculate(0, spline.getEndPoint().getX()-x);
+                y_power = translationalControlEndY.calculate(0, spline.getEndPoint().getY()-y);
+
+                x_power = (!reachedXTarget()) ? (x_power + Math.signum(x_power) * kStatic): 0;
+                y_power = (!reachedYTarget()) ? (y_power + Math.signum(y_power) * kStatic): 0;
+
 
                 x_rotated = x_power * Math.cos(Math.toRadians(currentHeading)) + y_power * Math.sin(Math.toRadians(currentHeading));
                 y_rotated =  -x_power * Math.sin(Math.toRadians(currentHeading)) + y_power * Math.cos(Math.toRadians(currentHeading));
+
+
 
                 magnitude = Math.hypot(x_rotated, y_rotated);
                 theta = Math.toDegrees(Math.atan2(y_rotated, x_rotated));
                 driveTurn = headingControlEnd.calculate(0, getHeadingError());
 
+                driveTurn = (!reachedHeadingTarget()) ? (driveTurn + Math.signum(driveTurn) * kStatic): 0;
 
-
-                drive.drive(magnitude, theta, driveTurn, 1, voltage);
+                drive.drive(magnitude, theta, driveTurn, movementPower, voltage);
 
 
             } else {
@@ -236,8 +235,6 @@ public static double MAX_VEL = 42.22; // was * 0.9
 
                 theta = Math.toDegrees(Math.atan2(vy, vx));
 
-
-                /********DUMB*********/
 
                 double correction;
                 double multiplier = 1;
@@ -299,6 +296,18 @@ public static double MAX_VEL = 42.22; // was * 0.9
             }
 
         }else{
+           if(reachedXTarget()){
+               translationalControlEndX.reset();
+           }
+
+            if(reachedYTarget()){
+                translationalControlEndY.reset();
+            }
+
+           if(reachedHeadingTarget()){
+               headingControlEnd.reset();
+           }
+
             drive.drive(0, 0, 0, 0);
         }
 
@@ -336,8 +345,23 @@ public static double MAX_VEL = 42.22; // was * 0.9
     }
 
     public boolean isFinished() {
-        return ((Math.abs(spline.getEndPoint().getX()-x)<= translational_error && Math.abs(spline.getEndPoint().getY()-y)<= translational_error)
-                &&(Math.abs(targetHeading - currentHeading)<= heading_error));
+        return  reachedTranslationalTarget() && reachedHeadingTarget();
+    }
+
+    private boolean reachedTranslationalTarget(){
+        return (reachedXTarget() && reachedYTarget());
+    }
+
+    private boolean reachedXTarget(){
+        return Math.abs(spline.getEndPoint().getX()-x)<= translational_error;
+    }
+
+    private boolean reachedYTarget(){
+        return Math.abs(spline.getEndPoint().getY()-y)<= translational_error;
+    }
+
+    private boolean reachedHeadingTarget(){
+        return (Math.abs(targetHeading - currentHeading)<= heading_error);
     }
 
     private double distance(Point p1, Point p2){

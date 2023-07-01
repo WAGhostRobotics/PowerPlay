@@ -58,13 +58,16 @@ public class HeadingEndTuner extends LinearOpMode {
         ));
 
 
+        double timeout = 7;
+        ElapsedTime timer = new ElapsedTime();
+
         while (!isStopRequested()) {
 
             motionPlanner.headingControlEnd.setPID(p, i, d);
             Localizer.LATERAL_DISTANCE = trackWidth;
             motionPlanner.update();
 
-            if(motionPlanner.isFinished()){
+            if(motionPlanner.isFinished()||timer.seconds()>timeout){
 
                 if(stop){
                     wait.reset();
@@ -75,7 +78,7 @@ public class HeadingEndTuner extends LinearOpMode {
 
                 if(wait.seconds()>3) {
                     stop = true;
-
+                    timer.reset();
                     angle += 90;
                     motionPlanner.startTrajectory(new Bezier(
                             angle,

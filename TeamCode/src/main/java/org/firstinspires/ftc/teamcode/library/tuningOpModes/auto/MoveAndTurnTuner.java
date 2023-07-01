@@ -49,13 +49,15 @@ public class MoveAndTurnTuner extends LinearOpMode {
         boolean forward = true;
         motionPlanner.startTrajectory(new Bezier(90, new Point(0, 0), new Point(40, 0)));
 
+        double timeout = 7;
+        ElapsedTime timer = new ElapsedTime();
 
         while (!isStopRequested()) {
 
             motionPlanner.headingControl.setPID(p, i, d);
             motionPlanner.update();
 
-            if(motionPlanner.isFinished()){
+            if(motionPlanner.isFinished()||timer.seconds()>timeout){
 
                 if(stop){
                     wait.reset();
@@ -66,6 +68,7 @@ public class MoveAndTurnTuner extends LinearOpMode {
 
                 if(wait.seconds()>3) {
                     stop = true;
+                    timer.reset();
                     if (forward) {
                         forward = false;
                         motionPlanner.startTrajectory(new Bezier(0, new Point(40, 0), new Point(0, 0)));

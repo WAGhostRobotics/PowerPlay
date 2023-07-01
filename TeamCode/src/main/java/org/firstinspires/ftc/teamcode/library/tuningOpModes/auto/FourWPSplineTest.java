@@ -57,13 +57,15 @@ public class FourWPSplineTest extends LinearOpMode {
                 new Point(45, 25)
         ));
 
+        double timeout = 7;
+        ElapsedTime timer = new ElapsedTime();
 
         while (!isStopRequested()) {
 
             motionPlanner.translationalControl.setPID(p, i, d);
             motionPlanner.update();
 
-            if(motionPlanner.isFinished()){
+            if(motionPlanner.isFinished()||timer.seconds()>timeout){
 
                 if(stop){
                     wait.reset();
@@ -74,7 +76,7 @@ public class FourWPSplineTest extends LinearOpMode {
 
                 if(wait.seconds()>3) {
                     stop = true;
-
+                    timer.reset();
 
                     if (forward) {
                         forward = false;

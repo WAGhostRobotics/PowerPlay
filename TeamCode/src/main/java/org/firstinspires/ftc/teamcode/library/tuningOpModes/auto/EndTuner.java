@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDri
 public class EndTuner extends LinearOpMode {
 
 
-    public static double p = MotionPlanner.translationalControlEnd.getP(), i = MotionPlanner.translationalControlEnd.getI(), d = MotionPlanner.translationalControlEnd.getD();
+    public static double p = MotionPlanner.translationalControlEndX.getP(), i = MotionPlanner.translationalControlEndX.getI(), d = MotionPlanner.translationalControlEndX.getD();
 
 
 
@@ -49,15 +49,18 @@ public class EndTuner extends LinearOpMode {
 
 
         boolean forward = true;
-        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(12, 0)));
+        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(14, 0)));
 
+        double timeout = 7;
+        ElapsedTime timer = new ElapsedTime();
 
         while (!isStopRequested()) {
 
-            motionPlanner.translationalControlEnd.setPID(p, i, d);
+            motionPlanner.translationalControlEndX.setPID(p, i, d);
+            motionPlanner.translationalControlEndY.setPID(p, i, d);
             motionPlanner.update();
 
-            if(motionPlanner.isFinished()){
+            if(motionPlanner.isFinished()||timer.seconds()>timeout){
 
                 if(stop){
                     wait.reset();
@@ -68,12 +71,13 @@ public class EndTuner extends LinearOpMode {
 
                 if(wait.seconds()>3){
                     stop = true;
+                    timer.reset();
                     if(forward){
                         forward = false;
-                        motionPlanner.startTrajectory(new Bezier(new Point(12, 0), new Point(0, 0)));
+                        motionPlanner.startTrajectory(new Bezier(new Point(14, 0), new Point(0, 0)));
                     }else{
                         forward = true;
-                        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(12, 0)));
+                        motionPlanner.startTrajectory(new Bezier(new Point(0, 0), new Point(14, 0)));
                     }
                 }
             }else{
@@ -87,6 +91,7 @@ public class EndTuner extends LinearOpMode {
             telemetry.addData("UpperBound", 1);
             telemetry.addData("Heading Error", motionPlanner.getHeadingError());
             telemetry.addData("End", motionPlanner.getSpline().getEndPoint().getX() + " " + motionPlanner.getSpline().getEndPoint().getY());
+            telemetry.addLine(motionPlanner.getTelemetry());
             telemetry.update();
 
             PhotonCore.CONTROL_HUB.clearBulkCache();

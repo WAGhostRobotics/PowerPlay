@@ -20,7 +20,7 @@ public class MecanumDrive implements Drivetrain {
     private double backLeftPower;
     private double backRightPower;
 
-    public final double voltageConstant = 13.6;
+    public final double voltageConstant = 12.3;
 
 
     String telemetry = "";
