@@ -28,7 +28,7 @@ public class MotionPlanner {
 
 //    private PIDController translationalControlEnd = new PIDController(0.022,0.001,0.03);
 //    public static PIDController translationalControlEnd = new PIDController(0.025,0.02,0.1);
-    public static PIDController translationalControlEndX = new PIDController(0.025,0.002,0.5);
+    public static PIDController translationalControlEndX = new PIDController(0.025,0,0.5);
     public static PIDController translationalControlEndY = new PIDController(translationalControlEndX.getP(), translationalControlEndX.getI(), translationalControlEndX.getD());
     public static PIDController headingControlEnd = new PIDController(0.003, 0.02, 0.1); //i=0.0226
 
@@ -134,7 +134,7 @@ public class MotionPlanner {
 
     public String getTelemetry(){
         return "Index: " + index +
-//                "\n Theta: " + theta +
+                "\n Theta: " + theta +
                 "\n Magnitude: " + magnitude +
                 "\n Driveturn: " + driveTurn +
 //                "\n Phase: " + end +
