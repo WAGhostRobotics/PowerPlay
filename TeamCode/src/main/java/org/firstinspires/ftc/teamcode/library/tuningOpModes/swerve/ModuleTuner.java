@@ -32,6 +32,7 @@ public class ModuleTuner extends LinearOpMode {
 
 
         PhotonCore.CONTROL_HUB.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        PhotonCore.experimental.setMaximumParallelCommands(8);
         PhotonCore.enable();
 
         double targetAngle = 0;
@@ -50,10 +51,19 @@ public class ModuleTuner extends LinearOpMode {
                 targetAngle -= 15;
             }
 
+            if(gamepad1.y){
+                module.setPower(1);
+            }else if(gamepad1.x){
+                module.setPower(-1);
+            }else{
+                module.setPower(0);
+            }
+
             module.setTargetAngle(targetAngle);
             module.update();
 
             telemetry.addData("Target", 0);
+
             telemetry.addData("Angle Error", normalizeDegrees(module.getTargetAngle()- module.getModuleAngle()));
             telemetry.update();
 
