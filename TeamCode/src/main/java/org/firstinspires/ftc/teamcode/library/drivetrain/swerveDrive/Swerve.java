@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.library.drivetrain.swerveDrive;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.util.AnalogEncoder;
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class Swerve implements Drivetrain {
 
@@ -18,11 +23,27 @@ public class Swerve implements Drivetrain {
 
     public final double voltageConstant = 13.27;
 
-    public Swerve(HardwareMap hwMap, boolean reset){
-        frontLeft = new ModuleV2(hwMap, "lf", "lfPivot", "lfEnc", 0);
-        frontRight = new ModuleV2(hwMap, "rf", "rfPivot", "rfEnc", 0);
-        backRight = new ModuleV2(hwMap, "rr", "rrPivot", "rrEnc", 0);
-        backLeft = new ModuleV2(hwMap, "lr", "lrPivot", "lrEnc", 0);
+    public Swerve(HardwareMap hwMap){
+
+        DcMotor leftFront = hwMap.get(DcMotor.class, "lf");
+        DcMotor rightFront = hwMap.get(DcMotor.class, "rf");
+        DcMotor leftBack = hwMap.get(DcMotor.class, "lr");
+        DcMotor rightBack = hwMap.get(DcMotor.class, "rr");
+
+        CRServo leftFrontPivot = hwMap.get(CRServo.class, "lfPivot");
+        CRServo rightFrontPivot = hwMap.get(CRServo.class, "rfPivot");
+        CRServo leftBackPivot = hwMap.get(CRServo.class, "lrPivot");
+        CRServo rightBackPivot = hwMap.get(CRServo.class, "rrPivot");
+
+        AnalogEncoder leftFrontEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "lfEnc"));
+        AnalogEncoder rightFrontEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "rfEnc"));
+        AnalogEncoder leftBackEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "lrEnc"));
+        AnalogEncoder rightBackEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "rrEnc"));
+
+        frontLeft = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc);
+        frontRight = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc);
+        backLeft = new ModuleV2(leftBack, leftBackPivot, leftBackEnc);
+        backRight = new ModuleV2(rightBack, rightBackPivot, rightBackEnc);
     }
 
 
