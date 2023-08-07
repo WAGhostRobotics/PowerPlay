@@ -7,38 +7,20 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 
 public class AnalogEncoder {
 
-    private final static double RANGE = 0.294;
 
     private boolean reverse = false;
 
     private AnalogInput encoder;
     private double zero = 0;
-    private double range = RANGE;
-    private double last = 0;
+    private double range = 3.385;
+    private double last=1;
 
 
 
-    public AnalogEncoder(AnalogInput encoder, double zero, double range) {
-        this.encoder = encoder;
-        this.range = range;
-        this.zero = zero;
-    }
-
-    public AnalogEncoder(AnalogInput encoder, double zero, double range, boolean reverse){
-        this.encoder = encoder;
-        this.range = range;
-        this.zero = zero;
-        this.reverse = reverse;
-    }
-
-    public AnalogEncoder(AnalogInput encoder, double zero){
-        this.encoder = encoder;
-        this.zero = zero;
-
-    }
 
     public AnalogEncoder(AnalogInput encoder){
         this.encoder = encoder;
+
     }
 
     public AnalogEncoder(AnalogInput encoder, double zero, boolean reverse) {
@@ -69,19 +51,20 @@ public class AnalogEncoder {
     public double getCurrentPosition() {
         double pos;
 
-        if(reverse){
-            pos = Angle.norm((1 - getVoltage() / range) * 2 * Math.PI + Math.toRadians(zero));
-        }else{
-            pos = Angle.norm((getVoltage() / range) * 2 * Math.PI - Math.toRadians(zero));
-        }
+
+        double offset = -Math.toRadians(zero);
+
+
+        pos = Angle.norm(((reverse?(1- getVoltage()/range):(getVoltage()/range))) * 2 * Math.PI + offset);
 
 // nakul's bro logic
-        if(Math.abs(normalizeRadians(last+Math.toRadians(zero)))>0.2||Math.abs(normalizeRadians(pos+Math.toRadians(zero)))<1.0){
+        if(Math.abs(normalizeRadians(last-offset))>0.2 || Math.abs(normalizeRadians(pos-offset))<1.0){
             last=pos;
             return pos;
         }else {
             return last;
         }
+//        return pos;
 
 
     }

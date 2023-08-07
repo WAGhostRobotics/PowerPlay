@@ -32,7 +32,7 @@ public class WonkControlTeleOp extends LinearOpMode {
 
 
         Localizer localizer = new Localizer(hardwareMap);
-        Drivetrain drive = new MecanumDrive(hardwareMap);
+        Drivetrain drive = new Swerve(hardwareMap);
 
 
 

@@ -27,11 +27,11 @@ public class ModuleV2 {
     private double error = 0;
     private double power = 0;
 
-    public static double K_STATIC = 0.16;
+    public static double K_STATIC = 0.18;
 
     private final double PERMISSABLE_ERROR = 2;
 
-    public static double p = 0.0025, i = 0.00025, d = 0.001;
+    public static double p = 0.0015, i = 0, d = 0.001;
 
     public PIDController headingController = new PIDController(p, i, d);
 
@@ -58,9 +58,8 @@ public class ModuleV2 {
     public void setTargetAngle(double angle){
         if(normalizeDegrees(angle)!=targetAngle){
             headingController.reset();
+            targetAngle = normalizeDegrees(angle);
         }
-        targetAngle = normalizeDegrees(angle);
-
     }
 
     public AnalogEncoder getEncoder(){
@@ -71,7 +70,7 @@ public class ModuleV2 {
         return normalizeDegrees(targetAngle);
     }
 
-    public double getModuleAngle(){
+    public double  getModuleAngle(){
         return normalizeDegrees(Math.toDegrees(encoder.getCurrentPosition()));
     }
 

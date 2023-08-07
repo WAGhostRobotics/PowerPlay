@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.library.drivetrain.swerveDrive;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.library.drivetrain.Drivetrain;
@@ -34,6 +35,11 @@ public class Swerve implements Drivetrain {
         CRServo rightFrontPivot = hwMap.get(CRServo.class, "rfPivot");
         CRServo leftBackPivot = hwMap.get(CRServo.class, "lrPivot");
         CRServo rightBackPivot = hwMap.get(CRServo.class, "rrPivot");
+
+        leftFrontPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBackPivot.setDirection(DcMotorSimple.Direction.REVERSE);
 
         AnalogEncoder leftFrontEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "lfEnc"));
         AnalogEncoder rightFrontEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "rfEnc"));

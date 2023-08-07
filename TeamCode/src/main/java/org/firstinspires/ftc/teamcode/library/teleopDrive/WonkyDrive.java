@@ -57,10 +57,10 @@ public class WonkyDrive {
 
 
 
-    public static double theHolyConstant = 0.0001; //0.01
-    public static double rotationalDriftConstant = 0.001; //0.002
-    public static double p = 0.011, i = 0.001, d = 0.0011;
-    public static double turnff = -0.11;
+    public static double theHolyConstant = 0; //0.01
+    public static double rotationalDriftConstant = 0; //0.002
+    public static double p = 0, i = 0, d = 0;
+    public static double turnff = 0;
 
 
 //    PIDController headingController = new PIDController(0, 0, 0);

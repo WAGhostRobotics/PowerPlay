@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.library.autoDrive.Localizer;
 import org.firstinspires.ftc.teamcode.library.autoDrive.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.library.drivetrain.mecanumDrive.MecanumDrive;
+import org.firstinspires.ftc.teamcode.library.drivetrain.swerveDrive.Swerve;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -26,7 +27,7 @@ public class CustomLocalizerTest extends LinearOpMode {
 
 
         Localizer localizer = new TwoWheelLocalizer(this, hardwareMap);
-        MecanumDrive drive = new MecanumDrive(hardwareMap);
+        Swerve drive = new Swerve(hardwareMap);
 
         PhotonCore.enable();
 
