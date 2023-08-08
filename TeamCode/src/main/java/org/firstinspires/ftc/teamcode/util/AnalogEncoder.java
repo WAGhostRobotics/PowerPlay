@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.norm
 
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class AnalogEncoder {
 
@@ -13,7 +14,11 @@ public class AnalogEncoder {
     private AnalogInput encoder;
     private double zero = 0;
     private double range = 3.385;
-    private double last=1;
+    private double last=Double.NaN;
+
+    private double angularVelocity = 0;
+
+    private ElapsedTime timer;
 
 
 
@@ -27,6 +32,7 @@ public class AnalogEncoder {
         this.encoder = encoder;
         this.zero = zero;
         this.reverse = reverse;
+
     }
 
 
@@ -49,6 +55,9 @@ public class AnalogEncoder {
     }
 
     public double getCurrentPosition() {
+        if(timer==null){
+            timer = new ElapsedTime();
+        }
         double pos;
 
 
@@ -57,8 +66,11 @@ public class AnalogEncoder {
 
         pos = Angle.norm(((reverse?(1- getVoltage()/range):(getVoltage()/range))) * 2 * Math.PI + offset);
 
+
+        angularVelocity = Math.abs(normalizeRadians(last-pos))/timer.seconds();
+        timer.reset();
 // nakul's bro logic
-        if(Math.abs(normalizeRadians(last-offset))>0.2 || Math.abs(normalizeRadians(pos-offset))<1.0){
+        if(angularVelocity>0){
             last=pos;
             return pos;
         }else {
@@ -67,6 +79,10 @@ public class AnalogEncoder {
 //        return pos;
 
 
+
+    }
+    public double getAngularVelocity(){
+        return angularVelocity;
     }
 
     public AnalogInput getEncoder() {
