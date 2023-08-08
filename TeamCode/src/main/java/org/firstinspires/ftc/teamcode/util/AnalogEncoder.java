@@ -102,13 +102,12 @@ public class AnalogEncoder {
             log.remove(lastIndex);
         }
 
-        for(int i=0;i<log.size();i++){
-            if(pos<=log.get(i)){
-                log.add(i, pos);
-                lastIndex = i;
-                break;
-            }
+        int i = 0;
+        while(pos>log.get(i)||i>=log.size()){
+            i++;
         }
+        log.add(i, pos);
+        lastIndex = i;
 
 
         return getMedian(log);
