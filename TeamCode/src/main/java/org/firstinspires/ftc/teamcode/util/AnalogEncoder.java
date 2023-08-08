@@ -6,6 +6,8 @@ import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.ArrayList;
+
 public class AnalogEncoder {
 
 
@@ -21,6 +23,9 @@ public class AnalogEncoder {
     private ElapsedTime timer;
 
 
+
+    private ArrayList<Double> log = new ArrayList<Double>();
+    private double maxLogSize = 9;
 
 
     public AnalogEncoder(AnalogInput encoder){
@@ -81,6 +86,40 @@ public class AnalogEncoder {
 
 
     }
+
+
+    public double getCurrentPositionMedianFilter(){
+        double pos;
+
+
+        double offset = -Math.toRadians(zero);
+
+
+        pos = Angle.norm(((reverse?(1- getVoltage()/range):(getVoltage()/range))) * 2 * Math.PI + offset);
+
+
+        if(log.size()<maxLogSize){
+            log.add(pos);
+        }else{
+            log.remove(0);
+            log.add(pos);
+        }
+
+
+        return getMedian(log);
+
+    }
+
+    public double getMedian(ArrayList<Double> log){
+        ArrayList<Double> sorted = quicksort(log);
+
+        if(sorted.size()%2 != 0){
+            return sorted.get(sorted.size()/2);
+        }else{
+            return (sorted.get(sorted.size()/2) + sorted.get((sorted.size()-1)/2))/2.0;
+        }
+    }
+
     public double getAngularVelocity(){
         return angularVelocity;
     }
@@ -91,5 +130,49 @@ public class AnalogEncoder {
 
     public double getVoltage(){
         return encoder.getVoltage();
+    }
+
+    private ArrayList<Double> quicksort(ArrayList<Double> input){
+
+        if(input.size() <= 1){
+            return input;
+        }
+
+        int middle = (int) Math.ceil((double)input.size() / 2);
+        double pivot = input.get(middle);
+
+        ArrayList<Double> less = new ArrayList<Double>();
+        ArrayList<Double> greater = new ArrayList<Double>();
+
+        for (int i = 0; i < input.size(); i++) {
+            if(input.get(i) <= pivot){
+                if(i == middle){
+                    continue;
+                }
+                less.add(input.get(i));
+            }
+            else{
+                greater.add(input.get(i));
+            }
+        }
+
+        return concatenate(quicksort(less), pivot, quicksort(greater));
+    }
+
+    private ArrayList<Double> concatenate(ArrayList<Double> less, double pivot, ArrayList<Double> greater){
+
+        ArrayList<Double> list = new ArrayList<Double>();
+
+        for (int i = 0; i < less.size(); i++) {
+            list.add(less.get(i));
+        }
+
+        list.add(pivot);
+
+        for (int i = 0; i < greater.size(); i++) {
+            list.add(greater.get(i));
+        }
+
+        return list;
     }
 }
