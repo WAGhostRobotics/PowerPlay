@@ -27,11 +27,15 @@ public class ModuleV2 {
     private double error = 0;
     private double power = 0;
 
-    public static double K_STATIC = 0.18;
+//    public static double K_STATIC = 0.16;
 
-    private final double PERMISSABLE_ERROR = 2;
+    public double K_STATIC = 0.16;
 
-    public static double p = 0.0015, i = 0, d = 0.001;
+    private final double PERMISSABLE_ERROR = 4;
+
+//    public static double p = 0.00185, i = 0.00018, d = 0;
+    public double p = 0.00185;
+    public static double i = 0.00018, d = 0;
 
     public PIDController headingController = new PIDController(p, i, d);
 
@@ -40,6 +44,27 @@ public class ModuleV2 {
         this.motor = motor;
         this.pivot = pivot;
         this.encoder = encoder;
+
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public ModuleV2(DcMotor motor, CRServo pivot, AnalogEncoder encoder, double K_STATIC){
+        this.motor = motor;
+        this.pivot = pivot;
+        this.encoder = encoder;
+        this.K_STATIC = K_STATIC;
+
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public ModuleV2(DcMotor motor, CRServo pivot, AnalogEncoder encoder, double K_STATIC, double p){
+        this.motor = motor;
+        this.pivot = pivot;
+        this.encoder = encoder;
+        this.K_STATIC = K_STATIC;
+        this.p = p;
 
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -70,7 +95,7 @@ public class ModuleV2 {
         return normalizeDegrees(targetAngle);
     }
 
-    public double  getModuleAngle(){
+    public double getModuleAngle(){
         return normalizeDegrees(Math.toDegrees(encoder.getCurrentPosition()));
     }
 

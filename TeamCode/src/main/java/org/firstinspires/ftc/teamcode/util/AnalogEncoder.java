@@ -18,14 +18,11 @@ public class AnalogEncoder {
     private double range = 3.385;
     private double last=Double.NaN;
 
-    private double angularVelocity = 0;
-
-    private ElapsedTime timer;
 
 
 
-    private ArrayList<Double> log = new ArrayList<Double>();
-    private double maxLogSize = 8;
+    public ArrayList<Double> log = new ArrayList<Double>();
+    private double maxLogSize = 15;
 
 
     public AnalogEncoder(AnalogInput encoder){
@@ -60,28 +57,14 @@ public class AnalogEncoder {
     }
 
     public double getCurrentPosition() {
-        if(timer==null){
-            timer = new ElapsedTime();
-        }
-        double pos;
 
+        double pos;
 
         double offset = -Math.toRadians(zero);
 
-
         pos = Angle.norm(((reverse?(1- getVoltage()/range):(getVoltage()/range))) * 2 * Math.PI + offset);
 
-
-        angularVelocity = Math.abs(normalizeRadians(last-pos))/timer.seconds();
-        timer.reset();
-// nakul's bro logic
-        if(angularVelocity>0){
-            last=pos;
-            return pos;
-        }else {
-            return last;
-        }
-//        return pos;
+        return pos;
 
 
 
@@ -95,7 +78,7 @@ public class AnalogEncoder {
         double offset = -Math.toRadians(zero);
 
 
-        pos = Angle.norm(((reverse?(1- getVoltage()/range):(getVoltage()/range))) * 2 * Math.PI + offset);
+        pos = normalizeRadians(((reverse?(1- getVoltage()/range):(getVoltage()/range))) * 2 * Math.PI + offset);
 
 
         if(log.size()<maxLogSize){
@@ -116,13 +99,10 @@ public class AnalogEncoder {
         if(sorted.size()%2 != 0){
             return sorted.get(sorted.size()/2);
         }else{
-            return (sorted.get(sorted.size()/2) + sorted.get((sorted.size()-1)/2));
+            return (sorted.get(sorted.size()/2) + sorted.get((sorted.size()-1)/2))/2;
         }
     }
 
-    public double getAngularVelocity(){
-        return angularVelocity;
-    }
 
     public AnalogInput getEncoder() {
         return encoder;
@@ -132,7 +112,7 @@ public class AnalogEncoder {
         return encoder.getVoltage();
     }
 
-    private ArrayList<Double> quicksort(ArrayList<Double> input){
+    public ArrayList<Double> quicksort(ArrayList<Double> input){
 
         if(input.size() <= 1){
             return input;

@@ -26,7 +26,7 @@ public class CustomLocalizerTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        Localizer localizer = new TwoWheelLocalizer(this, hardwareMap);
+//        Localizer localizer = new TwoWheelLocalizer(this, hardwareMap);
         Swerve drive = new Swerve(hardwareMap);
 
         PhotonCore.enable();
@@ -44,13 +44,13 @@ public class CustomLocalizerTest extends LinearOpMode {
             drive.drive(0.5 * Math.hypot(driveX, driveY), Math.toDegrees(Math.atan2(driveY, driveX)), 0.5 * driveTurn, 1);
 
 
-            localizer.update();
+//            localizer.update();
             
-            telemetry.addData("x", localizer.getX());
-            telemetry.addData("y", localizer.getY());
-            telemetry.addData("heading", localizer.getHeading(Localizer.Angle.DEGREES));
-            telemetry.addData("rawx", localizer.getRawX());
-            telemetry.addData("rawy", localizer.getRawY());
+//            telemetry.addData("x", localizer.getX());
+//            telemetry.addData("y", localizer.getY());
+//            telemetry.addData("heading", localizer.getHeading(Localizer.Angle.DEGREES));
+//            telemetry.addData("rawx", localizer.getRawX());
+//            telemetry.addData("rawy", localizer.getRawY());
             telemetry.addData("hz", 1.0/timer.seconds());
             telemetry.update();
         }

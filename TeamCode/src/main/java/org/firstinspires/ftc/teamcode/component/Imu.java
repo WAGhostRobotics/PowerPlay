@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.component;
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

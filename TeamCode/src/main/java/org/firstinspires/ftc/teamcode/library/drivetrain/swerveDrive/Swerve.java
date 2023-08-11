@@ -46,10 +46,10 @@ public class Swerve implements Drivetrain {
         AnalogEncoder leftBackEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "lrEnc"));
         AnalogEncoder rightBackEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "rrEnc"));
 
-        frontLeft = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc);
-        frontRight = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc);
-        backLeft = new ModuleV2(leftBack, leftBackPivot, leftBackEnc);
-        backRight = new ModuleV2(rightBack, rightBackPivot, rightBackEnc);
+        frontLeft = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc, 0.137, 0.0019);
+        frontRight = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc, 0.142, 0.00185);
+        backLeft = new ModuleV2(leftBack, leftBackPivot, leftBackEnc, 0.131, 0.0029);
+        backRight = new ModuleV2(rightBack, rightBackPivot, rightBackEnc, 0.122, 0.00169 );
     }
 
 
