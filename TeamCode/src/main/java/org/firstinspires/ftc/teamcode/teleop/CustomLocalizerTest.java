@@ -41,7 +41,7 @@ public class CustomLocalizerTest extends LinearOpMode {
             double driveTurn = Math.pow(-gamepad2.right_stick_x, 3);
             double driveY = Math.pow(-gamepad2.left_stick_x, 3);
             double driveX = Math.pow(-gamepad2.left_stick_y, 3);
-            drive.drive(0.5 * Math.hypot(driveX, driveY), Math.toDegrees(Math.atan2(driveY, driveX)), 0.5 * driveTurn, 1);
+            drive.drive(0.5 * Math.hypot(driveX, driveY), Math.toDegrees(Math.atan2(driveY, driveX)), 0.5 * driveTurn, 0.8);
 
 
 //            localizer.update();
@@ -52,6 +52,7 @@ public class CustomLocalizerTest extends LinearOpMode {
 //            telemetry.addData("rawx", localizer.getRawX());
 //            telemetry.addData("rawy", localizer.getRawY());
             telemetry.addData("hz", 1.0/timer.seconds());
+            telemetry.addData("Angles", drive.getTelemetry());
             telemetry.update();
         }
     }

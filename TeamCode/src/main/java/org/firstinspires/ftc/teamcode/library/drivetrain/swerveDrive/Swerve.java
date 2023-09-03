@@ -41,15 +41,20 @@ public class Swerve implements Drivetrain {
         leftBackPivot.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBackPivot.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        AnalogEncoder leftFrontEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "lfEnc"));
-        AnalogEncoder rightFrontEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "rfEnc"));
-        AnalogEncoder leftBackEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "lrEnc"));
-        AnalogEncoder rightBackEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "rrEnc"));
+        AnalogEncoder leftFrontEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "lfEnc"), 0, false);
+        AnalogEncoder rightFrontEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "rfEnc"), 0, false);
+        AnalogEncoder leftBackEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "lrEnc"), 0, false);
+        AnalogEncoder rightBackEnc = new AnalogEncoder(hwMap.get(AnalogInput.class, "rrEnc"), 0, false);
 
-        frontLeft = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc, 0.137, 0.0019);
-        frontRight = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc, 0.142, 0.00185);
-        backLeft = new ModuleV2(leftBack, leftBackPivot, leftBackEnc, 0.131, 0.0029);
-        backRight = new ModuleV2(rightBack, rightBackPivot, rightBackEnc, 0.122, 0.00169 );
+//        frontLeft = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc, 0.115 , 0.0016, 0.00016, 0.022);
+//        frontRight = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc, 0.12, 0.002, 0.00016, 0.022);
+//        backLeft = new ModuleV2(leftBack, leftBackPivot, leftBackEnc, 0.12, 0.0017, 0.00016, 0.022);
+//        backRight = new ModuleV2(rightBack, rightBackPivot, rightBackEnc, 0.115, 0.0018, 0.00016, 0.02);
+
+        frontLeft = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc, 0.11 , 0.0019, 0.0001, 0.022);
+        frontRight = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc, 0.12, 0.0019, 0.0001, 0.025);
+        backLeft = new ModuleV2(leftBack, leftBackPivot, leftBackEnc, 0.125 , 0.0018, 0.00015, 0.021);
+        backRight = new ModuleV2(rightBack, rightBackPivot, rightBackEnc, 0.11, 0.0019, 0.0001, 0.022);
     }
 
 
@@ -210,6 +215,11 @@ public class Swerve implements Drivetrain {
         return "Front Left: " + frontLeft.getModuleAngle() + "\n"
             + "Front Right: " + frontRight.getModuleAngle() + "\n"
                 + "Back Left: " + backLeft.getModuleAngle() + "\n"
-                + "Back Right: " + backRight.getModuleAngle() ;
+                + "Back Right: " + backRight.getModuleAngle() + "\n"
+                + "Error:" + "\n"
+                + "Front Left: " + frontLeft.getError() + "\n"
+                + "Front Right: " + frontRight.getError() + "\n"
+                + "Back Left: " + backLeft.getError() + "\n"
+                + "Back Right: " + backRight.getError();
     }
 }

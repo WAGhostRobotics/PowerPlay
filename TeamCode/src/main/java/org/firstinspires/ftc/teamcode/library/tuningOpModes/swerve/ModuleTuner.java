@@ -33,29 +33,29 @@ public class ModuleTuner extends LinearOpMode {
         DcMotor leftFront = hardwareMap.get(DcMotor.class, "lf");
         CRServo leftFrontPivot = hardwareMap.get(CRServo.class, "lfPivot");
         leftFrontPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        AnalogEncoder leftFrontEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "lfEnc"), 0, true);
-        ModuleV2 module_lf = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc, 0.137, 0.0019);
+        AnalogEncoder leftFrontEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "lfEnc"), 0, false);
+        ModuleV2 module_lf = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc, 0.13, 0.135, 0.0013, 0.000005, 0, hardwareMap.voltageSensor);
 
         // 0.142 k 0.00185 p
         DcMotor rightFront = hardwareMap.get(DcMotor.class, "rf");
         CRServo rightFrontPivot = hardwareMap.get(CRServo.class, "rfPivot");
         rightFrontPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        AnalogEncoder rightFrontEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "rfEnc"), 0, true);
-        ModuleV2 module_rf = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc, 0.142, 0.00185);
+        AnalogEncoder rightFrontEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "rfEnc"), 0, false);
+        ModuleV2 module_rf = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc);
 
         // 0.131 k 0.0029 p
         DcMotor leftRear = hardwareMap.get(DcMotor.class, "lr");
         CRServo leftRearPivot = hardwareMap.get(CRServo.class, "lrPivot");
         leftRearPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        AnalogEncoder leftRearEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "lrEnc"), 0, true);
-        ModuleV2 module_lr = new ModuleV2(leftRear, leftRearPivot, leftRearEnc, 0.131, 0.0029);
+        AnalogEncoder leftRearEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "lrEnc"), 0, false);
+        ModuleV2 module_lr = new ModuleV2(leftRear, leftRearPivot, leftRearEnc);
 
         // 0.122 k 0.00169 p
         DcMotor rightRear = hardwareMap.get(DcMotor.class, "rr");
         CRServo rightRearPivot = hardwareMap.get(CRServo.class, "rrPivot");
         rightRearPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        AnalogEncoder rightRearEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "rrEnc"), 0, true);
-        ModuleV2 module_rr = new ModuleV2(rightRear, rightRearPivot, rightRearEnc, 0.122, 0.00169);
+        AnalogEncoder rightRearEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "rrEnc"), 0, false);
+        ModuleV2 module_rr = new ModuleV2(rightRear, rightRearPivot, rightRearEnc);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -72,6 +72,11 @@ public class ModuleTuner extends LinearOpMode {
         while (opModeIsActive()) {
 
             //DRIVETRAIN STUFF
+
+            module_rf.setHold();
+            module_lf.setHold();
+            module_rr.setHold();
+            module_lr.setHold();
 
             if(gamepad1.a){
                 targetAngle += 15;
@@ -97,26 +102,33 @@ public class ModuleTuner extends LinearOpMode {
 //                module_lr.setPower(0);
 //                module_rr.setPower(0);
 //            }
-//
+
 //            if (gamepad1.dpad_right) {
 //                module_lf.setServoPower(ModuleV2.K_STATIC);
-//                module_rf.setServoPower(ModuleV2.K_STATIC);
-//                module_lr.setServoPower(ModuleV2.K_STATIC);
-//                module_rr.setServoPower(ModuleV2.K_STATIC);
+////                module_rf.setServoPower(ModuleV2.K_STATIC);
+////                module_lr.setServoPower(ModuleV2.K_STATIC);
+//               // module_rr.setServoPower(ModuleV2.K_STATIC);
 //            } else if (gamepad1.dpad_left) {
 //                module_lf.setServoPower(-ModuleV2.K_STATIC);
-//                module_rf.setServoPower(-ModuleV2.K_STATIC);
-//                module_lr.setServoPower(-ModuleV2.K_STATIC);
-//                module_rr.setServoPower(-ModuleV2.K_STATIC);
+////                module_rf.setServoPower(-ModuleV2.K_STATIC);
+////                module_lr.setServoPower(-ModuleV2.K_STATIC);
+////                module_rr.setServoPower(-ModuleV2.K_STATIC);
 //            } else {
-//                module_lf.setServoPower(0);
-//                module_rf.setServoPower(0);
-//                module_lr.setServoPower(0);
-//                module_rr.setServoPower(0);
+////                module_lf.setServoPower(0);
+////                module_rf.setServoPower(0);
+////                module_lr.setServoPower(0);
+////                module_rr.setServoPower(0);
 //            }
 
+            module_lf.setTargetAngle(targetAngle);
             module_rf.setTargetAngle(targetAngle);
+            module_lr.setTargetAngle(targetAngle);
+            module_rr.setTargetAngle(targetAngle);
+
+            module_lf.update();
             module_rf.update();
+            module_lr.update();
+            module_rr.update();
 
             telemetry.addData("Target", module_rf.getTargetAngle());
             telemetry.addData("Zero", module_rf.getEncoder().getZero());
@@ -127,7 +139,10 @@ public class ModuleTuner extends LinearOpMode {
             telemetry.addData("Loop", (1 / timer.seconds()));
             telemetry.addData("Voltage", module_rf.getEncoder().getVoltage());
             telemetry.addData("Radians Not Normalized", module_rf.getEncoder().getCurrentPosition());
-            telemetry.addData("Angle Error", module_rf.getError());
+            telemetry.addData("Angle Error rf", module_rf.getError());
+            telemetry.addData("Angle Error lf", module_lf.getError());
+            telemetry.addData("Angle Error rr", module_rr.getError());
+            telemetry.addData("Angle Error lr", module_lr.getError());
             telemetry.addData("Power", module_rf.getPower());
             telemetry.update();
 
