@@ -30,18 +30,17 @@ public class ModuleV2 {
 
     public HardwareMap.DeviceMapping<VoltageSensor> voltageSensor;
 
-    public static double K_STATIC = 0.1;
     public static double K_STATIC_POS = 0.1;
+    //    private double K_STATIC = 0.16;
+    public static double K_STATIC = 0.1;
     public static double K_STATIC_NEG = 0.1;
 
     public static double voltage = 12.5; //12.08
 
-//    public double K_STATIC = 0.16;
 
     private final double PERMISSABLE_ERROR = 4;
 
     public static double p = 0.00185, i = 0.00018, d = 0.02;
-
 //    private double p = 0.00185, i = 0.00018, d = 0.01;
 
     public PIDController headingController = new PIDController(p, i, d);
@@ -101,7 +100,7 @@ public class ModuleV2 {
         this.p = p;
         this.i = i;
         this.d = d;
-        this.voltageSensor = voltageSensor;
+//        this.voltageSensor = voltageSensor;
 
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

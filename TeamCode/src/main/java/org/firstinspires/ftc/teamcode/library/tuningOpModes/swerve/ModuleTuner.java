@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.library.tuningOpModes.swerve;
 
 
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -13,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.library.drivetrain.swerveDrive.ModuleV2;
@@ -32,30 +29,32 @@ public class ModuleTuner extends LinearOpMode {
         // 0.137 k 0.0019 p
         DcMotor leftFront = hardwareMap.get(DcMotor.class, "lf");
         CRServo leftFrontPivot = hardwareMap.get(CRServo.class, "lfPivot");
-        leftFrontPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        AnalogEncoder leftFrontEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "lfEnc"), 0, false);
-        ModuleV2 module_lf = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc, 0.13, 0.135, 0.0013, 0.000005, 0, hardwareMap.voltageSensor);
+//        leftFrontPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        AnalogEncoder leftFrontEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "lfEnc"), 0, true);
+        ModuleV2 module_lf = new ModuleV2(leftFront, leftFrontPivot, leftFrontEnc, 0.17, 0.14, 0.0005, 0.0015, 0.000085, hardwareMap.voltageSensor);
 
         // 0.142 k 0.00185 p
         DcMotor rightFront = hardwareMap.get(DcMotor.class, "rf");
         CRServo rightFrontPivot = hardwareMap.get(CRServo.class, "rfPivot");
-        rightFrontPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        AnalogEncoder rightFrontEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "rfEnc"), 0, false);
-        ModuleV2 module_rf = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc);
+//        rightFrontPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        AnalogEncoder rightFrontEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "rfEnc"), 0, true);
+        ModuleV2 module_rf = new ModuleV2(rightFront, rightFrontPivot, rightFrontEnc, 0.176, 0.167, 0.00051, 0.000185, 0.0007, hardwareMap.voltageSensor);
 
         // 0.131 k 0.0029 p
         DcMotor leftRear = hardwareMap.get(DcMotor.class, "lr");
         CRServo leftRearPivot = hardwareMap.get(CRServo.class, "lrPivot");
-        leftRearPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        AnalogEncoder leftRearEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "lrEnc"), 0, false);
-        ModuleV2 module_lr = new ModuleV2(leftRear, leftRearPivot, leftRearEnc);
+//        leftRearPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        AnalogEncoder leftRearEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "lrEnc"), 0, true);
+//        ModuleV2 module_lr = new ModuleV2(leftRear, leftRearPivot, leftRearEnc, 0.162, 0.154, 0.00055, 0.000195, 0.00028, hardwareMap.voltageSensor);
+        ModuleV2 module_lr = new ModuleV2(leftRear, leftRearPivot, leftRearEnc, 0.162, 0.154, 0.00055, 0.000195, 0.00028, hardwareMap.voltageSensor);
 
         // 0.122 k 0.00169 p
         DcMotor rightRear = hardwareMap.get(DcMotor.class, "rr");
         CRServo rightRearPivot = hardwareMap.get(CRServo.class, "rrPivot");
-        rightRearPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        AnalogEncoder rightRearEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "rrEnc"), 0, false);
-        ModuleV2 module_rr = new ModuleV2(rightRear, rightRearPivot, rightRearEnc);
+//        rightRearPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+        AnalogEncoder rightRearEnc = new AnalogEncoder(hardwareMap.get(AnalogInput.class, "rrEnc"), 0, true);
+//        ModuleV2 module_rr = new ModuleV2(rightRear, rightRearPivot, rightRearEnc, 0.19, 0.167, 0, 0, 0, hardwareMap.voltageSensor);
+        ModuleV2 module_rr = new ModuleV2(rightRear, rightRearPivot, rightRearEnc, 0.176, 0.167, 0.00051, 0.000185, 0.0007, hardwareMap.voltageSensor);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -104,31 +103,31 @@ public class ModuleTuner extends LinearOpMode {
 //            }
 
 //            if (gamepad1.dpad_right) {
-//                module_lf.setServoPower(ModuleV2.K_STATIC);
-////                module_rf.setServoPower(ModuleV2.K_STATIC);
+////                module_lf.setServoPower(ModuleV2.K_STATIC_POS);
+//                module_rf.setServoPower(ModuleV2.K_STATIC);
 ////                module_lr.setServoPower(ModuleV2.K_STATIC);
-//               // module_rr.setServoPower(ModuleV2.K_STATIC);
+////                module_rr.setServoPower(ModuleV2.K_STATIC);
 //            } else if (gamepad1.dpad_left) {
-//                module_lf.setServoPower(-ModuleV2.K_STATIC);
-////                module_rf.setServoPower(-ModuleV2.K_STATIC);
+////                module_lf.setServoPower(ModuleV2.K_STATIC_NEG);
+//                module_rf.setServoPower(-ModuleV2.K_STATIC);
 ////                module_lr.setServoPower(-ModuleV2.K_STATIC);
 ////                module_rr.setServoPower(-ModuleV2.K_STATIC);
 //            } else {
 ////                module_lf.setServoPower(0);
-////                module_rf.setServoPower(0);
+//                module_rf.setServoPower(0);
 ////                module_lr.setServoPower(0);
 ////                module_rr.setServoPower(0);
 //            }
 
-            module_lf.setTargetAngle(targetAngle);
+//            module_lf.setTargetAngle(targetAngle);
             module_rf.setTargetAngle(targetAngle);
-            module_lr.setTargetAngle(targetAngle);
-            module_rr.setTargetAngle(targetAngle);
+//            module_lr.setTargetAngle(targetAngle);
+//            module_rr.setTargetAngle(targetAngle);
 
-            module_lf.update();
+//            module_lf.update();
             module_rf.update();
-            module_lr.update();
-            module_rr.update();
+//            module_lr.update();
+//            module_rr.update();
 
             telemetry.addData("Target", module_rf.getTargetAngle());
             telemetry.addData("Zero", module_rf.getEncoder().getZero());
